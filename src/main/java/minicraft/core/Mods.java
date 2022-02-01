@@ -10,10 +10,12 @@ import java.util.stream.Stream;
 public class Mods extends Game {
     private Mods() {}
     public final static Module Core;
+    public final static Module[] Mods;
     static {
         File[] mods = FileHandler.readModsFolder();
         if (mods == null) {
             Core = null;
+            Mods = null;
         } else {
             List<Module> externalMods = Collections.<Module>emptyList();
             Predicate<File> checkCore = (File f) -> (f.getName() == "core.jar");
@@ -24,6 +26,11 @@ public class Mods extends Game {
                 if (mods[a].getName() == "core.jar") continue;
                 externalMods.add(FileHandler.readJarFile(mods[a]).getModule());
             }
+            Mods = externalMods.toArray(new Module[0]);
         }
+    }
+    public void loadCore() {
+        if (Core == null) return;
+        
     }
 }

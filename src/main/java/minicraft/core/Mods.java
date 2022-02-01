@@ -18,12 +18,12 @@ public class Mods extends Game {
             Mods = null;
         } else {
             List<Module> externalMods = Collections.<Module>emptyList();
-            Predicate<File> checkCore = (File f) -> (f.getName() == "core.jar");
-            Stream<File> coreA = Arrays.stream(mods).filter(checkCore);
-            if (coreA.count()>0) Core = FileHandler.readJarFile(coreA.findFirst()).getModule();
+            Predicate<File> checkCore = (File f) -> (f.getName().equals("core.jar"));
+            File coreA = Arrays.stream(mods).filter(checkCore).findFirst().get();
+            if (coreA!=null) Core = FileHandler.readJarFile(coreA).getModule();
             else Core = null;
             for (int a = 0; a<mods.length; a++) {
-                if (mods[a].getName() == "core.jar") continue;
+                if (mods[a].getName().equals("core.jar")) continue;
                 externalMods.add(FileHandler.readJarFile(mods[a]).getModule());
             }
             Mods = externalMods.toArray(new Module[0]);
@@ -31,6 +31,6 @@ public class Mods extends Game {
     }
     public void loadCore() {
         if (Core == null) return;
-        
+
     }
 }

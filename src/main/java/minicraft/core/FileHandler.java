@@ -82,7 +82,7 @@ public class FileHandler extends Game {
 	}
 
 	public static File[] readModsFolder() {
-		if (new File(gameModsDir).exists()) {
+		if (!new File(gameModsDir).exists()) {
 			return null;
 		} else return new File(gameModsDir).listFiles(new FilenameFilter() {
 			@Override
@@ -90,17 +90,6 @@ public class FileHandler extends Game {
 				return name.matches("\\w+.jar");
 			}
 		});
-	}
-
-	public static Class<?> readJarFile(Optional<File> file) {
-		try {
-			JarFile jar = new JarFile(file.get());
-			Class<?> jarclass = jar.getClass();
-			jar.close();
-			return jarclass;
-		} catch (IOException e) {
-			return null;
-		}
 	}
 
 	public static Class<?> readJarFile(File file) {

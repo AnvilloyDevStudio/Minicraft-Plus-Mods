@@ -1,6 +1,7 @@
 package minicraft.core;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.FileVisitor;
@@ -8,6 +9,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.Optional;
+import java.util.jar.JarFile;
 
 import minicraft.saveload.Save;
 
@@ -77,6 +80,39 @@ public class FileHandler extends Game {
 	public static String getLocalGameDir() {
 		    return localGameDir;
 	}
+
+	public static File[] readModsFolder() {
+		if (new File(gameModsDir).exists()) {
+			return null;
+		} else return new File(gameModsDir).listFiles(new FilenameFilter() {
+			@Override
+			public boolean accept(File dir, String name) {
+				return name.matches("\\w+.jar");
+			}
+		});
+	}
+
+	public static Class<?> readJarFile(Optional<File> file) {
+		try {
+			JarFile jar = new JarFile(file.get());
+			Class<?> jarclass = jar.getClass();
+			jar.close();
+			return jarclass;
+		} catch (IOException e) {
+			return null;
+		}
+	}
+
+	public static Class<?> readJarFile(File file) {
+		try {
+			JarFile jar = new JarFile(file);
+			Class<?> jarclass = jar.getClass();
+			jar.close();
+			return jarclass;
+		} catch (IOException e) {
+			return null;
+		}
+	}
 	
 	private static void deleteFolder(File top) {
 		if(top == null) return;
@@ -132,5 +168,4 @@ public class FileHandler extends Game {
 		if(deleteOriginal)
 			deleteFolder(origFolder.toFile());
 	}
-	
 }

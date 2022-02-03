@@ -146,12 +146,11 @@ public class Game {
 		World.resetGame(); // "half"-starts a new game, to set up initial variables
 		player.eid = 0;
 		new Load(true); // This loads any saved preferences.
-		Module[] mods = Mods.Mods;
-		if (mods != null) for (int a = 0; a<mods.length; a++) {
-			System.out.println(mods[a].getName());
+		Object[] mods = Mods.Mods;
+		for (int a = 0; a<mods.length; a++) {
+			System.out.println(mods[a]);
 		}
-		System.out.println(Mods.Core.getName());
-		
+
 		if (Network.autoclient)
 			setMenu(new MultiplayerDisplay("localhost"));
 		else if (!HAS_GUI)

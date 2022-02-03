@@ -19,13 +19,13 @@
 
 package net.minecraftforge.fml.event.lifecycle;
 
-import net.minecraftforge.fml.DeferredWorkQueue;
-import net.minecraftforge.fml.ModContainer;
-import net.minecraftforge.fml.ModLoadingStage;
-
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
+
+import net.minecraftforge.fml.DeferredWorkQueue;
+import net.minecraftforge.fml.ModContainer;
+import net.minecraftforge.fml.ModLoadingStage;
 
 public class ParallelDispatchEvent extends ModLifecycleEvent {
     private final ModLoadingStage modLoadingStage;

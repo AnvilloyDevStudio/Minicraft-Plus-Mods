@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package net.minecraftforge.fmlonlyclient;
+package minicraft.core.io;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.ClientPackSource;
@@ -31,6 +31,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.LoadingFailedException;
 import net.minecraftforge.fml.ModLoader;
 import net.minecraftforge.fml.ModWorkManager;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

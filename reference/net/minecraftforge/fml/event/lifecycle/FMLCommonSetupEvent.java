@@ -19,11 +19,11 @@
 
 package net.minecraftforge.fml.event.lifecycle;
 
-import net.minecraftforge.fml.ModContainer;
-import net.minecraftforge.fml.DeferredWorkQueue;
-import net.minecraftforge.fml.ModLoadingStage;
-
 import java.util.function.Consumer;
+
+import net.minecraftforge.fml.DeferredWorkQueue;
+import net.minecraftforge.fml.ModContainer;
+import net.minecraftforge.fml.ModLoadingStage;
 
 /**
  * This is the first of four commonly called events during mod initialization.

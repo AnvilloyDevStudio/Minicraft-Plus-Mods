@@ -1,36 +1,47 @@
 package minicraft.core;
 
 import java.io.File;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.Predicate;
-import java.util.stream.Stream;
+import minicraft.core.io.ClassLoader;
+import minicraft.item.*;
 
 public class Mods extends Game {
     private Mods() {}
-    public final static Module Core;
-    public final static Module[] Mods;
+    public final static InMod[] Mods;
+    public final static ArrayList ToolTypes;
     static {
         File[] mods = FileHandler.readModsFolder();
         if (mods == null) {
-            Core = null;
             Mods = null;
+            ToolTypes = null;
         } else {
-            List<Module> externalMods = Collections.<Module>emptyList();
-            Predicate<File> checkCore = (File f) -> (f.getName().equals("core.jar"));
-            File coreA = Arrays.stream(mods).filter(checkCore).findFirst().get();
-            if (coreA!=null) Core = FileHandler.readJarFile(coreA).getModule();
-            else Core = null;
+            ClassLoader loader = new ClassLoader();
+            List<InMod> externalMods = new ArrayList(Collections.<InMod>emptyList());
             for (int a = 0; a<mods.length; a++) {
-                if (mods[a].getName().equals("core.jar")) continue;
-                externalMods.add(FileHandler.readJarFile(mods[a]).getModule());
+                Class mod = loader.loadJar(mods[a]);
+                Class[] modclasses = mod.getDeclaredClasses();
+                InMod modinstance = new InMod();
+                for (int b = 0; b<modclasses.length; b++) {
+                    if (modclasses[b].getName() == "Items") {
+                        Class<Item>[] items = (List<Class<Item>>)modclasses[b].getClasses();
+                        modinstance.items = items.stream();
+                    }
+                }
+                System.out.println(modinstance);
+                externalMods.add(modinstance);
             }
-            Mods = externalMods.toArray(new Module[0]);
+            Mods = externalMods.toArray(new InMod[0]);
+            for (int a = 0; a<Mods.length; a++) {
+                for (int b = 0; b<Mods[a].items.length; b++) {
+                    if (Mods[a].items[b].getType() == "")
+                }
+            }
         }
     }
-    public void loadCore() {
-        if (Core == null) return;
-
+    private static class InMod {
+        public InMod() {}
+        public Item[] items;
     }
 }

@@ -31,6 +31,11 @@ dependencies {
     implementation 'org.slf4j:slf4j-api:1.7.32'
     implementation 'com.mashape.unirest:unirest-java:1.4.9'
     implementation 'org.apache.xmlgraphics:xmlgraphics-commons:2.6'
+    implementation 'org.apache.maven:maven-artifact:3.3.9'
+    implementation 'org.ow2.asm:asm:7.1'
+    implementation files("dependencies/modlauncher-9.1.1.jar")
+    implementation files("dependencies/forgespi-4.0.11.jar")
+    implementation files("dependencies/accesstransformers-8.0.7.jar")
     testImplementation 'org.hamcrest:hamcrest:2.2'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.2'
 }

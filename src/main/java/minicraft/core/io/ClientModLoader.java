@@ -19,34 +19,28 @@
 
 package minicraft.core.io;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.ClientPackSource;
-import net.minecraft.server.packs.repository.PackRepository;
-import net.minecraft.server.packs.resources.PreparableReloadListener;
-import net.minecraft.server.packs.resources.ReloadableResourceManager;
-import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraft.util.profiling.ProfilerFiller;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+// import net.minecraft.client.Minecraft;
+// import net.minecraft.client.resources.ClientPackSource;
+// import net.minecraft.server.packs.repository.PackRepository;
+// import net.minecraft.server.packs.resources.PreparableReloadListener;
+// import net.minecraft.server.packs.resources.ReloadableResourceManager;
+// import net.minecraft.server.packs.resources.ResourceManager;
+// import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraftforge.fml.LoadingFailedException;
-import net.minecraftforge.fml.ModLoader;
+import minicraft.core.io.ModLoader;
 import net.minecraftforge.fml.ModWorkManager;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import minicraft.core.Game;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 
-@OnlyIn(Dist.CLIENT)
 public class ClientModLoader
 {
-    private static final Logger LOGGER = LogManager.getLogger();
     private static boolean loading;
-    private static Minecraft mc;
+    private static Game mc;
     private static boolean loadingComplete;
-    private static LoadingFailedException error;
+    private static Exception error;
 //    private static EarlyLoaderGUI earlyLoaderGUI;
 
     private static class SpacedRunnable implements Runnable {
@@ -67,7 +61,7 @@ public class ClientModLoader
             }
         }
     }
-    public static void begin(final Minecraft minecraft, final PackRepository defaultResourcePacks, final ReloadableResourceManager mcResourceManager, ClientPackSource metadataSerializer)
+    public static void begin(final Game minecraft, final PackRepository defaultResourcePacks, final ReloadableResourceManager mcResourceManager, ClientPackSource metadataSerializer)
     {
         // force log4j to shutdown logging in a shutdown hook. This is because we disable default shutdown hook so the server properly logs it's shutdown
         Runtime.getRuntime().addShutdownHook(new Thread(LogManager::shutdown));
@@ -97,7 +91,7 @@ public class ClientModLoader
             if (loadingComplete) return;
             try {
                 r.run();
-            } catch (LoadingFailedException e) {
+            } catch (Exception e) {
                 if (error == null) error = e;
             }
         };

@@ -12,6 +12,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 import org.jetbrains.annotations.Nullable;
+import org.json.JSONObject;
 
 import minicraft.core.io.InputHandler;
 import minicraft.core.io.Settings;
@@ -138,7 +139,7 @@ public class Game {
 		Initializer.parseArgs(args); // Parses the command line arguments
 		
 		input = new InputHandler(Renderer.canvas);
-		
+		Mods.init();
 		Tiles.initTileList();
 		Sound.init();
 		Settings.init();
@@ -146,10 +147,6 @@ public class Game {
 		World.resetGame(); // "half"-starts a new game, to set up initial variables
 		player.eid = 0;
 		new Load(true); // This loads any saved preferences.
-		Object[] mods = Mods.Mods;
-		for (int a = 0; a<mods.length; a++) {
-			System.out.println(mods[a]);
-		}
 
 		if (Network.autoclient)
 			setMenu(new MultiplayerDisplay("localhost"));

@@ -29,15 +29,16 @@ public class FileHandler extends Game {
 	static {
 		OS = System.getProperty("os.name").toLowerCase();
 		//System.out.println("os name: \"" +os + "\"");
-		String local = "playminicraft/mods/Minicraft_Plus";
+		String local = "MinicraftPlusData";
 		
-		if(OS.contains("windows")) // windows
-			systemGameDir = System.getenv("APPDATA");
-		else {
-			systemGameDir = System.getProperty("user.home");
-			if(!OS.contains("mac"))
-				local = "."+local; // linux
-		}
+		// if(OS.contains("windows")) // windows
+			systemGameDir = "./";
+		// else {
+		// 	// uncertain
+		// 	systemGameDir = System.getProperty("user.home");
+		// 	if(!OS.contains("mac"))
+		// 		local = "."+local; // linux
+		// }
 		
 		localGameDir = "/"+local;
 		
@@ -52,25 +53,26 @@ public class FileHandler extends Game {
 		File testFile = new File(gameDir);
 		testFile.mkdirs();
 		
-		File oldFolder = new File(saveDir + "/.playminicraft/mods/Minicraft Plus");
-		if(oldFolder.exists()) {
-			try {
-				copyFolderContents(oldFolder.toPath(), testFile.toPath(), RENAME_COPY, true);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
+		// No need
+		// File oldFolder = new File(saveDir + "/MinicraftPlusData");
+		// if(oldFolder.exists()) {
+		// 	try {
+		// 		copyFolderContents(oldFolder.toPath(), testFile.toPath(), RENAME_COPY, true);
+		// 	} catch (IOException e) {
+		// 		e.printStackTrace();
+		// 	}
+		// }
 		
-		if(OS.contains("mac")) {
-			oldFolder = new File(saveDir+"/.playminicraft");
-			if(oldFolder.exists()) {
-				try {
-					copyFolderContents(oldFolder.toPath(), testFile.toPath(), RENAME_COPY, true);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		}
+		// if(OS.contains("mac")) {
+		// 	oldFolder = new File(saveDir+"/.playminicraft");
+		// 	if(oldFolder.exists()) {
+		// 		try {
+		// 			copyFolderContents(oldFolder.toPath(), testFile.toPath(), RENAME_COPY, true);
+		// 		} catch (IOException e) {
+		// 			e.printStackTrace();
+		// 		}
+		// 	}
+		// }
 	}
 	
 	public static String getSystemGameDir() {

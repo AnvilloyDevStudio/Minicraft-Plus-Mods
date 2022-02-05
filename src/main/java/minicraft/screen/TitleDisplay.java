@@ -45,6 +45,7 @@ public class TitleDisplay extends Display {
 					).createMenu()));
 				else Game.setMenu(new WorldGenDisplay());
 			}),
+			new SelectEntry("Mods", () -> Game.setMenu(new ModsDisplay())),
 			new SelectEntry("Options", () -> Game.setMenu(new OptionsDisplay())),
             new SelectEntry("Skins", () -> Game.setMenu(new SkinDisplay())),
 			displayFactory("Help",

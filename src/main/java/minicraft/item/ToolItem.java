@@ -11,24 +11,23 @@ import minicraft.gfx.Sprite;
 
 public class ToolItem extends Item {
 	
-	protected static ArrayList<Item> getAllInstances() {
-		ArrayList<Item> items = new ArrayList<>();
+	public static ArrayList<Item> Instances = new ArrayList<>();
 
-		for (ToolType tool : ToolType.values()) {
-			if (!tool.noLevel) {
-				for (int lvl = 0; lvl <= 4; lvl++)
-					items.add(new ToolItem(tool, lvl));
-			} else {
-				items.add(new ToolItem(tool));
-			}
-		}
+	protected static ArrayList<Item> getAllInstances() {
+
+		// for (ToolType tool : ToolType.values()) {
+		// 	if (!tool.noLevel) {
+		// 		for (int lvl = 0; lvl <= 4; lvl++)
+		// 			items.add(new ToolItem(tool, lvl));
+		// 	} else {
+		// 		items.add(new ToolItem(tool));
+		// 	}
+		// }
 		
-		return items;
+		return Instances;
 	}
 	
 	private Random random = new Random();
-	
-	public static final String[] LEVEL_NAMES = {"Wood", "Rock", "Iron", "Gold", "Gem"}; // The names of the different levels. A later level means a stronger tool.
 	
 	public ToolType type; // Type of tool (Sword, hoe, axe, pickaxe, shovel)
 	public int level; // Level of said tool
@@ -49,6 +48,10 @@ public class ToolItem extends Item {
 
 		this.type = type;
 		dur = type.durability;
+	}
+
+	static {
+		
 	}
 	
 	/** Gets the name of this tool (and it's type) as a display string. */

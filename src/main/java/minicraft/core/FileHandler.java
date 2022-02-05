@@ -52,6 +52,7 @@ public class FileHandler extends Game {
 		
 		File testFile = new File(gameDir);
 		testFile.mkdirs();
+		new File(gameModsDir).mkdirs();
 		
 		// No need
 		// File oldFolder = new File(saveDir + "/MinicraftPlusData");

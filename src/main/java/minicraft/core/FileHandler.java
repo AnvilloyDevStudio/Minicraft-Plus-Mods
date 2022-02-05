@@ -32,7 +32,7 @@ public class FileHandler extends Game {
 		String local = "MinicraftPlusData";
 		
 		// if(OS.contains("windows")) // windows
-			systemGameDir = "./";
+			systemGameDir = ".";
 		// else {
 		// 	// uncertain
 		// 	systemGameDir = System.getProperty("user.home");

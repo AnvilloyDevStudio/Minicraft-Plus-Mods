@@ -15,7 +15,7 @@ public class ItemLevel {
     }
     public String name;
     public int level;
-    ItemLevel(String name, int level) {
+    public ItemLevel(String name, int level) {
         this.name = name.toLowerCase();
         this.level = level;
         LevelInstances.add(this);

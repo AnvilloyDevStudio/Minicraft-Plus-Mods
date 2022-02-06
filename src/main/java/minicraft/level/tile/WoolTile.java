@@ -20,8 +20,8 @@ public class WoolTile extends Tile {
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
-			if (tool.type == ToolType.Shear) {
-				if (player.payStamina(3 - tool.level) && tool.payDurability()) {
+			if (tool.type.name.equals("shear")) {
+				if (player.payStamina(3 - (tool.level.level-1)) && tool.payDurability()) {
 					level.setTile(xt, yt, Tiles.get("Hole"));
 					Sound.monsterHurt.play();
 					level.dropItem(xt * 16 + 8, yt * 16 + 8, Items.get(name));

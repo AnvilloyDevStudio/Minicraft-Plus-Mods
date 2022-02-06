@@ -38,8 +38,8 @@ public class CloudCactusTile extends Tile {
 			return false; // Go directly to hurt method
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
-			if (tool.type == ToolType.Pickaxe) {
-				if (player.payStamina(6 - tool.level) && tool.payDurability()) {
+			if (tool.type.name.equals("pickaxe")) {
+				if (player.payStamina(6 - (tool.level.level-1)) && tool.payDurability()) {
 					hurt(level, xt, yt, 1);
 					return true;
 				}

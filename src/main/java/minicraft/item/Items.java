@@ -44,6 +44,8 @@ public class Items {
 		addAll(PotionItem.getAllInstances());
 		addAll(FishingRodItem.getAllInstances());
 		addAll(ModItem.getAllInstances());
+		System.out.println(get("Al1").sprite);
+		System.out.println(get("Wood").sprite);
 	}
 	
 	/** fetches an item from the list given its name. */

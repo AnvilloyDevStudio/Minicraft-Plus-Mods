@@ -48,16 +48,16 @@ public class DirtTile extends Tile {
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
-			if (tool.type == ToolType.Shovel) {
-				if (player.payStamina(4 - tool.level) && tool.payDurability()) {
+			if (tool.type.name.equals("shovel")) {
+				if (player.payStamina(4 - (tool.level.level-1)) && tool.payDurability()) {
 					level.setTile(xt, yt, Tiles.get("Hole"));
 					Sound.monsterHurt.play();
 					level.dropItem(xt * 16 + 8, yt * 16 + 8, Items.get("Dirt"));
 					return true;
 				}
 			}
-			if (tool.type == ToolType.Hoe) {
-				if (player.payStamina(4 - tool.level) && tool.payDurability()) {
+			if (tool.type.name.equals("hoe")) {
+				if (player.payStamina(4 - (tool.level.level-1)) && tool.payDurability()) {
 					level.setTile(xt, yt, Tiles.get("Farmland"));
 					Sound.monsterHurt.play();
 					return true;

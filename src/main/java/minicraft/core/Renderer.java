@@ -194,7 +194,7 @@ public class Renderer extends Game {
 
 		// This checks if the player is holding a bow, and shows the arrow counter accordingly.
 		if (player.activeItem instanceof ToolItem) {
-			if (((ToolItem)player.activeItem).type == ToolType.Bow) {
+			if (((ToolItem)player.activeItem).type.name.equals("bow")) {
 				int ac = player.getInventory().count(Items.arrowItem);
 				// "^" is an infinite symbol.
 				if (isMode("creative") || ac >= 10000)
@@ -284,7 +284,7 @@ public class Renderer extends Game {
 		if (player.activeItem instanceof ToolItem) {
 			// Draws the text
 			ToolItem tool = (ToolItem) player.activeItem;
-			int dura = tool.dur * 100 / (tool.type.durability * (tool.level+1));
+			int dura = tool.dur * 100 / (tool.type.durability * (tool.level.level));
 			int green = (int)(dura * 2.55f);
 			Font.drawBackground(dura + "%", screen, 164, Screen.h - 16, Color.get(1, 255 - green, green, 0));
 		}

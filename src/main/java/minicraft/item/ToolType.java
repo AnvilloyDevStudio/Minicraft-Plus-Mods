@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import minicraft.gfx.Sprite;
+
 public class ToolType {
 	public static ArrayList<ToolType> TypeInstances = new ArrayList<>();
 	public static HashMap<String, ToolType> Types = new HashMap<>();
@@ -35,10 +37,12 @@ public class ToolType {
 	}
 
 	public final String name;
-	public final int xPos; // X Position of origin
-	public final int yPos; // Y position of origin
+	public int xPos; // X Position of origin
+	public int yPos; // Y position of origin
+	public Sprite sprite;
 	public final int durability;
 	public final boolean noLevel;
+	public final boolean attack;
 
 	/**
 	 * Create a tool with four levels: wood, stone, iron, gold, and gem.
@@ -47,9 +51,10 @@ public class ToolType {
 	 * @param xPos X position of the starting sprite in the spritesheet.
 	 * @param dur Durabiltity of the tool.
 	 */
-	ToolType(String name, int xPos, int dur) {this(name, xPos, 13, dur);}
-	ToolType(String name, int xPos, int yPos, int dur) {this(name, xPos, yPos, dur, false);}
-	ToolType(String name, int xPos, int dur, boolean noLevel) {this(name, xPos, 12, dur, noLevel);}
+	ToolType(String name, int xPos, int dur) {this(name, xPos, 13, dur, true);}
+	ToolType(String name, int xPos, int dur, boolean attack) {this(name, xPos, 13, dur, attack);}
+	ToolType(String name, int xPos, int yPos, int dur, boolean attack) {this(name, xPos, yPos, dur, attack, false);}
+	ToolType(String name, int xPos, int dur, boolean attack, boolean noLevel) {this(name, xPos, 12, dur, attack, noLevel);}
 	/**
 	 * Create a tool without a specified level.
 	 * Uses line 13 in the items spritesheet.
@@ -57,17 +62,33 @@ public class ToolType {
 	 * @param dur Durabiltity of the tool.
 	 * @param noLevel If the tool has only one level.
 	 */
-	ToolType(String name, int xPos, int yPos, int dur, boolean noLevel) {
+	ToolType(String name, int xPos, int yPos, int dur, boolean attack, boolean noLevel) {
 		name = name.toLowerCase();
 		this.name = name;
 		this.yPos = yPos;
 		this.xPos = xPos;
 		durability = dur;
 		this.noLevel = noLevel;
+		this.attack = attack;
 		TypeInstances.add(this);
 		if (Types.containsKey(name)) new Exception("Repeated ToolType: "+name).printStackTrace();
 		Types.put(name, this);
 		TypeLevels.put(name, new ArrayList<ItemLevel>());
+	}
+	public ToolType(String name, Sprite sprite, int dur, boolean attack, boolean noLevel) {
+		name = name.toLowerCase();
+		this.name = name;
+		this.sprite = sprite;
+		durability = dur;
+		this.noLevel = noLevel;
+		this.attack = attack;
+		TypeInstances.add(this);
+		if (Types.containsKey(name)) new Exception("Repeated ToolType: "+name).printStackTrace();
+		Types.put(name, this);
+		TypeLevels.put(name, new ArrayList<ItemLevel>());
+	}
 
+	boolean equal(ToolType type) {
+		return this.name.equals(type.name);
 	}
 }

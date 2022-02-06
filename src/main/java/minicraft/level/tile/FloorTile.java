@@ -30,7 +30,7 @@ public class FloorTile extends Tile {
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type == type.getRequiredTool()) {
-				if (player.payStamina(4 - tool.level) && tool.payDurability()) {
+				if (player.payStamina(4 - (tool.level.level-1)) && tool.payDurability()) {
 					if (level.depth == 1) {
 						level.setTile(xt, yt, Tiles.get("Cloud"));
 					} else {

@@ -1,16 +1,26 @@
 package minicraft.core;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+import java.util.jar.Manifest;
 
-import org.apache.commons.beanutils.PropertyUtils;
+import javax.imageio.ImageIO;
+
 import org.apache.commons.lang3.tuple.Pair;
 import org.json.JSONObject;
 
 import minicraft.core.io.ClassLoader;
+import minicraft.gfx.Sprite;
+import minicraft.gfx.SpriteSheet;
+import minicraft.item.*;
+import minicraft.mod.ModItem;
 
 public class Mods extends Game {
     private Mods() {}
@@ -26,22 +36,23 @@ public class Mods extends Game {
             ClassLoader loader = new ClassLoader();
             for (int a = 0; a<mods.length; a++) {
                 Mod modObj = new Mod();
-                Pair<Pair<Class<?>, Enumeration<URL>>, JSONObject> modP = loader.loadJar(mods[a]);
+                Pair<Pair<Class<?>, Mod.Resources>, JSONObject> modP = loader.loadJar(mods[a]);
                 modObj.Info = modP.getRight();
-                Object mod = modP.getLeft().getLeft();
-                modObj.Resources = new Mod.Resources(modP.getLeft().getRight());
-                Class<?>[] modclasses = mod.getClass().getDeclaredClasses();
+                Class<?> mod = modP.getLeft().getLeft();
+                modObj.Resources = modP.getLeft().getRight();
+                Class<?>[] modclasses = mod.getDeclaredClasses();
                 for (int b = 0; b<modclasses.length; b++) {
-                    if (modclasses[b].getName() == "Items") {
+                    if (modclasses[b].getName().equals("mod.Module$Items")) {
                         Class<?>[] itemsC = modclasses[b].getDeclaredClasses();
                         for (int c = 0; c<itemsC.length; c++) {
-                            Items.add(new Mod.Item(itemsC[c]));
+                            Items.add(new Mod.Item(itemsC[c], modObj.Resources));
                         }
                     }
                 }
                 if (modObj.Info.getString("name") == null) System.out.println("mod.json name not found.");
                 if (modObj.Info.getString("description") == null) System.out.println("mod.json description not found.");
                 Mods.add(modObj.Info);
+                ModItem.init();
             }
         }
     }
@@ -52,22 +63,63 @@ public class Mods extends Game {
             public String itemtype;
             public String tooltype;
             public int durability;
-            Item(Class<?> Obj) {
+            public boolean noLevel;
+            public int tooltypelvl;
+            public boolean attack;
+            public boolean spriteSheet;
+            public int[] sprite;
+            private Resources resources;
+            public SpriteSheet  findSpriteSheet(Resources resources) {
+                if (spriteSheet) return resources.ItemsSheet;
+                else return resources.ItemImages.get(name+".png");
+            }
+            Item(Class<?> Obj, Resources res) {
+                resources = res;
                 try {
-                    name = (String)PropertyUtils.getProperty(Obj, "name");
-                    itemtype = (String)PropertyUtils.getProperty(Obj, "itemtype");
-                    tooltype = (String)PropertyUtils.getProperty(Obj, "type");
-                    durability = (Integer)PropertyUtils.getProperty(Obj, "durability");
-                } catch (IllegalArgumentException | IllegalAccessException
-                        | SecurityException | InvocationTargetException | NoSuchMethodException e) {
+                    name = (String)Obj.getDeclaredField("name").get(null); // Item name
+                    itemtype = (String)Obj.getDeclaredField("itemtype").get(null); // Item type
+                    tooltype = (String)Obj.getDeclaredField("type").get(null); // Item level
+                    durability = (Integer)Obj.getDeclaredField("durability").get(null);
+                    noLevel = (boolean)Obj.getDeclaredField("noLevel").get(null);
+                    if (!noLevel) tooltypelvl = (Integer)Obj.getDeclaredField("level").get(null); // Item level level number
+                    attack = (boolean)Obj.getDeclaredField("attack").get(null); // canAttack
+                    spriteSheet = (boolean)Obj.getDeclaredField("spriteSheet").get(null); // false or ignore if sprite is separated from items.png
+                    try{sprite = (int[])Obj.getDeclaredField("sprite").get(null);} catch (NoSuchFieldException e) {sprite = new int[] {0, 0};} // xPos, yPos
+                } catch (IllegalArgumentException
+                        | SecurityException | NoSuchFieldException | IllegalAccessException e) {
                     e.printStackTrace();
                 }
+            }
+            public ToolItem toToolItem() {
+                ToolType toolType = ToolType.Types.containsKey(name)? ToolType.Types.get(name): new ToolType(name, resources.getSprite(findSpriteSheet(resources), sprite[0], sprite[1]), durability, attack, noLevel);
+                if (!noLevel) {
+                    ItemLevel itemLevel = ItemLevel.Levels.containsKey(tooltype)? ItemLevel.Levels.get(tooltype): new ItemLevel(tooltype, tooltypelvl);
+                    return new ToolItem(toolType, itemLevel);
+                }
+                else return new ToolItem(toolType);
             }
         }
         public Resources Resources;
         public static class Resources {
-            Resources(Enumeration<URL> urls) {
-                for (Enumeration<URL> a = urls; a.hasMoreElements();) System.out.println(a.nextElement());
+            private SpriteSheet BytestoSpriteSheet(byte[] bytes) throws IOException {return new SpriteSheet(ImageIO.read(new ByteArrayInputStream(bytes)));}
+            public SpriteSheet ItemsSheet;
+            public HashMap<String, SpriteSheet> ItemImages = new HashMap<>();
+            public Manifest manifest;
+            public Sprite getSprite(SpriteSheet sheet, int x, int y) {
+                return new Sprite(new Sprite.Px[][]{new Sprite.Px[]{new Sprite.Px(x*2, y*2, 0, sheet), new Sprite.Px(x*2+1, y*2, 0, sheet)}, new Sprite.Px[]{new Sprite.Px(x*2, y*2+1, 0, sheet), new Sprite.Px(x*2+1, y*2+1, 0, sheet)}});
+            }
+            public Resources(JarFile jar, Manifest man) throws IOException {
+                manifest = man;
+                Enumeration<JarEntry> entries = jar.entries();
+                while (entries.hasMoreElements()) {
+                    JarEntry entry = entries.nextElement();
+                    if (entry.getName().startsWith("resources/")) {
+                        if (entry.getName().equals("resources/items.png")) ItemsSheet = BytestoSpriteSheet(jar.getInputStream(entry).readAllBytes());
+                        if (!entry.isDirectory()&&entry.getName().startsWith("resources/item/")&&entry.getName().endsWith(".png")) {
+                            ItemImages.put(entry.getName().substring(15), BytestoSpriteSheet(jar.getInputStream(entry).readAllBytes()));
+                        }
+                    }
+                }
             }
         }
     }

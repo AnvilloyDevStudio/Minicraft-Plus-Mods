@@ -1,38 +1,32 @@
 package minicraft.core.io;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.Enumeration;
+import java.util.jar.JarFile;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.json.JSONObject;
 
+import minicraft.core.Mods;
+
 public class ClassLoader {
     public ClassLoader() {}
-    public Pair<Pair<Class<?>, Enumeration<URL>>, JSONObject> loadJar(File jar) {
+    public Pair<Pair<Class<?>, Mods.Mod.Resources>, JSONObject> loadJar(File jarf) {
         URLClassLoader child;
         try {
+            JarFile jar = new JarFile(jarf);
+			JSONObject modInfo = new JSONObject(new String(jar.getInputStream(jar.getEntry("mod.json")).readAllBytes()));
+            Mods.Mod.Resources res = new Mods.Mod.Resources(jar, jar.getManifest());
+            // jar.getJarEntry("mod/")
+            jar.close();
             child = new URLClassLoader(
-                new URL[] {jar.toURI().toURL()},
-                this.getClass().getClassLoader()
+                new URL[] {jarf.toURI().toURL()},
+                getClass().getClassLoader()
             );
             Class<?> classToLoad = Class.forName("mod.Module", true, child);
-            InputStream is = child.getResourceAsStream("mod.json");
-            if (is == null) System.out.println("mod.json not found.");
-            BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-            StringBuilder content = new StringBuilder();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                content.append(line);
-                content.append(System.lineSeparator());
-            }
-            JSONObject modInfo = new JSONObject(content.toString());
-            return Pair.of(Pair.of(classToLoad, child.getResources("resources")), modInfo);
+            return Pair.of(Pair.of(classToLoad, res), modInfo);
             // Method method = classToLoad.getDeclaredMethod("myMethod");
             // Object instance = classToLoad.getDeclaredConstructor().newInstance();
             // Object result = method.invoke(instance);

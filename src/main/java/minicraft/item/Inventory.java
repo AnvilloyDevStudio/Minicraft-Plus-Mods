@@ -219,7 +219,7 @@ public class Inventory {
 	}
 	public void tryAdd(int chance, @Nullable Item item) { tryAdd(chance, item, 1); }
 	public void tryAdd(int chance, ToolType type, int lvl) {
-		tryAdd(chance, new ToolItem(type, lvl));
+		tryAdd(chance, new ToolItem(type, ItemLevel.LevelInstances.get(lvl)));
 	}
 	
 	/**

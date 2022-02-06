@@ -40,9 +40,9 @@ public class HardRockTile extends Tile {
 			return false; // Go directly to hurt method
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
-			if (tool.type == ToolType.Pickaxe && tool.level == 4) {
-				if (player.payStamina(4 - tool.level) && tool.payDurability()) {
-					hurt(level, xt, yt, random.nextInt(10) + (tool.level) * 5 + 10);
+			if (tool.type.name.equals("pickaxe") && tool.level.level-1 == 4) {
+				if (player.payStamina(4 - (tool.level.level-1)) && tool.payDurability()) {
+					hurt(level, xt, yt, random.nextInt(10) + (tool.level.level-1) * 5 + 10);
 					return true;
 				}
 			} else {

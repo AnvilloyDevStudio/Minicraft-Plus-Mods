@@ -17,6 +17,10 @@ public abstract class ModItem /*extends Item*/ {
             switch (item.itemtype) {
                 case "Tool":
                     moditems.add(item.toToolItem());
+                    break;
+                case "Stackable":
+                    moditems.add(item.toStackableItem());
+                    break;
             }
         }
         ModItems = moditems;

@@ -30,7 +30,7 @@ public class ToolItem extends Item {
 	private Random random = new Random();
 	
 	public ToolType type; // Type of tool (Sword, hoe, axe, pickaxe, shovel)
-	public ItemLevel level; // Level of said tool
+	public ItemLevel level = ItemLevel.Levels.get("wood"); // Level of said tool
 	public int dur; // The durability of the tool
 	
 	/** Tool Item, requires a tool type (ToolType.Sword, ToolType.Axe, ToolType.Hoe, etc) and a level (0 = wood, 2 = iron, 4 = gem, etc) */

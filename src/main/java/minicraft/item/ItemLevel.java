@@ -7,11 +7,11 @@ public class ItemLevel {
     public static HashMap<String, ItemLevel> Levels = new HashMap<>();
     public static ArrayList<ItemLevel> LevelInstances = new ArrayList<>();
     static {
-        Levels.put("wood", new ItemLevel("wood", 1));
-        Levels.put("rock", new ItemLevel("rock", 2));
-        Levels.put("iron", new ItemLevel("iron", 3));
-        Levels.put("gold", new ItemLevel("gold", 4));
-        Levels.put("gem", new ItemLevel("gem", 5));
+        new ItemLevel("wood", 1);
+        new ItemLevel("rock", 2);
+        new ItemLevel("iron", 3);
+        new ItemLevel("gold", 4);
+        new ItemLevel("gem", 5);
     }
     public String name;
     public int level;
@@ -19,5 +19,6 @@ public class ItemLevel {
         this.name = name.toLowerCase();
         this.level = level;
         LevelInstances.add(this);
+        Levels.put(name.toLowerCase(), this);
     }
 }

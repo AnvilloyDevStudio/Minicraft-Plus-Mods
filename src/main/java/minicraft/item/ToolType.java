@@ -71,9 +71,6 @@ public class ToolType {
 		this.noLevel = noLevel;
 		this.attack = attack;
 		TypeInstances.add(this);
-		if (Types.containsKey(name)) new Exception("Repeated ToolType: "+name).printStackTrace();
-		Types.put(name, this);
-		TypeLevels.put(name, new ArrayList<ItemLevel>());
 	}
 	public ToolType(String name, Sprite sprite, int dur, boolean attack, boolean noLevel) {
 		name = name.toLowerCase();

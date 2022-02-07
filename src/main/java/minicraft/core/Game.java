@@ -139,10 +139,10 @@ public class Game {
 		Initializer.parseArgs(args); // Parses the command line arguments
 		
 		input = new InputHandler(Renderer.canvas);
-		Mods.init();
 		Tiles.initTileList();
 		Sound.init();
 		Settings.init();
+		Mods.init();
 
 		World.resetGame(); // "half"-starts a new game, to set up initial variables
 		player.eid = 0;

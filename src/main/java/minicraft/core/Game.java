@@ -1,6 +1,7 @@
 package minicraft.core;
 
 import java.awt.GraphicsEnvironment;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -11,8 +12,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
+import com.mashape.unirest.http.HttpResponse;
+
 import org.jetbrains.annotations.Nullable;
-import org.json.JSONObject;
 
 import minicraft.core.io.InputHandler;
 import minicraft.core.io.Settings;
@@ -113,7 +115,7 @@ public class Game {
 			PrintWriter printer = new PrintWriter(string);
 			throwable.printStackTrace(printer);
 			
-			Future ping = Analytics.Crashes.ping();
+			Future<HttpResponse<InputStream>> ping = Analytics.Crashes.ping();
 			
 			if(GraphicsEnvironment.isHeadless()) {
 				// ensure ping finishes before program closes

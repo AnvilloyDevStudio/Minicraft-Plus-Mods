@@ -24,7 +24,6 @@ import minicraft.gfx.SpriteSheet;
 import minicraft.item.Items;
 import minicraft.item.PotionType;
 import minicraft.item.ToolItem;
-import minicraft.item.ToolType;
 import minicraft.level.Level;
 import minicraft.saveload.Load;
 import minicraft.screen.LoadingDisplay;

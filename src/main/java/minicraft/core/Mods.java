@@ -3,8 +3,6 @@ package minicraft.core;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -21,12 +19,12 @@ import minicraft.core.io.ClassLoader;
 import minicraft.gfx.Sprite;
 import minicraft.gfx.SpriteSheet;
 import minicraft.item.*;
-import minicraft.mod.ModItem;
 
 public class Mods extends Game {
     private Mods() {}
     public static ArrayList<JSONObject> Mods = new ArrayList<>();
     public static ArrayList<Mod.Item> Items = new ArrayList<>();
+	public static ArrayList<Mod.Recipe> Recipes = new ArrayList<>();
     public static void init() {}
 
     static {
@@ -48,11 +46,17 @@ public class Mods extends Game {
                         for (int c = 0; c<itemsC.length; c++) {
                             Items.add(new Mod.Item(itemsC[c], modObj.Resources));
                         }
-                    }
+                    } else if (modclasses[b].getName().equals("mod.Module$Recipes")) {
+                        Class<?>[] itemsC = modclasses[b].getDeclaredClasses();
+                        for (int c = 0; c<itemsC.length; c++) {
+                            Recipes.add(new Mod.Recipe(itemsC[c]));
+                        }
+					}
                 }
                 if (modObj.Info.getString("name") == null) System.out.println("mod.json name not found.");
                 if (modObj.Info.getString("description") == null) System.out.println("mod.json description not found.");
                 Mods.add(modObj.Info);
+
             }
         }
     }
@@ -89,13 +93,16 @@ public class Mods extends Game {
                     try{durability = (Integer)Obj.getDeclaredField("durability").get(null);} catch (NoSuchFieldException e) {durability = 1;};
                     try{noLevel = (boolean)Obj.getDeclaredField("noLevel").get(null);} catch (NoSuchFieldException e) {noLevel = true;};
                     if (!noLevel) tooltypelvl = (Integer)Obj.getDeclaredField("level").get(null); // Item level level number
-                    try{attack = (boolean)Obj.getDeclaredField("attack").get(null);} catch (NoSuchFieldException e) {attack = true;}; // canAttack
+                    attack = (boolean)Obj.getDeclaredField("attack").get(null); // canAttack
                     spriteSheet = (boolean)Obj.getDeclaredField("spriteSheet").get(null); // false or ignore if sprite is separated from items.png
                     try{sprite = (int[])Obj.getDeclaredField("sprite").get(null);} catch (NoSuchFieldException e) {sprite = new int[] {0, 0};} // xPos, yPos
-                } catch (IllegalArgumentException
+                } catch (IllegalArgumentException | NullPointerException
                         | SecurityException | NoSuchFieldException | IllegalAccessException e) {
-                    e.printStackTrace();
-                }
+					if (e instanceof NoSuchFieldException) new Crash(new Crash.CrashData("ModLoad", Crash.getStackTrace(e), "Missing Item Field", Obj.getName()));
+					else if (e instanceof IllegalArgumentException) new Crash(new Crash.CrashData("ModLoad", Crash.getStackTrace(e), "Illegal Item Field", Obj.getName()));
+					else if (e instanceof IllegalAccessException || e instanceof NullPointerException) new Crash(new Crash.CrashData("ModLoad", Crash.getStackTrace(e), "Invalid Item Field", Obj.getName()));
+					else e.printStackTrace();
+				}
             }
             public ToolItem toToolItem() {
                 ToolType toolType = ToolType.Types.containsKey(name)? ToolType.Types.get(name): new ToolType(name, resources.getSprite(findSpriteSheet(resources), sprite[0], sprite[1]), durability, attack, noLevel);
@@ -109,6 +116,27 @@ public class Mods extends Game {
                 return new StackableItem(name, resources.getSprite(findSpriteSheet(resources), sprite[0], sprite[1]));
             }
         }
+		public static class Recipe {
+			public String creation;
+			public String[] req;
+			public String type;
+			public Recipe(Class<?> Obj) {
+                try {
+					creation = (String)Obj.getDeclaredField("creation").get(null);
+					req = (String[])Obj.getDeclaredField("require").get(null); // Array of String
+					try{type = (String)Obj.getDeclaredField("type").get(null);} catch (NoSuchFieldException e) {type = "workbench";} // Type of Recipe
+                } catch (IllegalArgumentException | NullPointerException
+                        | SecurityException | NoSuchFieldException | IllegalAccessException e) {
+					if (e instanceof NoSuchFieldException) new Crash(new Crash.CrashData("ModLoad", Crash.getStackTrace(e), "Missing Recipe Field", Obj.getName()));
+					else if (e instanceof IllegalArgumentException) new Crash(new Crash.CrashData("ModLoad", Crash.getStackTrace(e), "Illegal Recipe Field", Obj.getName()));
+					else if (e instanceof IllegalAccessException || e instanceof NullPointerException) new Crash(new Crash.CrashData("ModLoad", Crash.getStackTrace(e), "Invalid Recipe Field", Obj.getName()));
+					else e.printStackTrace();
+				}
+			}
+			public minicraft.item.Recipe toRecipe() {
+				return new minicraft.item.Recipe(creation, req);
+			}
+		}
         public Resources Resources;
         public static class Resources {
             private SpriteSheet BytestoSpriteSheet(byte[] bytes) throws IOException {return new SpriteSheet(ImageIO.read(new ByteArrayInputStream(bytes)));}

@@ -24,6 +24,31 @@ public abstract class ModItem /*extends Item*/ {
             }
         }
         ModItems = moditems;
+        for (Mods.Mod.Recipe recipe : Mods.Recipes) {
+            switch (recipe.type) {
+                case "workbench":
+                    Recipes.workbenchRecipes.add(recipe.toRecipe());
+                    break;
+                case "craft":
+                    Recipes.craftRecipes.add(recipe.toRecipe());
+                    break;
+                case "anvil":
+                    Recipes.anvilRecipes.add(recipe.toRecipe());
+                    break;
+                case "enchant":
+                    Recipes.enchantRecipes.add(recipe.toRecipe());
+                    break;
+                case "furnace":
+                    Recipes.furnaceRecipes.add(recipe.toRecipe());
+                    break;
+                case "loom":
+                    Recipes.loomRecipes.add(recipe.toRecipe());
+                    break;
+                case "oven":
+                    Recipes.ovenRecipes.add(recipe.toRecipe());
+                    break;
+            }
+        }
     }
     public static class ModItemLevel {
         public int level;

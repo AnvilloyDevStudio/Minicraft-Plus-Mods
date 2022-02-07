@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+    <title>MiniMods</title>
+    <head>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" href="../style.css">
+    </head>
+    <body>
+        <div class="sidenav">
+            <h3>Documentation</b>
+            <a href="../index.html">Home</a>
+            <a href="structure.html">Mod File Structure</a>
+        </div>
+        <div class="main">
+            The structure of &lt;mod&gt;.jar mod file:
+            <ol style="list-style-type:disc;">
+                <li><a href="#mod/">mod/</a>
+                    <ol style="list-style-type:disc;"><li><a href="#mod/">Module.class</a></li></ol>
+                </li>
+                <li><a href="#META-INF">META-INF/</a>
+                    <ol style="list-style-type:disc;"><li>MANIFEST.MF</li></ol>
+                </li>
+                <li><a href="#resources">resources/</a><ol style="list-style-type:disc;"><li>...</li></ol></li>
+                <li><a href="#mod.json">mod.json</a></li>
+            </ol>
+            <h2 id="mod/">mod.Module class</h2>
+            <pre><code lang="java">package mod; // Fixed package entry
+
+            public class Module {
+                private Module() {}
+                public static class Items {
+                    public static class /*class name*/{
+                        // Fields must be static
+                        public static String name; // Item name (required)
+                        public static String itemtype; // Item type (required)
+                        public static String type; // Item level (default 0)
+                        public static int durability; // Item durability (default 1)
+                        public static boolean noLevel; // If the item has no level (default true)
+                        public static int level; // Item level level number (requied when noLevel == false)
+                        public static boolean attack; // canAttack (default true)
+                        public static boolean spriteSheet; // If the sprite is using sheet (required)
+                        public static int[] sprite; // Sprite position (default {0, 0})
+                    }
+                }
+                public static class Recipes {
+                    public static class /*class name*/{
+                        // Fields must be static
+                        public static String creation; // Creation name (required)
+                        public static String[] require; // Array of requiement names (required)
+                        public static String type; // Recipe type (default workbench)
+                    }
+                }
+            }</code></pre>
+            <h3>Sprite</h3>
+            In <a href="#resources">resources</a>, if spriteSheet == false, then it finds with <code>resources/item/&lt;item_name&gt;.png</code>.
+            <h2 id="META-INF">META-INF/MANIFEST.MF (MANIFEST)</h2>
+            Not required for now.
+            <h2 id="resources">resources/</h2>
+            This directory contains the sprite sheets, for standard sprite sheet, at <code>resources/items.png</code>, otherwise, at <code>resources/item/&lt;item_name&gt;.png</code>.
+            <h2 id="mod.json">mod.json</h2>
+            The content of this json will be displayed at the "Mods" Menu, only <code>name</code> (mod name) and <code>description</code> (mod description) are required.
+        </div>
+    </body>
+</html>

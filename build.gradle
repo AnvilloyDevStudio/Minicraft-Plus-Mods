@@ -52,7 +52,7 @@ buildscript {
 apply plugin: 'com.github.johnrengelman.shadow'
 
 shadowJar {
-    archivesBaseName = 'minicraft_plus'
+    archivesBaseName = 'minicraft_plus_mods'
     archiveClassifier.set('')
 
     manifest {

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+    <title>MiniMods</title>
+    <style>
+        /* The sidebar menu */
+        .sidenav {
+            height: 100%; /* Full-height: remove this if you want "auto" height */
+            width: 15%; /* Set the width of the sidebar */
+            position: fixed; /* Fixed Sidebar (stay in place on scroll) */
+            z-index: 1; /* Stay on top */
+            top: 0; /* Stay at the top */
+            left: 0;
+            background-color: #dfd; /* Black */
+            text-align: center;
+            overflow-x: auto; /* Disable horizontal scroll */
+            padding-top: 30px;
+        }
+
+        /* The navigation menu links */
+        .sidenav a {
+            padding: 6px 8px 6px 16px;
+            text-decoration: none;
+            font-size: 25px;
+            color: #6f6;
+            display: block;
+        }
+
+        /* When you mouse over the navigation links, change their color */
+        .sidenav a:hover {
+            color: #efe;
+        }
+
+        /* Style page content */
+        .main {
+            margin-left: 15%; /* Same as the width of the sidebar */
+            padding: 0px 10px;
+        }
+
+        /* On smaller screens, where height is less than 450px, change the style of the sidebar (less padding and a smaller font size) */
+        @media screen and (max-height: 450px) {
+            .sidenav {padding-top: 15px;}
+            .sidenav a {font-size: 18px;}
+        }
+    </style>
+    <body>
+        <div class="sidenav">
+            <b style="font-size: 30px; color: #3f3;">Documentation</b>
+            <a href="index.html">Home</a>
+        </div>
+        <div class="main">
+        <h1>Documentation for MiniMods</h1>
+        <p>
+            MiniMods is a Modloader which loads mods for Minicraft(+). And it is based on Minicraft+, which is a modded version of Minicraft that adds many more features to the original version.
+            This Modloader is not based on any Modloader API (Fabric, Forge(FML), etc.), so there is no need to use any dependency with basic mods.
+            <br/>
+            For the <a href="https://github.com/BenChueng0422/Minicraft-Plus-Mods/releases/">releases</a>, you do not need to use other executable files.
+            <h2>Features</h2>
+            Currently available Item type: ToolItem, StackableItem, Recipe<br/>
+        </p>
+        </div>
+    </body>
+</html>

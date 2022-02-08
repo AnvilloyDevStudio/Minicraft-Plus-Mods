@@ -96,7 +96,7 @@ public class Mods extends Game {
                     try{feed = (Integer)Obj.getDeclaredField("feed").get(null);} catch (NoSuchFieldException e) {feed = 1;};
                     try{cost = (Integer)Obj.getDeclaredField("cost").get(null);} catch (NoSuchFieldException e) {cost = 1;};
                     try{noLevel = (boolean)Obj.getDeclaredField("noLevel").get(null);} catch (NoSuchFieldException e) {noLevel = true;};
-                    if (!noLevel) tooltypelvl = (Integer)Obj.getDeclaredField("level").get(null); // Item level level number
+                    try{tooltypelvl = (Integer)Obj.getDeclaredField("level").get(null);} catch (NoSuchFieldException e) {tooltypelvl = 1;} // Item level level number
                     try{attack = (boolean)Obj.getDeclaredField("attack").get(null);} catch (NoSuchFieldException e) {attack = true;} // canAttack
                     spriteSheet = (boolean)Obj.getDeclaredField("spriteSheet").get(null); // false or ignore if sprite is separated from items.png
                     try{sprite = (int[])Obj.getDeclaredField("sprite").get(null);} catch (NoSuchFieldException e) {sprite = new int[] {0, 0};} // xPos, yPos
@@ -127,6 +127,9 @@ public class Mods extends Game {
             }
             public BucketItem toBucketItem() {
                 return new BucketItem(new BucketItem.Fill(name, mod.modtiles.get(ename).toTile(), resources.getSprite(findSpriteSheet(), sprite[0], sprite[1])));
+            }
+            public ArmorItem toArmorItem() {
+                return new ArmorItem(name, resources.getSprite(findSpriteSheet(), sprite[0], sprite[1]), durability, tooltypelvl);
             }
         }
 		public static class Recipe {

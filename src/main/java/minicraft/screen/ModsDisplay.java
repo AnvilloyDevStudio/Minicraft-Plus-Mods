@@ -18,9 +18,9 @@ public class ModsDisplay extends Display {
 
 	static {
 		// These are all the generic skins. To add one, just add an entry in this list.
-		for (JSONObject mod : minicraft.core.Mods.Mods) {
-            mods.add(mod);
-        }
+		// for (JSONObject mod : minicraft.core.Mods.Mods) {
+        //     mods.add(mod);
+        // }
 
 		// Read and add the .png file to the skins list.
 	}
@@ -73,18 +73,19 @@ public class ModsDisplay extends Display {
 		Font.draw(ModsDisplay.shortNameIfLong(selectedUUU), screen, 0, Screen.h - 80, Color.GRAY); // First unselected space
 		Font.draw(ModsDisplay.shortNameIfLong(selectedUU), screen, 0, Screen.h - 90, Color.GRAY); // First unselected space
 		Font.draw(ModsDisplay.shortNameIfLong(selectedU), screen, 0, Screen.h - 100, Color.GRAY); // First unselected space
-		Font.draw(ModsDisplay.shortNameIfLong(mods.get(selectedIndex).getString("name")), screen, 0, Screen.h - 110, Color.WHITE); // Selection
+		if (mods.size() != 0) Font.draw(ModsDisplay.shortNameIfLong(mods.get(selectedIndex).getString("name")), screen, 0, Screen.h - 110, Color.WHITE); // Selection
 		Font.draw(ModsDisplay.shortNameIfLong(selectedD), screen, 0, Screen.h - 120, Color.GRAY); // Fourth space
 		Font.draw(ModsDisplay.shortNameIfLong(selectedDD), screen, 0, Screen.h - 130, Color.GRAY); // Fourth space
 		Font.draw(ModsDisplay.shortNameIfLong(selectedDDD), screen, 0, Screen.h - 140, Color.GRAY); // Fourth space
 		Font.draw(ModsDisplay.shortNameIfLong(selectedDDDD), screen, 0, Screen.h - 150, Color.GRAY); // Fourth space
 		Font.draw(ModsDisplay.shortNameIfLong(selectedDDDDD), screen, 0, Screen.h - 160, Color.GRAY); // Fourth space
 		Font.draw(ModsDisplay.shortNameIfLong(selectedDDDDDD), screen, 0, Screen.h - 170, Color.GRAY); // Fourth space
+		if (mods.size() == 0) Font.drawCentered("No mod available.", screen, screen.h/2, Color.CYAN);
 		FontStyle fs = new FontStyle();
 		fs.setXPos(screen.w/2);
 		fs.setYPos(screen.h-170);
 		List<String> des = new ArrayList<>();
-		for (String line : Arrays.asList(mods.get(selectedIndex).getString("description").split("\n"))) {
+		if (mods.size() != 0) for (String line : Arrays.asList(mods.get(selectedIndex).getString("description").split("\n"))) {
 			int br = (int)Math.ceil(line.length()/18)+1;
 			for (int a = 0; a<br; a++) {
 				int b = (a+1)*18;
@@ -99,7 +100,7 @@ public class ModsDisplay extends Display {
 
 	// In case the name is too big ...
 	private static String shortNameIfLong(String name) {
-		return name.length() > 22 ? name.substring(0, 16) + "..." : name;
+		return name.length() > 15 ? name.substring(0, 10) + "..." : name;
 	}
 
 	public static int getSelectedIndex() {

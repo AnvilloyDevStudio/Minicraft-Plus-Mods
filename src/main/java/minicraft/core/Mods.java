@@ -19,10 +19,14 @@ import minicraft.core.io.ClassLoader;
 import minicraft.entity.furniture.*;
 import minicraft.entity.mob.*;
 import minicraft.gfx.MobSprite;
+import minicraft.gfx.Screen;
 import minicraft.gfx.Sprite;
 import minicraft.gfx.SpriteSheet;
 import minicraft.item.*;
+import minicraft.level.Level;
 import minicraft.level.tile.*;
+import minicraft.level.tile.farming.ModPlant;
+import minicraft.level.tile.farming.Plant;
 
 public class Mods extends Game {
     private Mods() {}
@@ -292,6 +296,7 @@ public class Mods extends Game {
             public String name;
             public String tiletype;
             public String drop;
+            public String seed;
             public boolean spriteSheet;
             public int[] sprite;
             private Resources resources;
@@ -314,6 +319,7 @@ public class Mods extends Game {
                     name = (String)Obj.getDeclaredField("name").get(null); // Tile name
                     tiletype = (String)Obj.getDeclaredField("tiletype").get(null);
                     try{drop = (String)Obj.getDeclaredField("drop").get(null);} catch (NoSuchFieldException e) {drop = null;} // xPos, yPos
+                    try{seed = (String)Obj.getDeclaredField("seed").get(null);} catch (NoSuchFieldException e) {seed = null;} // xPos, yPos
                     spriteSheet = (boolean)Obj.getDeclaredField("spriteSheet").get(null); // false or ignore if sprite is separated from tiles.png
                     try{sprite = (int[])Obj.getDeclaredField("sprite").get(null);} catch (NoSuchFieldException e) {sprite = new int[] {0, 0};} // xPos, yPos
                 } catch (IllegalArgumentException | NullPointerException
@@ -325,15 +331,13 @@ public class Mods extends Game {
 				}
             }
             public minicraft.level.tile.Tile toTile() {
-                switch (tiletype) {
-                    case "Ore":
-                        return new OreTile(new OreTile.OreType(name, mod.moditems.get(drop).toStackableItem(), resources.getSprite2(findSpriteSheet(), sprite[0], sprite[1])));
-                    default:
-                        return new ModTile(name, resources.getSprite2(findSpriteSheet(), sprite[0], sprite[1]));
-                }
+                return new ModTile(name, resources.getSprite2(findSpriteSheet(), sprite[0], sprite[1]));
             }
             public OreTile toOreTile() {
                 return new OreTile(new OreTile.OreType(name, mod.moditems.get(drop).toStackableItem(), resources.getSprite2(findSpriteSheet(), sprite[0], sprite[1])));
+            }
+            public Plant toPlant() {
+                return new ModPlant(name, seed, drop, sprite[0], sprite[1], findSpriteSheet());
             }
         }
         public Resources Resources;

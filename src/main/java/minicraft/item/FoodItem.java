@@ -9,32 +9,36 @@ import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 
 public class FoodItem extends StackableItem {
+	public static ArrayList<Item> Instances = new ArrayList<>();
 	
 	protected static ArrayList<Item> getAllInstances() {
-		ArrayList<Item> items = new ArrayList<>();
 
-		items.add(new FoodItem("Baked Potato", new Sprite(19, 0, 0), 1));
-		items.add(new FoodItem("Apple", new Sprite(16, 0, 0), 1));
-		items.add(new FoodItem("Raw Pork", new Sprite(10, 0, 0), 1));
-		items.add(new FoodItem("Raw Fish", new Sprite(14, 0, 0), 1));
-		items.add(new FoodItem("Raw Beef", new Sprite(12, 0, 0), 1));
-		items.add(new FoodItem("Bread", new Sprite(7, 0, 0), 2));
-		items.add(new FoodItem("Cooked Fish", new Sprite(15, 0, 0), 3));
-		items.add(new FoodItem("Cooked Pork", new Sprite(11, 0, 0), 3));
-		items.add(new FoodItem("Steak", new Sprite(13, 0, 0), 3));
-		items.add(new FoodItem("Gold Apple", new Sprite(17, 0, 0), 10));
-		
-		return items;
+		return Instances;
+	}
+	
+	static {
+		new FoodItem("Baked Potato", new Sprite(19, 0, 0), 1);
+		new FoodItem("Apple", new Sprite(16, 0, 0), 1);
+		new FoodItem("Raw Pork", new Sprite(10, 0, 0), 1);
+		new FoodItem("Raw Fish", new Sprite(14, 0, 0), 1);
+		new FoodItem("Raw Beef", new Sprite(12, 0, 0), 1);
+		new FoodItem("Bread", new Sprite(7, 0, 0), 2);
+		new FoodItem("Cooked Fish", new Sprite(15, 0, 0), 3);
+		new FoodItem("Cooked Pork", new Sprite(11, 0, 0), 3);
+		new FoodItem("Steak", new Sprite(13, 0, 0), 3);
+		new FoodItem("Gold Apple", new Sprite(17, 0, 0), 10);
 	}
 	
 	private int feed; // The amount of hunger the food "satisfies" you by.
 	private int staminaCost; // The amount of stamina it costs to consume the food.
 	
 	private FoodItem(String name, Sprite sprite, int feed) { this(name, sprite, 1, feed); }
-	private FoodItem(String name, Sprite sprite, int count, int feed) {
+	private FoodItem(String name, Sprite sprite, int count, int feed) { this(name, sprite, 1, feed, 5); }
+	public FoodItem(String name, Sprite sprite, int count, int feed, int cost) {
 		super(name, sprite, count);
 		this.feed = feed;
-		staminaCost = 5;
+		staminaCost = cost;
+		Instances.add(this);
 	}
 	
 	/** What happens when the player uses the item on a tile */

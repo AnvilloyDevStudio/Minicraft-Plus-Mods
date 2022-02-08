@@ -23,6 +23,12 @@ public abstract class ModItem /*extends Item*/ {
                 case "Stackable":
                     moditems.add(item.toStackableItem());
                     break;
+                case "Furniture":
+                    moditems.add(item.toFurnitureItem());
+                    break;
+                case "Food":
+                    moditems.add(item.toFoodItem());
+                    break;
             }
         }
         ModItems = moditems;

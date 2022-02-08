@@ -67,6 +67,8 @@ public class Mods extends Game {
             public int tooltypelvl;
             public boolean attack;
             public String ename;
+            public int feed;
+            public int cost;
             public boolean spriteSheet;
             public int[] sprite;
             private Resources resources;
@@ -91,6 +93,8 @@ public class Mods extends Game {
                     try{itype = (String)Obj.getDeclaredField("type").get(null);} catch (NoSuchFieldException e) {itype = null;}; // Item level
                     try{ename = (String)Obj.getDeclaredField("ename").get(null);} catch (NoSuchFieldException e) {ename = null;}; // Item level
                     try{durability = (Integer)Obj.getDeclaredField("durability").get(null);} catch (NoSuchFieldException e) {durability = 1;};
+                    try{feed = (Integer)Obj.getDeclaredField("feed").get(null);} catch (NoSuchFieldException e) {feed = 1;};
+                    try{cost = (Integer)Obj.getDeclaredField("cost").get(null);} catch (NoSuchFieldException e) {cost = 1;};
                     try{noLevel = (boolean)Obj.getDeclaredField("noLevel").get(null);} catch (NoSuchFieldException e) {noLevel = true;};
                     if (!noLevel) tooltypelvl = (Integer)Obj.getDeclaredField("level").get(null); // Item level level number
                     try{attack = (boolean)Obj.getDeclaredField("attack").get(null);} catch (NoSuchFieldException e) {attack = true;} // canAttack
@@ -117,6 +121,9 @@ public class Mods extends Game {
             }
             public FurnitureItem toFurnitureItem() {
                 return new FurnitureItem(mod.modentities.get(ename).toFurniture());
+            }
+            public FoodItem toFoodItem() {
+                return new FoodItem(name, resources.getSprite(findSpriteSheet(), sprite[0], sprite[1]), 1, feed, cost);
             }
         }
 		public static class Recipe {

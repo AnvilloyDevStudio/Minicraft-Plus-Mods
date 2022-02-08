@@ -262,24 +262,30 @@ public class Mods extends Game {
             public MobAi toMobAi(int lvl) {
                 switch (entitytype) {
                     case "Enemy":
-                        MobSprite[][][] sprites;
-                        if (type == "basic") {
-                            sprites = new MobSprite[4][4][2];
-                            for (int i = 0; i < 4; i++) {
-                                MobSprite[][] list = compileMobSpriteAnimations(sprite[0], sprite[1] + (i * 2));
-                                sprites[i] = list;
-                            }
-                        } else {
-                            sprites = new MobSprite[4][1][2];
-                            for (int i = 0; i < 4; i++) {
-                                MobSprite[] list = compileSpriteList(sprite[0], sprite[1] + (i * 2), 2, 2, 0, 2);
-                                sprites[i][0] = list;
-                            }
-                        }
-                        return new EnemyMob(lvl, sprites, health, isFactor, detectDist, lifetime, rwTime, rwChance);
+                        return toEnemyMob(lvl);
                     default: // Passive
-                        return new PassiveMob(compileMobSpriteAnimations(sprite[0], sprite[1]), health);
+                        return toPassiveMob();
                 }
+            }
+            public EnemyMob toEnemyMob(int lvl) {
+                MobSprite[][][] sprites;
+                if (type == "basic") {
+                    sprites = new MobSprite[4][4][2];
+                    for (int i = 0; i < 4; i++) {
+                        MobSprite[][] list = compileMobSpriteAnimations(sprite[0], sprite[1] + (i * 2));
+                        sprites[i] = list;
+                    }
+                } else {
+                    sprites = new MobSprite[4][1][2];
+                    for (int i = 0; i < 4; i++) {
+                        MobSprite[] list = compileSpriteList(sprite[0], sprite[1] + (i * 2), 2, 2, 0, 2);
+                        sprites[i][0] = list;
+                    }
+                }
+                return new EnemyMob(lvl, sprites, health, isFactor, detectDist, lifetime, rwTime, rwChance);
+            }
+            public PassiveMob toPassiveMob() {
+                return new PassiveMob(compileMobSpriteAnimations(sprite[0], sprite[1]), health);
             }
         }
         public static class Tile {

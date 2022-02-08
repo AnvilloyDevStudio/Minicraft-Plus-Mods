@@ -30,6 +30,8 @@ public abstract class ModItem /*extends Item*/ {
                     break;
                 case "Bucket":
                     moditems.add(item.toBucketItem());
+                case "Armor":
+                    moditems.add(item.toArmorItem());
             }
         }
         ModItems = moditems;

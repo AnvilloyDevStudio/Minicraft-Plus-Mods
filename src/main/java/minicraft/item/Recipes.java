@@ -1,6 +1,7 @@
 package minicraft.item;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Recipes {
 	
@@ -11,7 +12,8 @@ public class Recipes {
 	public static final ArrayList<Recipe> enchantRecipes = new ArrayList<>();
 	public static final ArrayList<Recipe> craftRecipes = new ArrayList<>();
 	public static final ArrayList<Recipe> loomRecipes = new ArrayList<>();
-	
+	public static final HashMap<String, ArrayList<Recipe>> modRecipes = new HashMap<>();
+
 	static {
 		craftRecipes.add(new Recipe("Workbench_1", "Wood_10"));
 		craftRecipes.add(new Recipe("Torch_2", "Wood_1", "coal_1"));

@@ -28,7 +28,7 @@
 
             public class Module {
                 private Module() {}
-                public static class Items {
+                public static class Items { // The class names below this levels must same as the name
                     public static class /*class name*/{
                         // Fields must be static
                         public static String name; // Item name (required)
@@ -55,6 +55,7 @@
             In <a href="#resources">resources</a>, if spriteSheet == false, then it finds with <code>resources/item/&lt;item_name&gt;.png</code>.
             <h2 id="META-INF">META-INF/MANIFEST.MF (MANIFEST)</h2>
             Not required for now.
+            In the later versions, Implementation-Version will be required.
             <h2 id="resources">resources/</h2>
             This directory contains the sprite sheets, for standard sprite sheet, at <code>resources/items.png</code>, otherwise, at <code>resources/item/&lt;item_name&gt;.png</code>.
             <h2 id="mod.json">mod.json</h2>

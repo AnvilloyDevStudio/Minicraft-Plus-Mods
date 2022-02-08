@@ -124,7 +124,7 @@ public class Structure {
 					"WOOOW\n" +
 					"WWDWW"
 		);
-		dungeonGate.addFurniture(-1, -1, new Lantern(Lantern.Type.IRON));
+		dungeonGate.addFurniture(-1, -1, new Lantern(Lantern.Type.Types.get("IRON")));
 
 		dungeonLock = new Structure();
 		dungeonLock.setData("O:Obsidian,W:Obsidian Wall",
@@ -190,8 +190,8 @@ public class Structure {
 					"WFFFFFW\n" +
 					"WWWWWWW"
 		);
-		airWizardHouse.addFurniture(-2, 0, new Lantern(Lantern.Type.GOLD));
-		airWizardHouse.addFurniture(0, 0, new Crafter(Crafter.Type.Enchanter));
+		airWizardHouse.addFurniture(-2, 0, new Lantern(Lantern.Type.Types.get("GOLD")));
+		airWizardHouse.addFurniture(0, 0, new Crafter(Crafter.Type.Types.get("Enchanter")));
 
 		villageHouseNormal = new Structure();
 		villageHouseNormal.setData("F:Wood Planks,W:Wood Wall,D:Wood Door,G:Grass",

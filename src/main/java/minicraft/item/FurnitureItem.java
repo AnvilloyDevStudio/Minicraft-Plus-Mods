@@ -29,38 +29,40 @@ import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 
 public class FurnitureItem extends Item {
-	
+	public static ArrayList<Item> Instances = new ArrayList<>();
+
 	protected static ArrayList<Item> getAllInstances() {
-		ArrayList<Item> items = new ArrayList<>();
 		
+		return Instances;
+	}
+	
+	static {
 		/// There should be a spawner for each level of mob, or at least make the level able to be changed.
-		items.add(new FurnitureItem(new Spawner(new Cow())));
-		items.add(new FurnitureItem(new Spawner(new Pig())));
-		items.add(new FurnitureItem(new Spawner(new Sheep())));
-		items.add(new FurnitureItem(new Spawner(new Slime(1))));
-		items.add(new FurnitureItem(new Spawner(new Zombie(1))));
-		items.add(new FurnitureItem(new Spawner(new Creeper(1))));
-		items.add(new FurnitureItem(new Spawner(new Skeleton(1))));
-		items.add(new FurnitureItem(new Spawner(new Snake(1))));
-		items.add(new FurnitureItem(new Spawner(new Knight(1))));
-		items.add(new FurnitureItem(new Spawner(new AirWizard(false))));
+		new FurnitureItem(new Spawner(new Cow()));
+		new FurnitureItem(new Spawner(new Pig()));
+		new FurnitureItem(new Spawner(new Sheep()));
+		new FurnitureItem(new Spawner(new Slime(1)));
+		new FurnitureItem(new Spawner(new Zombie(1)));
+		new FurnitureItem(new Spawner(new Creeper(1)));
+		new FurnitureItem(new Spawner(new Skeleton(1)));
+		new FurnitureItem(new Spawner(new Snake(1)));
+		new FurnitureItem(new Spawner(new Knight(1)));
+		new FurnitureItem(new Spawner(new AirWizard(false)));
 		
-		items.add(new FurnitureItem(new Chest()));
-		items.add(new FurnitureItem(new DungeonChest(false, true)));
+		new FurnitureItem(new Chest());
+		new FurnitureItem(new DungeonChest(false, true));
 		
 		// Add the various types of crafting furniture
-		for (Crafter.Type type: Crafter.Type.values()) {
-			 items.add(new FurnitureItem(new Crafter(type)));
+		for (Crafter.Type type: Crafter.Type.Instances) {
+			 new FurnitureItem(new Crafter(type));
 		}
 		// Add the various lanterns
-		for (Lantern.Type type: Lantern.Type.values()) {
-			 items.add(new FurnitureItem(new Lantern(type)));
+		for (Lantern.Type type: Lantern.Type.Instances) {
+			 new FurnitureItem(new Lantern(type));
 		}
 		
-		items.add(new FurnitureItem(new Tnt()));
-		items.add(new FurnitureItem(new Bed()));
-		
-		return items;
+		new FurnitureItem(new Tnt());
+		new FurnitureItem(new Bed());
 	}
 	
 	public Furniture furniture; // The furniture of this item
@@ -76,6 +78,7 @@ public class FurnitureItem extends Item {
 		super(furniture.name, new Sprite(getSpritePos(furniture.sprite.getPos()), 0));
 		this.furniture = furniture; // Assigns the furniture to the item
 		placed = false;
+		Instances.add(this);
 	}
 	
 	/** Determines if you can attack enemies with furniture (you can't) */

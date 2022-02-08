@@ -771,7 +771,7 @@ public class Load {
 			if (mob != null)
 				newEntity = new Spawner(mob);
 		} else if (newEntity instanceof Lantern && worldVer.compareTo(new Version("1.9.4")) >= 0 && info.size() > 3) {
-			newEntity = new Lantern(Lantern.Type.values()[Integer.parseInt(info.get(2))]);
+			newEntity = new Lantern(Lantern.Type.Instances.get(Integer.parseInt(info.get(2))));
 		}
 		
 		if (!isLocalSave) {
@@ -832,18 +832,18 @@ public class Load {
 			case "Snake": return new Snake(moblvl);
 			case "AirWizard": return new AirWizard(moblvl>1);
 			case "Spawner": return new Spawner(new Zombie(1));
-			case "Workbench": return new Crafter(Crafter.Type.Workbench);
+			case "Workbench": return new Crafter(Crafter.Type.Types.get("Workbench"));
 			case "Chest": return new Chest();
 			case "DeathChest": return new DeathChest();
 			case "DungeonChest": return new DungeonChest(false);
-			case "Anvil": return new Crafter(Crafter.Type.Anvil);
-			case "Enchanter": return new Crafter(Crafter.Type.Enchanter);
-			case "Loom": return new Crafter(Crafter.Type.Loom);
-			case "Furnace": return new Crafter(Crafter.Type.Furnace);
-			case "Oven": return new Crafter(Crafter.Type.Oven);
+			case "Anvil": return new Crafter(Crafter.Type.Types.get("Anvil"));
+			case "Enchanter": return new Crafter(Crafter.Type.Types.get("Enchanter"));
+			case "Loom": return new Crafter(Crafter.Type.Types.get("Loom"));
+			case "Furnace": return new Crafter(Crafter.Type.Types.get("Furnace"));
+			case "Oven": return new Crafter(Crafter.Type.Types.get("Oven"));
 			case "Bed": return new Bed();
 			case "Tnt": return new Tnt();
-			case "Lantern": return new Lantern(Lantern.Type.NORM);
+			case "Lantern": return new Lantern(Lantern.Type.Types.get("NORM"));
 			case "Arrow": return new Arrow(new Skeleton(0), 0, 0, Direction.NONE, 0);
 			case "ItemEntity": return new ItemEntity(Items.get("unknown"), 0, 0);
 			case "FireParticle": return new FireParticle(0, 0);

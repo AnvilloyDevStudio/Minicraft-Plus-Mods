@@ -1,6 +1,8 @@
 package minicraft.mod;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.List;
 
 import minicraft.core.Mods;
 import minicraft.item.*;
@@ -47,6 +49,9 @@ public abstract class ModItem /*extends Item*/ {
                 case "oven":
                     Recipes.ovenRecipes.add(recipe.toRecipe());
                     break;
+                default:
+                    if (!Recipes.modRecipes.containsKey(recipe.type)) Recipes.modRecipes.put(recipe.type, new ArrayList<>(List.of(recipe.toRecipe())));
+                    else Recipes.modRecipes.get(recipe.type).add(recipe.toRecipe());
             }
         }
     }

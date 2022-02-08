@@ -6,6 +6,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import minicraft.core.Game;
@@ -359,11 +360,13 @@ public class Save {
 		}
 		
 		if (e instanceof Lantern) {
-			extradata.append(":").append(((Lantern) e).type.ordinal());
+			int index = 0;
+			for (String k : Lantern.Type.Types.keySet()) {if (k.equals(((Lantern) e).type.name)); index++;}
+			extradata.append(":").append(index);
 		}
 		
 		if (e instanceof Crafter) {
-			name = ((Crafter)e).type.name();
+			name = ((Crafter)e).type.name;
 		}
 		
 		if (!isLocalSave) {

@@ -8,7 +8,6 @@ import minicraft.entity.mob.Player;
 import minicraft.gfx.Sprite;
 import minicraft.item.Item;
 import minicraft.item.ToolItem;
-import minicraft.item.ToolType;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;

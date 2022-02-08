@@ -38,10 +38,10 @@ public final class Tiles {
 		tiles.set(10, new SandTile("Sand"));
 		tiles.set(11, new CactusTile("Cactus"));
 		tiles.set(12, new SaplingTile("Cactus Sapling", Tiles.get("Sand"), Tiles.get("Cactus")));
-		tiles.set(13, new OreTile(OreTile.OreType.Iron));
-		tiles.set(14, new OreTile(OreTile.OreType.Gold));
-		tiles.set(15, new OreTile(OreTile.OreType.Gem));
-		tiles.set(16, new OreTile(OreTile.OreType.Lapis));
+		tiles.set(13, new OreTile(OreTile.OreType.OreTypes.get("Iron")));
+		tiles.set(14, new OreTile(OreTile.OreType.OreTypes.get("Gold")));
+		tiles.set(15, new OreTile(OreTile.OreType.OreTypes.get("Gem")));
+		tiles.set(16, new OreTile(OreTile.OreType.OreTypes.get("Lapis")));
 		tiles.set(18, new LavaBrickTile("Lava Brick"));
 		tiles.set(19, new ExplodedTile("Explode"));
 		tiles.set(20, new FarmTile("Farmland"));

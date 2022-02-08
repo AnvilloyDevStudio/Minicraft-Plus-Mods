@@ -16,13 +16,13 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.json.JSONObject;
 
 import minicraft.core.io.ClassLoader;
-import minicraft.entity.*;
 import minicraft.entity.furniture.*;
 import minicraft.entity.mob.*;
 import minicraft.gfx.MobSprite;
 import minicraft.gfx.Sprite;
 import minicraft.gfx.SpriteSheet;
 import minicraft.item.*;
+import minicraft.level.tile.*;
 
 public class Mods extends Game {
     private Mods() {}
@@ -30,6 +30,7 @@ public class Mods extends Game {
     public static ArrayList<Mod.Item> Items = new ArrayList<>();
 	public static ArrayList<Mod.Recipe> Recipes = new ArrayList<>();
     public static ArrayList<Mod.Entity> Entities = new ArrayList<>();    
+    public static ArrayList<Mod.Tile> Tiles = new ArrayList<>();    
     public static void init() {}
 
     static {
@@ -41,9 +42,8 @@ public class Mods extends Game {
             for (int a = 0; a<mods.length; a++) {
                 Pair<Pair<Class<?>, Mod.Resources>, JSONObject> modP = loader.loadJar(mods[a]);
                 Class<?> mod = modP.getLeft().getLeft();
-                Mod modObj = new Mod(mod);
+                Mod modObj = new Mod(mod, modP.getLeft().getRight());
                 modObj.Info = modP.getRight();
-                modObj.Resources = modP.getLeft().getRight();
                 if (modObj.Info.getString("name") == null) System.out.println("mod.json name not found.");
                 if (modObj.Info.getString("description") == null) System.out.println("mod.json description not found.");
                 Mods.add(modObj);
@@ -56,7 +56,7 @@ public class Mods extends Game {
         public HashMap<String, Mod.Item> moditems = new HashMap<>();
         public HashMap<String, Mod.Recipe> modrecipes = new HashMap<>();
         public HashMap<String, Mod.Entity> modentities = new HashMap<>();
-        public HashMap<String, Class<?>> modtiles = new HashMap<>();
+        public HashMap<String, Mod.Tile> modtiles = new HashMap<>();
         public HashMap<String, Class<?>> modtileentities = new HashMap<>();
         public static class Item {
             public String name;
@@ -124,6 +124,9 @@ public class Mods extends Game {
             }
             public FoodItem toFoodItem() {
                 return new FoodItem(name, resources.getSprite(findSpriteSheet(), sprite[0], sprite[1]), 1, feed, cost);
+            }
+            public BucketItem toBucketItem() {
+                return new BucketItem(new BucketItem.Fill(name, mod.modtiles.get(ename).toTile(), resources.getSprite(findSpriteSheet(), sprite[0], sprite[1])));
             }
         }
 		public static class Recipe {
@@ -199,9 +202,9 @@ public class Mods extends Game {
                     try{sprite = (int[])Obj.getDeclaredField("sprite").get(null);} catch (NoSuchFieldException e) {sprite = new int[] {0, 0};} // xPos, yPos
                 } catch (IllegalArgumentException | NullPointerException
                         | SecurityException | NoSuchFieldException | IllegalAccessException e) {
-					if (e instanceof NoSuchFieldException) new Crash(new Crash.CrashData("ModLoad", Crash.getStackTrace(e), "Missing Item Field", Obj.getName()));
-					else if (e instanceof IllegalArgumentException) new Crash(new Crash.CrashData("ModLoad", Crash.getStackTrace(e), "Illegal Item Field", Obj.getName()));
-					else if (e instanceof IllegalAccessException || e instanceof NullPointerException) new Crash(new Crash.CrashData("ModLoad", Crash.getStackTrace(e), "Invalid Item Field", Obj.getName()));
+					if (e instanceof NoSuchFieldException) new Crash(new Crash.CrashData("ModLoad", Crash.getStackTrace(e), "Missing Entity Field", Obj.getName()));
+					else if (e instanceof IllegalArgumentException) new Crash(new Crash.CrashData("ModLoad", Crash.getStackTrace(e), "Illegal Entity Field", Obj.getName()));
+					else if (e instanceof IllegalAccessException || e instanceof NullPointerException) new Crash(new Crash.CrashData("ModLoad", Crash.getStackTrace(e), "Invalid Entity Field", Obj.getName()));
 					else e.printStackTrace();
 				}
             }
@@ -276,6 +279,54 @@ public class Mods extends Game {
                 }
             }
         }
+        public static class Tile {
+            public String name;
+            public String tiletype;
+            public String drop;
+            public boolean spriteSheet;
+            public int[] sprite;
+            private Resources resources;
+            private Mod mod;
+            public SpriteSheet findSpriteSheet() {
+                if (spriteSheet) return resources.TilesSheet;
+                else {
+                    SpriteSheet img = resources.TileImages.get(name+".png");
+                    if (img == null) {
+                        sprite = new int[] {0, 30};
+                        return resources.Sheets[1];
+                    }
+                    else return img;
+                }
+            }
+            Tile(Mod mod, Class<?> Obj, Resources res) {
+                resources = res;
+                this.mod = mod;
+                try {
+                    name = (String)Obj.getDeclaredField("name").get(null); // Tile name
+                    tiletype = (String)Obj.getDeclaredField("tiletype").get(null);
+                    try{drop = (String)Obj.getDeclaredField("drop").get(null);} catch (NoSuchFieldException e) {drop = null;} // xPos, yPos
+                    spriteSheet = (boolean)Obj.getDeclaredField("spriteSheet").get(null); // false or ignore if sprite is separated from tiles.png
+                    try{sprite = (int[])Obj.getDeclaredField("sprite").get(null);} catch (NoSuchFieldException e) {sprite = new int[] {0, 0};} // xPos, yPos
+                } catch (IllegalArgumentException | NullPointerException
+                        | SecurityException | NoSuchFieldException | IllegalAccessException e) {
+					if (e instanceof NoSuchFieldException) new Crash(new Crash.CrashData("ModLoad", Crash.getStackTrace(e), "Missing Tile Field", Obj.getName()));
+					else if (e instanceof IllegalArgumentException) new Crash(new Crash.CrashData("ModLoad", Crash.getStackTrace(e), "Illegal Tile Field", Obj.getName()));
+					else if (e instanceof IllegalAccessException || e instanceof NullPointerException) new Crash(new Crash.CrashData("ModLoad", Crash.getStackTrace(e), "Invalid Tile Field", Obj.getName()));
+					else e.printStackTrace();
+				}
+            }
+            public minicraft.level.tile.Tile toTile() {
+                switch (tiletype) {
+                    case "Ore":
+                        return new OreTile(new OreTile.OreType(name, mod.moditems.get(drop).toStackableItem(), resources.getSprite2(findSpriteSheet(), sprite[0], sprite[1])));
+                    default:
+                        return new ModTile(name, resources.getSprite2(findSpriteSheet(), sprite[0], sprite[1]));
+                }
+            }
+            public OreTile toOreTile() {
+                return new OreTile(new OreTile.OreType(name, mod.moditems.get(drop).toStackableItem(), resources.getSprite2(findSpriteSheet(), sprite[0], sprite[1])));
+            }
+        }
         public Resources Resources;
         public static class Resources {
             private SpriteSheet BytestoSpriteSheet(byte[] bytes) throws IOException {return new SpriteSheet(ImageIO.read(new ByteArrayInputStream(bytes)));}
@@ -283,6 +334,8 @@ public class Mods extends Game {
             public HashMap<String, SpriteSheet> ItemImages = new HashMap<>();
             public SpriteSheet EntitiesSheet;
             public HashMap<String, SpriteSheet> EntityImages = new HashMap<>();
+            public SpriteSheet TilesSheet;
+            public HashMap<String, SpriteSheet> TileImages = new HashMap<>();
             public Manifest manifest;
             public SpriteSheet[] Sheets = new SpriteSheet[] {
                 new SpriteSheet(ImageIO.read(Game.class.getResourceAsStream("/resources/textures/items.png"))),
@@ -311,14 +364,19 @@ public class Mods extends Game {
                             ItemImages.put(entry.getName().substring(15), BytestoSpriteSheet(jar.getInputStream(entry).readAllBytes()));
                         }
                         if (entry.getName().equals("resources/entities.png")) EntitiesSheet = BytestoSpriteSheet(jar.getInputStream(entry).readAllBytes());
-                        if (!entry.isDirectory()&&entry.getName().startsWith("resources/item/")&&entry.getName().endsWith(".png")) {
+                        if (!entry.isDirectory()&&entry.getName().startsWith("resources/entity/")&&entry.getName().endsWith(".png")) {
                             EntityImages.put(entry.getName().substring(15), BytestoSpriteSheet(jar.getInputStream(entry).readAllBytes()));
+                        }
+                        if (entry.getName().equals("resources/tiles.png")) TilesSheet = BytestoSpriteSheet(jar.getInputStream(entry).readAllBytes());
+                        if (!entry.isDirectory()&&entry.getName().startsWith("resources/tile/")&&entry.getName().endsWith(".png")) {
+                            TileImages.put(entry.getName().substring(15), BytestoSpriteSheet(jar.getInputStream(entry).readAllBytes()));
                         }
                     }
                 }
             }
         }
-        public Mod(Class<?> m) {
+        public Mod(Class<?> m, Resources res) {
+            Resources = res;
             for (Class<?> class1: m.getDeclaredClasses()) {
                 if (class1.getSimpleName().equals("Items")) {
                     for (Class<?> class2 : class1.getDeclaredClasses()) {
@@ -340,7 +398,9 @@ public class Mods extends Game {
                     }
                 } else if (class1.getSimpleName().equals("Tiles")) {
                     for (Class<?> class2 : class1.getDeclaredClasses()) {
-                        modtiles.put(class2.getSimpleName(), class2);
+                        Mod.Tile tile = new Mod.Tile(this, class2, Resources);
+                        Tiles.add(tile);
+                        modtiles.put(class2.getSimpleName(), tile);
                     }
                 } else if (class1.getSimpleName().equals("TileEntities")) {
                     for (Class<?> class2 : class1.getDeclaredClasses()) {

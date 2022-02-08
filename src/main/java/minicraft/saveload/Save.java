@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -360,9 +361,7 @@ public class Save {
 		}
 		
 		if (e instanceof Lantern) {
-			int index = 0;
-			for (String k : Lantern.Type.Types.keySet()) {if (k.equals(((Lantern) e).type.name)); index++;}
-			extradata.append(":").append(index);
+			extradata.append(":").append(new ArrayList<String>(Arrays.asList(Lantern.Type.Types.keySet().toArray(new String[0]))).indexOf(((Lantern) e).type.name));
 		}
 		
 		if (e instanceof Crafter) {

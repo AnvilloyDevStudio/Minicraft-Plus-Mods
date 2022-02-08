@@ -14,7 +14,6 @@ import minicraft.gfx.Color;
 import minicraft.gfx.Sprite;
 import minicraft.item.Item;
 import minicraft.item.ToolItem;
-import minicraft.item.ToolType;
 import minicraft.level.Level;
 
 public class CloudCactusTile extends Tile {

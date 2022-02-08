@@ -1,5 +1,8 @@
 package minicraft.level.tile;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import minicraft.core.Game;
 import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
@@ -14,7 +17,6 @@ import minicraft.gfx.Sprite;
 import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.ToolItem;
-import minicraft.item.ToolType;
 import minicraft.level.Level;
 
 /// this is all the spikey stuff (except "cloud cactus")
@@ -22,18 +24,36 @@ public class OreTile extends Tile {
 	private Sprite sprite;
 	private OreType type;
 	
-	public enum OreType {
-        Iron (Items.get("Iron Ore"), 0),
-		Lapis (Items.get("Lapis"), 2),
-		Gold (Items.get("Gold Ore"), 4),
-		Gem (Items.get("Gem"), 6);
+	public static class OreType {
+		public static ArrayList<OreType> Instances = new ArrayList<>();
+		public static HashMap<String, OreType> OreTypes = new HashMap<>();
+
+		static {
+			new OreType("Iron", Items.get("Iron Ore"), 0);
+			new OreType("Lapis", Items.get("Lapis"), 2);
+			new OreType("Gold", Items.get("Gold Ore"), 4);
+			new OreType("Gem", Items.get("Gem"), 6);
+		}
 		
 		private Item drop;
-		public final int color;
+		public int color;
+		public String name;
+		public Sprite sprite;
 		
-		OreType(Item drop, int color) {
+		OreType(String name, Item drop, int color) {
+			this.name = name;
 			this.drop = drop;
 			this.color = color;
+			sprite = null;
+			Instances.add(this);
+			OreTypes.put(name, this);
+		}
+		public OreType(String name, Item drop, Sprite sprite) {
+			this.name = name;
+			this.drop = drop;
+			this.sprite = sprite;
+			Instances.add(this);
+			OreTypes.put(name, this);
 		}
 		
 		protected Item getOre() {
@@ -41,8 +61,8 @@ public class OreTile extends Tile {
 		}
     }
 	
-	protected OreTile(OreType o) {
-		super((o == OreTile.OreType.Lapis ? "Lapis" : o.name() + " Ore"), new Sprite(24 + o.color, 0, 2, 2, 1));
+	public OreTile(OreType o) {
+		super((o == OreTile.OreType.OreTypes.get("Lapis") ? "Lapis" : o.name + " Ore"), new Sprite(24 + o.color, 0, 2, 2, 1));
         this.type = o;
 		this.sprite = super.sprite;
 	}

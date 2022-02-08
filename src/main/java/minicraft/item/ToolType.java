@@ -32,7 +32,7 @@ public class ToolType {
 		TypeLevels.put("bow", defaultLevels);
 		Types.put("claymore", new ToolType("claymore", 6, 34));
 		TypeLevels.put("claymore", defaultLevels);
-		Types.put("shear", new ToolType("shear", 0, 42, true));
+		Types.put("shear", new ToolType("shear", 0, 42, false, true));
 		TypeLevels.put("shear", new ArrayList<ItemLevel>());
 	}
 

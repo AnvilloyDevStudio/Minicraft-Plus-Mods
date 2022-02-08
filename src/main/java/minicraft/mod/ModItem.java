@@ -1,6 +1,5 @@
 package minicraft.mod;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,6 +28,8 @@ public abstract class ModItem /*extends Item*/ {
                 case "Food":
                     moditems.add(item.toFoodItem());
                     break;
+                case "Bucket":
+                    moditems.add(item.toBucketItem());
             }
         }
         ModItems = moditems;

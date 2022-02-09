@@ -16,6 +16,7 @@ import minicraft.gfx.Screen;
 import minicraft.gfx.Sprite;
 import minicraft.item.Item;
 import minicraft.item.Items;
+import minicraft.item.TileItem;
 import minicraft.item.ToolItem;
 import minicraft.level.Level;
 
@@ -23,6 +24,7 @@ import minicraft.level.Level;
 public class OreTile extends Tile {
 	private Sprite sprite;
 	private OreType type;
+	public static ArrayList<OreTile> Instances = new ArrayList<>();
 	
 	public static class OreType {
 		public static ArrayList<OreType> Instances = new ArrayList<>();
@@ -62,9 +64,11 @@ public class OreTile extends Tile {
     }
 	
 	public OreTile(OreType o) {
-		super((o == OreTile.OreType.OreTypes.get("Lapis") ? "Lapis" : o.name + " Ore"), new Sprite(24 + o.color, 0, 2, 2, 1));
+		super((o == OreTile.OreType.OreTypes.get("Lapis") ? "Lapis" : o.name + " Ore"), o.sprite==null? new Sprite(24 + o.color, 0, 2, 2, 1): o.sprite);
         this.type = o;
 		this.sprite = super.sprite;
+		Instances.add(this);
+		Items.add(new TileItem(this.name+" OreTile", new Sprite(0, 31, 0), this.name, "rock", "dirt", "sand", "grass", "path"));
 	}
 
 	public void render(Screen screen, Level level, int x, int y) {

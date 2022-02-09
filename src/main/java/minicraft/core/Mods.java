@@ -3,6 +3,7 @@ package minicraft.core;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -35,6 +36,7 @@ public class Mods extends Game {
 	public static ArrayList<Mod.Recipe> Recipes = new ArrayList<>();
     public static ArrayList<Mod.Entity> Entities = new ArrayList<>();    
     public static ArrayList<Mod.Tile> Tiles = new ArrayList<>();    
+    public static ArrayList<Method> ModTileGens = new ArrayList<>();
     public static void init() {}
 
     static {
@@ -297,6 +299,7 @@ public class Mods extends Game {
             public String tiletype;
             public String drop;
             public String seed;
+            public int id;
             public boolean spriteSheet;
             public int[] sprite;
             private Resources resources;
@@ -320,8 +323,10 @@ public class Mods extends Game {
                     tiletype = (String)Obj.getDeclaredField("tiletype").get(null);
                     try{drop = (String)Obj.getDeclaredField("drop").get(null);} catch (NoSuchFieldException e) {drop = null;} // xPos, yPos
                     try{seed = (String)Obj.getDeclaredField("seed").get(null);} catch (NoSuchFieldException e) {seed = null;} // xPos, yPos
+                    try{id = (Integer)Obj.getDeclaredField("id").get(null);} catch (NoSuchFieldException e) {id = -1;} // xPos, yPos
                     spriteSheet = (boolean)Obj.getDeclaredField("spriteSheet").get(null); // false or ignore if sprite is separated from tiles.png
                     try{sprite = (int[])Obj.getDeclaredField("sprite").get(null);} catch (NoSuchFieldException e) {sprite = new int[] {0, 0};} // xPos, yPos
+                    try{ModTileGens.add(Obj.getDeclaredMethod("tilegen", byte[].class,java.util.Random.class,int.class,int.class,int.class));} catch (NoSuchMethodException e) {}
                 } catch (IllegalArgumentException | NullPointerException
                         | SecurityException | NoSuchFieldException | IllegalAccessException e) {
 					if (e instanceof NoSuchFieldException) new Crash(new Crash.CrashData("ModLoad", Crash.getStackTrace(e), "Missing Tile Field", Obj.getName()));

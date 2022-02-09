@@ -2,6 +2,7 @@ package minicraft.core;
 
 import org.jetbrains.annotations.Nullable;
 
+import minicraft.core.io.CommandWindow;
 import minicraft.core.io.Settings;
 import minicraft.entity.furniture.Bed;
 import minicraft.entity.mob.Player;
@@ -43,6 +44,7 @@ public class World extends Game {
 	@Nullable
 	public static Action onChangeAction; // Allows action to be stored during a change schedule that should only occur once the screen is blacked out.
 	
+	public static CommandWindow commandWindow;
 	/// SCORE MODE
 	
 	/** This is for a contained way to find the index in the levels array of a level, based on it's depth. This is also helpful because add a new level in the future could change this. */
@@ -170,6 +172,7 @@ public class World extends Game {
 		PlayerDeathDisplay.shouldRespawn = true;
 		
 		if (debug) System.out.println("World initialized.");
+		commandWindow = new CommandWindow(levels[currentLevel]);
 	}
 	
 	
@@ -219,5 +222,8 @@ public class World extends Game {
 			client.requestLevel(currentLevel);
 		} else
 			levels[currentLevel].add(player); // Adds the player to the level.
+		
+		commandWindow.close();
+		commandWindow = new CommandWindow(levels[currentLevel]);
 	}
 }

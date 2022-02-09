@@ -83,6 +83,15 @@ public final class Tiles {
 		System.out.println("Adding " + tile.name + " to tile list with id " + id);
 		tile.id = (byte) id;
 	}
+	public static void add(Tile tile) {
+		int id = 43;
+		Tile t = null;
+		while (t != null) {
+			t = tiles.get(id);
+			id++;
+		}
+		add(id, tile);
+	}
 
 	static {
 		for(int i = 0; i < 256; i++)

@@ -2,6 +2,8 @@ package minicraft.level;
 
 import java.awt.Image;
 import java.awt.image.BufferedImage;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Random;
 
 import javax.swing.ImageIcon;
@@ -9,7 +11,9 @@ import javax.swing.JOptionPane;
 
 import org.jetbrains.annotations.Nullable;
 
+import minicraft.core.Crash;
 import minicraft.core.Game;
+import minicraft.core.Mods;
 import minicraft.core.io.Settings;
 import minicraft.level.tile.Tiles;
 import minicraft.screen.WorldGenDisplay;
@@ -609,7 +613,14 @@ public class LevelGen {
 				}
 			}
 		}
-		
+		for (Method method : Mods.ModTileGens) {
+			try {
+				System.out.println("EXEMODTILEGEN");
+				method.invoke(null, map, random, depth, w, h);
+			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NullPointerException e) {
+				new Crash(new Crash.CrashData("Mod Tile Genration Method Error", Crash.getStackTrace(e)));
+			}
+		}
 		if (depth > 2) {
 			int r = 1;
 			int xx = 60;

@@ -32,7 +32,8 @@ public class Crash extends Game {
         return sw.toString();
     }
     public Crash(CrashData data) {
-        JFrame frame = new JFrame();
+
+        JDialog frame = new JDialog();
         frame.setSize(600, 450);
         frame.setLayout(null);
         frame.setTitle("Minicraft Crash");
@@ -41,7 +42,6 @@ public class Crash extends Game {
         textArea.setEditable(false);
         switch(data.type) {
             case "ModLoad":
-                frame.setName("Mod Loading Exception");
 				if (data.name.length()>0) textArea.append(data.name);
                 if (data.position.length()>0) textArea.append("; On Mod "+data.position+"\n");
 				textArea.append(data.content);

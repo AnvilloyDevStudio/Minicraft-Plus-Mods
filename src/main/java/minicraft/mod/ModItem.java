@@ -7,7 +7,7 @@ import minicraft.core.Mods;
 import minicraft.item.*;
 
 
-public abstract class ModItem /*extends Item*/ {
+public class ModItem /*extends Item*/ {
     public static void init() {}
     private static final ArrayList<Item> ModItems;
     public static ArrayList<ToolType> ToolTypes;
@@ -63,6 +63,7 @@ public abstract class ModItem /*extends Item*/ {
                     else Recipes.modRecipes.get(recipe.type).add(recipe.toRecipe());
             }
         }
+        ModTile.init();
     }
     public static class ModItemLevel {
         public int level;

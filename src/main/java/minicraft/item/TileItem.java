@@ -12,6 +12,7 @@ import minicraft.entity.mob.Player;
 import minicraft.entity.mob.RemotePlayer;
 import minicraft.gfx.Sprite;
 import minicraft.level.Level;
+import minicraft.level.tile.OreTile;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 
@@ -62,7 +63,7 @@ public class TileItem extends StackableItem {
 	public final String model;
 	public final List<String> validTiles;
 	
-	protected TileItem(String name, Sprite sprite, String model, String... validTiles) {
+	public TileItem(String name, Sprite sprite, String model, String... validTiles) {
 		this(name, sprite, 1, model, Arrays.asList(validTiles));
 	}
 	protected TileItem(String name, Sprite sprite, int count, String model, String... validTiles) {

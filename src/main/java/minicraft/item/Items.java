@@ -22,7 +22,7 @@ public class Items {
 	*/
 	private static ArrayList<Item> items = new ArrayList<>();
 	
-	private static void add(Item i) {
+	public static void add(Item i) {
 		items.add(i);
 	}
 	private static void addAll(ArrayList<Item> items) {

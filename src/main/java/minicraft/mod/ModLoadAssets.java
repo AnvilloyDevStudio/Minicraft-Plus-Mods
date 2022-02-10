@@ -14,7 +14,7 @@ public class ModLoadAssets /*extends Item*/ {
         for (Mods.Mod.Item item : Mods.Items) {
             switch (item.itemtype) {
                 case "Tool":
-                    Items.add(item.toToolItem());
+                    for (int a = 0; a<item.itype.length; a++) Items.add(item.toToolItem(a));
                     break;
                 case "Stackable":
                     Items.add(item.toStackableItem());
@@ -29,7 +29,7 @@ public class ModLoadAssets /*extends Item*/ {
                     Items.add(item.toBucketItem());
                     break;
                 case "Armor":
-                    Items.add(item.toArmorItem());
+                    for (int a = 0; a<item.itype.length; a++) Items.add(item.toArmorItem(a));
             }
         }
         for (Mods.Mod.Recipe recipe : Mods.Recipes) {

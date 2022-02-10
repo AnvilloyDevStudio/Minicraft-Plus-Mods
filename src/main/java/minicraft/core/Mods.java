@@ -28,6 +28,7 @@ import minicraft.level.Level;
 import minicraft.level.tile.*;
 import minicraft.level.tile.farming.ModPlant;
 import minicraft.level.tile.farming.Plant;
+import minicraft.mod.ModLoadAssets;
 
 public class Mods extends Game {
     private Mods() {}
@@ -55,6 +56,7 @@ public class Mods extends Game {
                 Mods.add(modObj);
 
             }
+            ModLoadAssets.init();
         }
     }
     public static class Mod {
@@ -67,10 +69,10 @@ public class Mods extends Game {
         public static class Item {
             public String name;
             public String itemtype;
-            public String itype;
+            public String[] itype;
             public int durability;
             public boolean noLevel;
-            public int tooltypelvl;
+            public int[] tooltypelvl;
             public boolean attack;
             public String ename;
             public int feed;
@@ -96,15 +98,16 @@ public class Mods extends Game {
                 try {
                     name = (String)Obj.getDeclaredField("name").get(null); // Item name
                     itemtype = (String)Obj.getDeclaredField("itemtype").get(null); // Item type
-                    try{itype = (String)Obj.getDeclaredField("type").get(null);} catch (NoSuchFieldException e) {itype = null;}; // Item level
-                    try{ename = (String)Obj.getDeclaredField("ename").get(null);} catch (NoSuchFieldException e) {ename = null;}; // Item level
+                    try{itype = (String[])Obj.getDeclaredField("type").get(null);} catch (NoSuchFieldException e) {itype = new String[0];}; // Item level
+                    try{ename = (String)Obj.getDeclaredField("ename").get(null);} catch (NoSuchFieldException e) {ename = null;}; // Other name (Always Entity)
                     try{durability = (Integer)Obj.getDeclaredField("durability").get(null);} catch (NoSuchFieldException e) {durability = 1;};
                     try{feed = (Integer)Obj.getDeclaredField("feed").get(null);} catch (NoSuchFieldException e) {feed = 1;};
                     try{cost = (Integer)Obj.getDeclaredField("cost").get(null);} catch (NoSuchFieldException e) {cost = 1;};
                     try{noLevel = (boolean)Obj.getDeclaredField("noLevel").get(null);} catch (NoSuchFieldException e) {noLevel = true;};
-                    try{tooltypelvl = (Integer)Obj.getDeclaredField("level").get(null);} catch (NoSuchFieldException e) {tooltypelvl = 1;} // Item level level number
+                    try{tooltypelvl = (int[])Obj.getDeclaredField("level").get(null);} catch (NoSuchFieldException e) {tooltypelvl = new int[0];} // Item level level number
                     try{attack = (boolean)Obj.getDeclaredField("attack").get(null);} catch (NoSuchFieldException e) {attack = true;} // canAttack
                     spriteSheet = (boolean)Obj.getDeclaredField("spriteSheet").get(null); // false or ignore if sprite is separated from items.png
+                    if (itype.length!=tooltypelvl.length) new Crash(new Crash.CrashData("ModLoad", "", "Lengths of Item type and level are difference", Obj.getName()));
                     try{sprite = (int[])Obj.getDeclaredField("sprite").get(null);} catch (NoSuchFieldException e) {sprite = new int[] {0, 0};} // xPos, yPos
                 } catch (IllegalArgumentException | NullPointerException
                         | SecurityException | NoSuchFieldException | IllegalAccessException e) {
@@ -114,10 +117,10 @@ public class Mods extends Game {
 					else e.printStackTrace();
 				}
             }
-            public ToolItem toToolItem() {
+            public ToolItem toToolItem(int index) {
                 ToolType toolType = ToolType.Types.containsKey(name)? ToolType.Types.get(name): new ToolType(name, resources.getSprite(findSpriteSheet(), sprite[0], sprite[1]), durability, attack, noLevel);
                 if (!noLevel) {
-                    ItemLevel itemLevel = ItemLevel.Levels.containsKey(itype)? ItemLevel.Levels.get(itype): new ItemLevel(itype, tooltypelvl);
+                    ItemLevel itemLevel = ItemLevel.Levels.containsKey(itype[index])? ItemLevel.Levels.get(itype[index]): new ItemLevel(itype[index], tooltypelvl[index]);
                     return new ToolItem(toolType, itemLevel);
                 }
                 else return new ToolItem(toolType);
@@ -134,8 +137,8 @@ public class Mods extends Game {
             public BucketItem toBucketItem() {
                 return new BucketItem(new BucketItem.Fill(name, mod.modtiles.get(ename).toTile(), resources.getSprite(findSpriteSheet(), sprite[0], sprite[1])));
             }
-            public ArmorItem toArmorItem() {
-                return new ArmorItem(name, resources.getSprite(findSpriteSheet(), sprite[0], sprite[1]), durability, tooltypelvl);
+            public ArmorItem toArmorItem(int index) {
+                return new ArmorItem(name, resources.getSprite(findSpriteSheet(), sprite[0], sprite[1]), durability, tooltypelvl[index]);
             }
         }
 		public static class Recipe {
@@ -326,7 +329,8 @@ public class Mods extends Game {
                     try{id = (Integer)Obj.getDeclaredField("id").get(null);} catch (NoSuchFieldException e) {id = -1;} // xPos, yPos
                     spriteSheet = (boolean)Obj.getDeclaredField("spriteSheet").get(null); // false or ignore if sprite is separated from tiles.png
                     try{sprite = (int[])Obj.getDeclaredField("sprite").get(null);} catch (NoSuchFieldException e) {sprite = new int[] {0, 0};} // xPos, yPos
-                    try{ModTileGens.add(Obj.getDeclaredMethod("tilegen", byte[].class,java.util.Random.class,int.class,int.class,int.class));} catch (NoSuchMethodException e) {}
+                    try{ModTileGens.add(Obj.getDeclaredMethod("tilegen", short[].class,java.util.Random.class,int.class,int.class,int.class));} catch (NoSuchMethodException e) {}
+                    if (id == -1) new Crash(new Crash.CrashData("ModLoad", "", "Invalid Tile ID: -1", Obj.getName()));
                 } catch (IllegalArgumentException | NullPointerException
                         | SecurityException | NoSuchFieldException | IllegalAccessException e) {
 					if (e instanceof NoSuchFieldException) new Crash(new Crash.CrashData("ModLoad", Crash.getStackTrace(e), "Missing Tile Field", Obj.getName()));

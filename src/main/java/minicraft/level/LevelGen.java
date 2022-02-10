@@ -598,7 +598,7 @@ public class LevelGen {
 					int yy = y + random.nextInt(5) - random.nextInt(5);
 					if (xx >= r && yy >= r && xx < w - r && yy < h - r) {
 						if (map[xx + yy * w] == Tiles.get("rock").id) {
-							map[xx + yy * w] = (byte) ((Tiles.get("iron Ore").id & 0xff) + depth - 1);
+							map[xx + yy * w] = (byte) ((Tiles.get("iron Ore").id) + depth - 1);
 						}
 					}
 				}
@@ -607,7 +607,7 @@ public class LevelGen {
 					int yy = y + random.nextInt(3) - random.nextInt(2);
 					if (xx >= r && yy >= r && xx < w - r && yy < h - r) {
 						if (map[xx + yy * w] == Tiles.get("rock").id) {
-							map[xx + yy * w] = (byte) (Tiles.get("Lapis").id & 0xff);
+							map[xx + yy * w] = (byte) (Tiles.get("Lapis").id);
 						}
 					}
 				}

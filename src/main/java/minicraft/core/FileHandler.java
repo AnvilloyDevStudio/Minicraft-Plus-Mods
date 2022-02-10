@@ -89,7 +89,7 @@ public class FileHandler extends Game {
 		} else return new File(gameModsDir).listFiles(new FilenameFilter() {
 			@Override
 			public boolean accept(File dir, String name) {
-				return name.matches("\\w+.jar");
+				return name.endsWith(".jar");
 			}
 		});
 	}

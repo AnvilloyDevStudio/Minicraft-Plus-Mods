@@ -5,36 +5,33 @@ import java.util.List;
 
 import minicraft.core.Mods;
 import minicraft.item.*;
+import minicraft.level.tile.Tiles;
 
 
-public class ModItem /*extends Item*/ {
+public class ModLoadAssets /*extends Item*/ {
     public static void init() {}
-    private static final ArrayList<Item> ModItems;
-    public static ArrayList<ToolType> ToolTypes;
     static {
-        ArrayList<Mods.Mod.Item> items = Mods.Items;
-        ArrayList<Item> moditems = new ArrayList<>();
-        for (Mods.Mod.Item item : items) {
+        for (Mods.Mod.Item item : Mods.Items) {
             switch (item.itemtype) {
                 case "Tool":
-                    moditems.add(item.toToolItem());
+                    Items.add(item.toToolItem());
                     break;
                 case "Stackable":
-                    moditems.add(item.toStackableItem());
+                    Items.add(item.toStackableItem());
                     break;
                 case "Furniture":
-                    moditems.add(item.toFurnitureItem());
+                    Items.add(item.toFurnitureItem());
                     break;
                 case "Food":
-                    moditems.add(item.toFoodItem());
+                    Items.add(item.toFoodItem());
                     break;
                 case "Bucket":
-                    moditems.add(item.toBucketItem());
+                    Items.add(item.toBucketItem());
+                    break;
                 case "Armor":
-                    moditems.add(item.toArmorItem());
+                    Items.add(item.toArmorItem());
             }
         }
-        ModItems = moditems;
         for (Mods.Mod.Recipe recipe : Mods.Recipes) {
             switch (recipe.type) {
                 case "workbench":
@@ -63,17 +60,17 @@ public class ModItem /*extends Item*/ {
                     else Recipes.modRecipes.get(recipe.type).add(recipe.toRecipe());
             }
         }
-        ModTile.init();
-    }
-    public static class ModItemLevel {
-        public int level;
-        public String name;
-        ModItemLevel(String name, int level) {
-            this.name = name;
-            this.level = level;
+        for (Mods.Mod.Tile tile : Mods.Tiles) {
+            switch (tile.tiletype) {
+                case "Ore":
+                    Tiles.add(tile.id, tile.toOreTile());
+                    break;
+                case "Plant":
+                    Tiles.add(tile.id, tile.toPlant());
+                    break;
+                default:
+                    Tiles.add(tile.id, tile.toTile());
+            }
         }
-    }
-    public static ArrayList<Item> getAllInstances() {
-        return ModItems;
     }
 }

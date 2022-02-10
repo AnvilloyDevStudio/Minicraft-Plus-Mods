@@ -118,7 +118,7 @@ public class LevelGen {
 	}
 	
 	@Nullable
-	static byte[][] createAndValidateMap(int w, int h, int level) {
+	static short[][] createAndValidateMap(int w, int h, int level) {
 		worldSeed = WorldGenDisplay.getSeed();
 		
 		if (level == 1)
@@ -135,10 +135,10 @@ public class LevelGen {
 		return null;
 	}
 	
-	private static byte[][] createAndValidateTopMap(int w, int h) {
+	private static short[][] createAndValidateTopMap(int w, int h) {
 		random.setSeed(worldSeed);
 		do {
-			byte[][] result = createTopMap(w, h);
+			short[][] result = createTopMap(w, h);
 			
 			int[] count = new int[256];
 			
@@ -158,10 +158,10 @@ public class LevelGen {
 		} while (true);
 	}
 	
-	private static byte[][] createAndValidateUndergroundMap(int w, int h, int depth) {
+	private static short[][] createAndValidateUndergroundMap(int w, int h, int depth) {
 		random.setSeed(worldSeed);
 		do {
-			byte[][] result = createUndergroundMap(w, h, depth);
+			short[][] result = createUndergroundMap(w, h, depth);
 			
 			int[] count = new int[256];
 			
@@ -180,11 +180,11 @@ public class LevelGen {
 		} while (true);
 	}
 	
-	private static byte[][] createAndValidateDungeon(int w, int h) {
+	private static short[][] createAndValidateDungeon(int w, int h) {
 		random.setSeed(worldSeed);
 		
 		do {
-			byte[][] result = createDungeon(w, h);
+			short[][] result = createDungeon(w, h);
 			
 			int[] count = new int[256];
 			
@@ -199,11 +199,11 @@ public class LevelGen {
 		} while (true);
 	}
 
-	private static byte[][] createAndValidateSkyMap(int w, int h) {
+	private static short[][] createAndValidateSkyMap(int w, int h) {
 		random.setSeed(worldSeed);
 		
 		do {
-			byte[][] result = createSkyMap(w, h);
+			short[][] result = createSkyMap(w, h);
 			
 			int[] count = new int[256];
 			
@@ -219,7 +219,7 @@ public class LevelGen {
 		} while (true);
 	}
 	
-	private static byte[][] createTopMap(int w, int h) { // Create surface map
+	private static short[][] createTopMap(int w, int h) { // Create surface map
 		// creates a bunch of value maps, some with small size...
 		LevelGen mnoise1 = new LevelGen(w, h, 16);
 		LevelGen mnoise2 = new LevelGen(w, h, 16);
@@ -229,8 +229,8 @@ public class LevelGen {
 		LevelGen noise1 = new LevelGen(w, h, 32);
 		LevelGen noise2 = new LevelGen(w, h, 32);
 		
-		byte[] map = new byte[w * h];
-		byte[] data = new byte[w * h];
+		short[] map = new short[w * h];
+		short[] data = new short[w * h];
 
 		for (int y = 0; y < h; y++) {
 			for (int x = 0; x < w; x++) {
@@ -479,15 +479,15 @@ public class LevelGen {
 		//average /= w*h;
 		//System.out.println(average);
 		
-		return new byte[][]{map, data};
+		return new short[][]{map, data};
 	}
 	
-	private static byte[][] createDungeon(int w, int h) {
+	private static short[][] createDungeon(int w, int h) {
 		LevelGen noise1 = new LevelGen(w, h, 8);
 		LevelGen noise2 = new LevelGen(w, h, 8);
 		
-		byte[] map = new byte[w * h];
-		byte[] data = new byte[w * h];
+		short[] map = new short[w * h];
+		short[] data = new short[w * h];
 		
 		for (int y = 0; y < h; y++) {
 			for (int x = 0; x < w; x++) {
@@ -526,10 +526,10 @@ public class LevelGen {
 			Structure.lavaPool.draw(map, x, y, w);
 		}
 		
-		return new byte[][]{map, data};
+		return new short[][]{map, data};
 	}
 	
-	private static byte[][] createUndergroundMap(int w, int h, int depth) {
+	private static short[][] createUndergroundMap(int w, int h, int depth) {
 		LevelGen mnoise1 = new LevelGen(w, h, 16);
 		LevelGen mnoise2 = new LevelGen(w, h, 16);
 		LevelGen mnoise3 = new LevelGen(w, h, 16);
@@ -545,8 +545,8 @@ public class LevelGen {
 		LevelGen noise1 = new LevelGen(w, h, 32);
 		LevelGen noise2 = new LevelGen(w, h, 32);
 		
-		byte[] map = new byte[w * h];
-		byte[] data = new byte[w * h];
+		short[] map = new short[w * h];
+		short[] data = new short[w * h];
 		for (int y = 0; y < h; y++) {
 			for (int x = 0; x < w; x++) {
 				int i = x + y * w;
@@ -660,15 +660,15 @@ public class LevelGen {
 			}
 		}
 		
-		return new byte[][]{map, data};
+		return new short[][]{map, data};
 	}
 	
-	private static byte[][] createSkyMap(int w, int h) {
+	private static short[][] createSkyMap(int w, int h) {
 		LevelGen noise1 = new LevelGen(w, h, 8);
 		LevelGen noise2 = new LevelGen(w, h, 8);
 		
-		byte[] map = new byte[w * h];
-		byte[] data = new byte[w * h];
+		short[] map = new short[w * h];
+		short[] data = new short[w * h];
 		
 		for (int y = 0; y < h; y++) {
 			for (int x = 0; x < w; x++) {
@@ -728,7 +728,7 @@ public class LevelGen {
 			if (count >= w / 64) break;
 		}
 		
-		return new byte[][]{map, data};
+		return new short[][]{map, data};
 	}
 	
 	public static void main(String[] args) {
@@ -771,10 +771,10 @@ public class LevelGen {
 			int lvl = maplvls[idx++ % maplvls.length];
 			if (lvl > 1 || lvl < -4) continue;
 			
-			byte[][] fullmap = LevelGen.createAndValidateMap(w, h, lvl);
+			short[][] fullmap = LevelGen.createAndValidateMap(w, h, lvl);
 			
 			if (fullmap == null) continue;
-			byte[] map = fullmap[0];
+			short[] map = fullmap[0];
 			
 			BufferedImage img = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
 			int[] pixels = new int[w * h];

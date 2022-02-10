@@ -367,8 +367,8 @@ public class Load {
 			long seed = hasSeed ? Long.parseLong(data.get(2)) : 0;
 			Settings.set("size", lvlw);
 			
-			byte[] tiles = new byte[lvlw * lvlh];
-			byte[] tdata = new byte[lvlw * lvlh];
+			short[] tiles = new short[lvlw * lvlh];
+			short[] tdata = new short[lvlw * lvlh];
 			
 			for (int x = 0; x < lvlw; x++) {
 				for (int y = 0; y < lvlh; y++) {

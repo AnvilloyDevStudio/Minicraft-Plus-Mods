@@ -1,6 +1,7 @@
 package minicraft.level.tile;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import minicraft.core.Game;
 import minicraft.level.tile.farming.FarmTile;
@@ -13,84 +14,71 @@ public final class Tiles {
 	
 	public static ArrayList<String> oldids = new ArrayList<>();
 	
-	private static ArrayList<Tile> tiles = new ArrayList<>();
+	private static HashMap<Integer, Tile> tiles = new HashMap<>();
 	
 	public static void initTileList() {
 		if (Game.debug) System.out.println("Initializing tile list...");
 		
-		// 
-		for (int i = 0; i < 256; i++)
-			tiles.add(null);
-
-		tiles.set(0, new GrassTile("Grass"));
-		tiles.set(1, new DirtTile("Dirt"));
-		tiles.set(2, new FlowerTile("Flower"));
-		tiles.set(3, new HoleTile("Hole"));
-		tiles.set(4, new StairsTile("Stairs Up", true));
-		tiles.set(5, new StairsTile("Stairs Down", false));
-		tiles.set(6, new WaterTile("Water"));
+		tiles.put(0, new GrassTile("Grass"));
+		tiles.put(1, new DirtTile("Dirt"));
+		tiles.put(2, new FlowerTile("Flower"));
+		tiles.put(3, new HoleTile("Hole"));
+		tiles.put(4, new StairsTile("Stairs Up", true));
+		tiles.put(5, new StairsTile("Stairs Down", false));
+		tiles.put(6, new WaterTile("Water"));
 		// This is out of order because of lava buckets
-		tiles.set(17, new LavaTile("Lava"));
+		tiles.put(17, new LavaTile("Lava"));
 
-		tiles.set(7, new RockTile("Rock"));
-		tiles.set(8, new TreeTile("Tree"));
-		tiles.set(9, new SaplingTile("Tree Sapling", Tiles.get("Grass"), Tiles.get("Tree")));
-		tiles.set(10, new SandTile("Sand"));
-		tiles.set(11, new CactusTile("Cactus"));
-		tiles.set(12, new SaplingTile("Cactus Sapling", Tiles.get("Sand"), Tiles.get("Cactus")));
-		tiles.set(13, new OreTile(OreTile.OreType.OreTypes.get("Iron")));
-		tiles.set(14, new OreTile(OreTile.OreType.OreTypes.get("Gold")));
-		tiles.set(15, new OreTile(OreTile.OreType.OreTypes.get("Gem")));
-		tiles.set(16, new OreTile(OreTile.OreType.OreTypes.get("Lapis")));
-		tiles.set(18, new LavaBrickTile("Lava Brick"));
-		tiles.set(19, new ExplodedTile("Explode"));
-		tiles.set(20, new FarmTile("Farmland"));
-		tiles.set(21, new WheatTile("Wheat"));
-		tiles.set(22, new HardRockTile("Hard Rock"));
-		tiles.set(23, new InfiniteFallTile("Infinite Fall"));
-		tiles.set(24, new CloudTile("Cloud"));
-		tiles.set(25, new CloudCactusTile("Cloud Cactus"));
-		tiles.set(26, new DoorTile(Tile.Material.Wood));
-		tiles.set(27, new DoorTile(Tile.Material.Stone));
-		tiles.set(28, new DoorTile(Tile.Material.Obsidian));
-		tiles.set(29, new FloorTile(Tile.Material.Wood));
-		tiles.set(30, new FloorTile(Tile.Material.Stone));
-		tiles.set(31, new FloorTile(Tile.Material.Obsidian));
-		tiles.set(32, new WallTile(Tile.Material.Wood));
-		tiles.set(33, new WallTile(Tile.Material.Stone));
-		tiles.set(34, new WallTile(Tile.Material.Obsidian));
-		tiles.set(35, new WoolTile(WoolTile.WoolType.NORMAL));
-		tiles.set(36, new PathTile("Path"));
-		tiles.set(37, new WoolTile(WoolTile.WoolType.RED));
-		tiles.set(38, new WoolTile(WoolTile.WoolType.BLUE));
-		tiles.set(39, new WoolTile(WoolTile.WoolType.GREEN));
-		tiles.set(40, new WoolTile(WoolTile.WoolType.YELLOW));
-		tiles.set(41, new WoolTile(WoolTile.WoolType.BLACK));
-		tiles.set(42, new PotatoTile("Potato"));
+		tiles.put(7, new RockTile("Rock"));
+		tiles.put(8, new TreeTile("Tree"));
+		tiles.put(9, new SaplingTile("Tree Sapling", Tiles.get("Grass"), Tiles.get("Tree")));
+		tiles.put(10, new SandTile("Sand"));
+		tiles.put(11, new CactusTile("Cactus"));
+		tiles.put(12, new SaplingTile("Cactus Sapling", Tiles.get("Sand"), Tiles.get("Cactus")));
+		tiles.put(13, new OreTile(OreTile.OreType.OreTypes.get("Iron")));
+		tiles.put(14, new OreTile(OreTile.OreType.OreTypes.get("Gold")));
+		tiles.put(15, new OreTile(OreTile.OreType.OreTypes.get("Gem")));
+		tiles.put(16, new OreTile(OreTile.OreType.OreTypes.get("Lapis")));
+		tiles.put(18, new LavaBrickTile("Lava Brick"));
+		tiles.put(19, new ExplodedTile("Explode"));
+		tiles.put(20, new FarmTile("Farmland"));
+		tiles.put(21, new WheatTile("Wheat"));
+		tiles.put(22, new HardRockTile("Hard Rock"));
+		tiles.put(23, new InfiniteFallTile("Infinite Fall"));
+		tiles.put(24, new CloudTile("Cloud"));
+		tiles.put(25, new CloudCactusTile("Cloud Cactus"));
+		tiles.put(26, new DoorTile(Tile.Material.Wood));
+		tiles.put(27, new DoorTile(Tile.Material.Stone));
+		tiles.put(28, new DoorTile(Tile.Material.Obsidian));
+		tiles.put(29, new FloorTile(Tile.Material.Wood));
+		tiles.put(30, new FloorTile(Tile.Material.Stone));
+		tiles.put(31, new FloorTile(Tile.Material.Obsidian));
+		tiles.put(32, new WallTile(Tile.Material.Wood));
+		tiles.put(33, new WallTile(Tile.Material.Stone));
+		tiles.put(34, new WallTile(Tile.Material.Obsidian));
+		tiles.put(35, new WoolTile(WoolTile.WoolType.NORMAL));
+		tiles.put(36, new PathTile("Path"));
+		tiles.put(37, new WoolTile(WoolTile.WoolType.RED));
+		tiles.put(38, new WoolTile(WoolTile.WoolType.BLUE));
+		tiles.put(39, new WoolTile(WoolTile.WoolType.GREEN));
+		tiles.put(40, new WoolTile(WoolTile.WoolType.YELLOW));
+		tiles.put(41, new WoolTile(WoolTile.WoolType.BLACK));
+		tiles.put(42, new PotatoTile("Potato"));
 
 		// WARNING: don't use this tile for anything!
-		tiles.set(255, new ConnectTile());
+		tiles.put(255, new ConnectTile());
 		
 		for(int i = 0; i < tiles.size(); i++) {
 			if(tiles.get(i) == null) continue;
-			tiles.get(i).id = (byte)i;
+			tiles.get(i).id = (short)i;
 		}
 	}
 	
 
-	protected static void add(int id, Tile tile) {
-		tiles.set(id, tile);
+	public static void add(int id, Tile tile) {
+		tiles.put(id, tile);
 		System.out.println("Adding " + tile.name + " to tile list with id " + id);
-		tile.id = (byte) id;
-	}
-	public static void add(Tile tile) {
-		int id = 43;
-		Tile t = null;
-		while (t != null) {
-			t = tiles.get(id);
-			id++;
-		}
-		add(id, tile);
+		tile.id = (short) id;
 	}
 
 	static {
@@ -212,7 +200,7 @@ public final class Tiles {
 			name = name.substring(0, name.indexOf("_"));
 		}
 		
-		for(Tile t: tiles) {
+		for(Tile t: tiles.values()) {
 			if(t == null) continue;
 			if(t.name.equals(name)) {
 				getting = t;

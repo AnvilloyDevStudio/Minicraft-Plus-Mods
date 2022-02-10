@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import minicraft.core.Network;
-import minicraft.mod.ModItem;
+import minicraft.mod.ModLoadAssets;
 
 public class Items {
 	
@@ -43,7 +43,7 @@ public class Items {
 		addAll(ArmorItem.getAllInstances());
 		addAll(PotionItem.getAllInstances());
 		addAll(FishingRodItem.getAllInstances());
-		addAll(ModItem.getAllInstances());
+		// addAll(ModItem.getAllInstances()); // decided to add into Items directly
 	}
 	
 	/** fetches an item from the list given its name. */

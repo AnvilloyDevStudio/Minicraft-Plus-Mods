@@ -143,14 +143,14 @@ public class LevelGen {
 			int[] count = new int[256];
 			
 			for (int i = 0; i < w * h; i++) {
-				count[result[0][i] & 0xff]++;
+				count[result[0][i] & 0xffff]++;
 			}
-			if (count[Tiles.get("rock").id & 0xff] < 100) continue;
-			if (count[Tiles.get("sand").id & 0xff] < 100) continue;
-			if (count[Tiles.get("grass").id & 0xff] < 100) continue;
-			if (count[Tiles.get("tree").id & 0xff] < 100) continue;
+			if (count[Tiles.get("rock").id & 0xffff] < 100) continue;
+			if (count[Tiles.get("sand").id & 0xffff] < 100) continue;
+			if (count[Tiles.get("grass").id & 0xffff] < 100) continue;
+			if (count[Tiles.get("tree").id & 0xffff] < 100) continue;
 			
-			if (count[Tiles.get("Stairs Down").id & 0xff] < w / 21)
+			if (count[Tiles.get("Stairs Down").id & 0xffff] < w / 21)
 				continue; // Size 128 = 6 stairs min
 			
 			return result;
@@ -166,13 +166,13 @@ public class LevelGen {
 			int[] count = new int[256];
 			
 			for (int i = 0; i < w * h; i++) {
-				count[result[0][i] & 0xff]++;
+				count[result[0][i] & 0xffff]++;
 			}
-			if (count[Tiles.get("rock").id & 0xff] < 100) continue;
-			if (count[Tiles.get("dirt").id & 0xff] < 100) continue;
-			if (count[(Tiles.get("iron Ore").id & 0xff) + depth - 1] < 20) continue;
+			if (count[Tiles.get("rock").id & 0xffff] < 100) continue;
+			if (count[Tiles.get("dirt").id & 0xffff] < 100) continue;
+			if (count[(Tiles.get("iron Ore").id & 0xffff) + depth - 1] < 20) continue;
 			
-			if (depth < 3 && count[Tiles.get("Stairs Down").id & 0xff] < w / 32)
+			if (depth < 3 && count[Tiles.get("Stairs Down").id & 0xffff] < w / 32)
 				continue; // Size 128 = 4 stairs min
 			
 			return result;
@@ -189,10 +189,10 @@ public class LevelGen {
 			int[] count = new int[256];
 			
 			for (int i = 0; i < w * h; i++) {
-				count[result[0][i] & 0xff]++;
+				count[result[0][i] & 0xffff]++;
 			}
-			if (count[Tiles.get("Obsidian").id & 0xff] < 100) continue;
-			if (count[Tiles.get("Obsidian Wall").id & 0xff] < 100) continue;
+			if (count[Tiles.get("Obsidian").id & 0xffff] < 100) continue;
+			if (count[Tiles.get("Obsidian Wall").id & 0xffff] < 100) continue;
 			
 			return result;
 			
@@ -208,10 +208,10 @@ public class LevelGen {
 			int[] count = new int[256];
 			
 			for (int i = 0; i < w * h; i++) {
-				count[result[0][i] & 0xff]++;
+				count[result[0][i] & 0xffff]++;
 			}
-			if (count[Tiles.get("cloud").id & 0xff] < 2000) continue;
-			if (count[Tiles.get("Stairs Down").id & 0xff] < w / 64)
+			if (count[Tiles.get("cloud").id & 0xffff] < 2000) continue;
+			if (count[Tiles.get("Stairs Down").id & 0xffff] < w / 64)
 				continue; // size 128 = 2 stairs min
 			
 			return result;
@@ -631,8 +631,8 @@ public class LevelGen {
 						
 						Structure.dungeonLock.draw(map, xx, yy, w);
 						
-						/// The "& 0xff" is a common way to convert a byte to an unsigned int, which basically prevents negative values... except... this doesn't do anything if you flip it back to a byte again...
-						map[xx + yy * w] = (byte) (Tiles.get("Stairs Down").id & 0xff);
+						/// The "& 0xffff" is a common way to convert a byte to an unsigned int, which basically prevents negative values... except... this doesn't do anything if you flip it back to a byte again...
+						map[xx + yy * w] = (short) (Tiles.get("Stairs Down").id & 0xffff);
 					}
 				}
 			}

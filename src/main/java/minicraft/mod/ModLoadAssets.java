@@ -14,7 +14,7 @@ public class ModLoadAssets /*extends Item*/ {
         for (Mods.Mod.Item item : Mods.Items) {
             switch (item.itemtype) {
                 case "Tool":
-                    for (int a = 0; a<item.itype.length; a++) Items.add(item.toToolItem(a));
+                    for (int a = 0; a<item.itype.length; a++) Items.add(item.toToolItem(true, a));
                     break;
                 case "Stackable":
                     Items.add(item.toStackableItem());

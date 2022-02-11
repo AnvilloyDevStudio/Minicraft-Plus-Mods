@@ -22,9 +22,9 @@ public abstract class Tile {
 	 * This is used by wall tiles to get what material they're made of.
 	 */
 	protected enum Material {
-		Wood(ToolType.Types.get("axe")),
-		Stone(ToolType.Types.get("pickaxe")),
-		Obsidian(ToolType.Types.get("pickaxe"));
+		Wood(ToolType.get("axe")),
+		Stone(ToolType.get("pickaxe")),
+		Obsidian(ToolType.get("pickaxe"));
 
 		public static final Material[] values = Material.values();
 		private final ToolType requiredTool;

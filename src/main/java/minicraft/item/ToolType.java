@@ -8,7 +8,7 @@ import minicraft.gfx.Sprite;
 
 public class ToolType {
 	public static ArrayList<ToolType> TypeInstances = new ArrayList<>();
-	public static HashMap<String, ToolType> Types = new HashMap<>();
+	public static HashMap<String, ToolType> Types = new HashMap<String, ToolType>();
 	public static HashMap<String, ArrayList<ItemLevel>> TypeLevels = new HashMap<>();
 	static {
 		ArrayList<ItemLevel> defaultLevels = new ArrayList<>(List.of(
@@ -79,12 +79,14 @@ public class ToolType {
 		durability = dur;
 		this.noLevel = noLevel;
 		this.attack = attack;
-		TypeInstances.add(this);
-		if (Types.containsKey(name)) new Exception("Repeated ToolType: "+name).printStackTrace();
-		Types.put(name, this);
-		TypeLevels.put(name, new ArrayList<ItemLevel>());
+		System.out.println(ToolType.Types.get(name));
+		ToolType.TypeInstances.add(this);
+		ToolType.Types.put(name, this);
+		ToolType.TypeLevels.put(name, new ArrayList<ItemLevel>());        
 	}
-
+	public static ToolType get(String name) {
+		return Types.get(name);
+	}
 	boolean equal(ToolType type) {
 		return this.name.equals(type.name);
 	}

@@ -120,8 +120,6 @@ public class Mods extends Game {
             public ToolItem toToolItem(boolean instance, int index) {
                 ToolType toolType = ToolType.Types.get(name.toLowerCase());
                 if (toolType==null) toolType = new ToolType(name, resources.getSprite(findSpriteSheet(), sprite[0], sprite[1]), durability, attack, noLevel);
-                // if (instance) {
-                // }
                 if (!noLevel) {
                     ItemLevel itemLevel = ItemLevel.Levels.containsKey(itype[index])? ItemLevel.Levels.get(itype[index]): new ItemLevel(itype[index], tooltypelvl[index]);
                     return new ToolItem(toolType, itemLevel);

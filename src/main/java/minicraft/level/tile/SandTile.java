@@ -11,7 +11,6 @@ import minicraft.gfx.Sprite;
 import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.ToolItem;
-import minicraft.item.ToolType;
 import minicraft.level.Level;
 
 public class SandTile extends Tile {
@@ -29,14 +28,14 @@ public class SandTile extends Tile {
 	{
 		public boolean connectsTo(Tile tile, boolean isSide) {
 			if(!isSide) return true;
-			return tile.connectsToSand;
+			return tile.Connections.get("sand");
 		}
 	};
 	
 	protected SandTile(String name) {
 		super(name, (ConnectorSprite)null);
 		csprite = sprite;
-		connectsToSand = true;
+		Connections.set("sand", true);
 		maySpawn = true;
 	}
 	

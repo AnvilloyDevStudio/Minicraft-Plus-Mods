@@ -10,14 +10,14 @@ public class WaterTile extends Tile {
 	private ConnectorSprite sprite = new ConnectorSprite(WaterTile.class, new Sprite(12, 6, 3, 3, 1, 3), Sprite.dots(/*Color.get(005, 105, 115, 115)*/ 0))
 	{
 		public boolean connectsTo(Tile tile, boolean isSide) {
-			return tile.connectsToFluid;
+			return tile.Connections.get("fluid");
 		}
 	};
 	
 	protected WaterTile(String name) {
 		super(name, (ConnectorSprite)null);
 		csprite = sprite;
-		connectsToFluid = true;
+		Connections.set("fluid", true);
 	}
 	
 	public void render(Screen screen, Level level, int x, int y) {

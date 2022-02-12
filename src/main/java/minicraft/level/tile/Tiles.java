@@ -1,6 +1,5 @@
 package minicraft.level.tile;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import minicraft.core.Game;

@@ -14,14 +14,13 @@ import minicraft.gfx.Screen;
 import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.ToolItem;
-import minicraft.item.ToolType;
 import minicraft.level.Level;
 
 public class TreeTile extends Tile {
 	
 	protected TreeTile(String name) {
 		super(name, (ConnectorSprite)null);
-		connectsToGrass = true;
+		Connections.set("grass", true);
 	}
 	
 	public void render(Screen screen, Level level, int x, int y) {

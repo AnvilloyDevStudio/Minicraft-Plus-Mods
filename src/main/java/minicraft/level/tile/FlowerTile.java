@@ -17,7 +17,7 @@ public class FlowerTile extends Tile {
 	
 	protected FlowerTile(String name) {
 		super(name, (ConnectorSprite)null);
-		connectsToGrass = true;
+		Connections.set("grass", true);
 		maySpawn = true;
 	}
 

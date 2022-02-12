@@ -1,5 +1,7 @@
 package minicraft.level.tile;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Random;
 
@@ -43,22 +45,49 @@ public abstract class Tile {
 	
 	public short id;
 	
-	public boolean connectsToGrass = false;
-	public boolean connectsToSand = false;
-	public boolean connectsToFluid = false;
-	public static class TileConnections extends HashMap<Short, Boolean> {
-		TileConnections() { super(); }
-		{
-			put((short)0, false);
-			put((short)0, false);
-			put((short)0, false);
+	public TileConnections Connections = new TileConnections();
+	public static class TileConnections extends HashMap<String, Boolean> {
+		TileConnections() {
+			for (String name : Classes.Map.keySet()) put(name, false);
 		}
-		public static class Classes extends HashMap<Short, Boolean> {
+		public ArrayList<Short> getTiles(String name) {
+			return Classes.get(name);
+		}
+		public Boolean get(String name) {
+			return super.get(name.toLowerCase());
+		}
+		public void set(String name, boolean value) {
+			replace(name.toLowerCase(), value);
+		}
+		public static class Classes {
+			private static HashMap<String, ArrayList<Short>> Map = new HashMap<>();
 			static {
-
+				put("grass", new ArrayList<Short>(Arrays.asList((short)0)));
+				put("sand", new ArrayList<Short>(Arrays.asList((short)10)));
+				put("fluid", new ArrayList<Short>(Arrays.asList((short)0)));
+			}
+			public static void put(String k, ArrayList<Short> v) {
+				Map.put(k.toLowerCase(), v);
+			}
+			public static ArrayList<Short> get(String k) {
+				return Map.get(k.toLowerCase());
+			}
+			public static void add(String name, short... values) {
+				ArrayList<Short> m = Map.get(name);
+				for (short v : values) m.add(v);
+			}
+			public static void add(String name, short v) {
+				Map.get(name).add(v);
 			}
 		}
-		public static class ConnectionKey {}
+		public static class ConnectionKey {
+			public String name;
+			public ArrayList<Short> tiles;
+			ConnectionKey(String name, ArrayList<Short> ids) {
+				this.name = name;
+				tiles = ids;
+			}
+		}
 	}
 
 	public int light;
@@ -156,7 +185,7 @@ public abstract class Tile {
 	}
 	
 	/** Sees if the tile connects to a fluid. */
-	public boolean connectsToLiquid() { return connectsToFluid; }
+	public boolean connectsToLiquid() { return Connections.get("fluid"); }
 	
 	public int getData(String data) {
 		try {

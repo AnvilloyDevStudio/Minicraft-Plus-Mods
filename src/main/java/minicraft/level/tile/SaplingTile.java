@@ -17,9 +17,9 @@ public class SaplingTile extends Tile {
 		super(name, sprite);
 		this.onType = onType;
 		this.growsTo = growsTo;
-		connectsToSand = onType.connectsToSand;
-		connectsToGrass = onType.connectsToGrass;
-		connectsToFluid = onType.connectsToFluid;
+		Connections.set("sand", onType.Connections.get("sand"));
+		Connections.set("grass", onType.Connections.get("grass"));
+		Connections.set("fluid", onType.Connections.get("fluid"));
 		maySpawn = true;
 	}
 

@@ -7,7 +7,6 @@ import minicraft.gfx.Sprite;
 import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.ToolItem;
-import minicraft.item.ToolType;
 import minicraft.level.Level;
 
 public class PathTile extends Tile {
@@ -15,7 +14,7 @@ public class PathTile extends Tile {
 
     public PathTile(String name) {
         super(name, sprite);
-        connectsToGrass = true;
+        Connections.set("grass", true);
         maySpawn = true;
     }
 

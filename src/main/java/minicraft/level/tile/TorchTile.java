@@ -32,9 +32,9 @@ public class TorchTile extends Tile {
 	private TorchTile(Tile onType) {
 		super("Torch "+ onType.name, sprite);
 		this.onType = onType;
-		this.connectsToSand = onType.connectsToSand;
-		this.connectsToGrass = onType.connectsToGrass;
-		this.connectsToFluid = onType.connectsToFluid;
+		Connections.set("sand", onType.Connections.get("sand"));
+		Connections.set("grass", onType.Connections.get("grass"));
+		Connections.set("fluid", onType.Connections.get("fluid"));
 	}
 	
 	public void render(Screen screen, Level level, int x, int y) {

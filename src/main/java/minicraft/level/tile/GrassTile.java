@@ -16,14 +16,14 @@ public class GrassTile extends Tile {
 	{
 		public boolean connectsTo(Tile tile, boolean isSide) {
 			if(!isSide) return true;
-			return tile.connectsToGrass;
+			return tile.Connections.get("grass");
 		}
 	};
 	
 	protected GrassTile(String name) {
 		super(name, sprite);
 		csprite.sides = csprite.sparse;
-		connectsToGrass = true;
+		Connections.set("grass", true);
 		maySpawn = true;
 	}
 

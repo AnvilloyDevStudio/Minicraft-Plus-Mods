@@ -1,5 +1,6 @@
 package minicraft.level.tile;
 
+import java.util.HashMap;
 import java.util.Random;
 
 import minicraft.core.World;
@@ -45,6 +46,21 @@ public abstract class Tile {
 	public boolean connectsToGrass = false;
 	public boolean connectsToSand = false;
 	public boolean connectsToFluid = false;
+	public static class TileConnections extends HashMap<Short, Boolean> {
+		TileConnections() { super(); }
+		{
+			put((short)0, false);
+			put((short)0, false);
+			put((short)0, false);
+		}
+		public static class Classes extends HashMap<Short, Boolean> {
+			static {
+
+			}
+		}
+		public static class ConnectionKey {}
+	}
+
 	public int light;
 	protected boolean maySpawn;
 	

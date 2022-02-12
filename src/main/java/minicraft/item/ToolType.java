@@ -84,7 +84,7 @@ public class ToolType {
 		ToolType.TypeLevels.put(name, new ArrayList<ItemLevel>());        
 	}
 	public static ToolType get(String name) {
-		return Types.get(name);
+		return Types.get(name.toLowerCase());
 	}
 	boolean equal(ToolType type) {
 		return this.name.equals(type.name);

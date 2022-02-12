@@ -101,9 +101,9 @@ public class Load {
 		
 		if (!loadGame) return;
 		
-		if (worldVer.compareTo(new Version("1.9.2")) < 0)
-			new LegacyLoad(worldname);
-		else {
+		// if (worldVer.compareTo(new Version("1.9.2")) < 0)
+		// 	new LegacyLoad(worldname);
+		// else {
 			location += "/saves/" + worldname + "/";
 			
 			percentInc = 5 + World.levels.length-1; // For the methods below, and world.
@@ -118,7 +118,7 @@ public class Load {
 			loadPlayer("Player", Game.player);
 			if (Game.isMode("creative"))
 				Items.fillCreativeInv(Game.player.getInventory(), false);
-		}
+		// }
 	}
 	
 	public Load(String worldname, MinicraftServer server) {
@@ -143,13 +143,14 @@ public class Load {
 		else
 			new Save();
 		
-		File testFileOld = new File(location + "unlocks" + extension);
+		// File testFileOld = new File(location + "unlocks" + extension);
 		File testFile = new File(location + "Unlocks" + extension);
-		if (testFileOld.exists() && !testFile.exists()) {
-			testFileOld.renameTo(testFile);
-			new LegacyLoad(testFile);
-		}
-		else if (!testFile.exists()) {
+		// if (testFileOld.exists() && !testFile.exists()) {
+		// 	testFileOld.renameTo(testFile);
+		// 	new LegacyLoad(testFile);
+		// }
+		// else 
+		if (!testFile.exists()) {
 			try {
 				testFile.createNewFile();
 			} catch (IOException ex) {
@@ -375,15 +376,15 @@ public class Load {
 					int tileArrIdx = y + x * lvlw;
 					int tileidx = x + y * lvlw; // the tiles are saved with x outer loop, and y inner loop, meaning that the list reads down, then right one, rather than right, then down one.
 					String tilename = data.get(tileidx + (hasSeed ? 4 : 3));
-					if (worldVer.compareTo(new Version("1.9.4-dev6")) < 0) {
-						int tileID = Integer.parseInt(tilename); // they were id numbers, not names, at this point
-						if (Tiles.oldids.get(tileID) != null)
-							tilename = Tiles.oldids.get(tileID);
-						else {
-							System.out.println("Tile list doesn't contain tile " + tileID);
-							tilename = "grass";
-						}
-					}
+					// if (worldVer.compareTo(new Version("1.9.4-dev6")) < 0) {
+					// 	int tileID = Integer.parseInt(tilename); // they were id numbers, not names, at this point
+					// 	if (Tiles.oldids.get(tileID) != null)
+					// 		tilename = Tiles.oldids.get(tileID);
+					// 	else {
+					// 		System.out.println("Tile list doesn't contain tile " + tileID);
+					// 		tilename = "grass";
+					// 	}
+					// }
 
 					if(tilename.equalsIgnoreCase("WOOL") && worldVer.compareTo(new Version("2.0.6-dev4")) < 0) {
 						switch (Integer.parseInt(extradata.get(tileidx))) {

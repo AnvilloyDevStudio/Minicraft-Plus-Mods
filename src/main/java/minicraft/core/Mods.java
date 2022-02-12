@@ -26,6 +26,7 @@ import minicraft.gfx.SpriteSheet;
 import minicraft.item.*;
 import minicraft.level.Level;
 import minicraft.level.tile.*;
+import minicraft.level.tile.ModTile.ModTileOption;
 import minicraft.level.tile.farming.ModPlant;
 import minicraft.level.tile.farming.Plant;
 import minicraft.mod.ModLoadAssets;
@@ -118,7 +119,7 @@ public class Mods extends Game {
 				}
             }
             public ToolItem toToolItem(boolean instance, int index) {
-                ToolType toolType = ToolType.Types.get(name.toLowerCase());
+                ToolType toolType = ToolType.get(name);
                 if (toolType==null) toolType = new ToolType(name, resources.getSprite(findSpriteSheet(), sprite[0], sprite[1]), durability, attack, noLevel);
                 if (!noLevel) {
                     ItemLevel itemLevel = ItemLevel.Levels.containsKey(itype[index])? ItemLevel.Levels.get(itype[index]): new ItemLevel(itype[index], tooltypelvl[index]);
@@ -308,6 +309,7 @@ public class Mods extends Game {
             public int[] sprite;
             private Resources resources;
             private Mod mod;
+            private ModTileOption options;
             public SpriteSheet findSpriteSheet() {
                 if (spriteSheet) return resources.TilesSheet;
                 else {
@@ -328,6 +330,9 @@ public class Mods extends Game {
                     try{drop = (String)Obj.getDeclaredField("drop").get(null);} catch (NoSuchFieldException e) {drop = null;} // xPos, yPos
                     try{seed = (String)Obj.getDeclaredField("seed").get(null);} catch (NoSuchFieldException e) {seed = null;} // xPos, yPos
                     try{id = (Integer)Obj.getDeclaredField("id").get(null);} catch (NoSuchFieldException e) {id = -1;} // xPos, yPos
+                    for (Class<?> class1 : Obj.getDeclaredClasses()) {
+                        if (class1.getSimpleName()=="Options") options = ModTileOption.class.cast(class1);
+                    }
                     spriteSheet = (boolean)Obj.getDeclaredField("spriteSheet").get(null); // false or ignore if sprite is separated from tiles.png
                     try{sprite = (int[])Obj.getDeclaredField("sprite").get(null);} catch (NoSuchFieldException e) {sprite = new int[] {0, 0};} // xPos, yPos
                     try{ModTileGens.add(Obj.getDeclaredMethod("tilegen", short[].class,java.util.Random.class,int.class,int.class,int.class));} catch (NoSuchMethodException e) {}
@@ -341,7 +346,8 @@ public class Mods extends Game {
 				}
             }
             public minicraft.level.tile.Tile toTile() {
-                return new ModTile(name, resources.getSprite2(findSpriteSheet(), sprite[0], sprite[1]));
+                if (options!=null) return new ModTile(name, resources.getSprite2(findSpriteSheet(), sprite[0], sprite[1]), options);
+                else return new ModTile(name, resources.getSprite2(findSpriteSheet(), sprite[0], sprite[1]));
             }
             public OreTile toOreTile() {
                 return new OreTile(new OreTile.OreType(name, mod.moditems.get(drop).toStackableItem(), resources.getSprite2(findSpriteSheet(), sprite[0], sprite[1])));

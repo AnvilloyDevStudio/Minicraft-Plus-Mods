@@ -79,7 +79,6 @@ public class ToolType {
 		durability = dur;
 		this.noLevel = noLevel;
 		this.attack = attack;
-		System.out.println(ToolType.Types.get(name));
 		ToolType.TypeInstances.add(this);
 		ToolType.Types.put(name, this);
 		ToolType.TypeLevels.put(name, new ArrayList<ItemLevel>());        

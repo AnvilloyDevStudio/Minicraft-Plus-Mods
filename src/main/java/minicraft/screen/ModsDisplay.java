@@ -84,14 +84,14 @@ public class ModsDisplay extends Display {
 		Font.draw(ModsDisplay.shortNameIfLong(selectedDDD), screen, 5, Screen.h - 135, Color.GRAY); // Fourth space
 		Font.draw(ModsDisplay.shortNameIfLong(selectedDDDD), screen, 5, Screen.h - 145, Color.GRAY); // Fourth space
 		Font.draw(ModsDisplay.shortNameIfLong(selectedDDDDD), screen, 5, Screen.h - 155, Color.GRAY); // Fourth space
-		if (mods.size() == 0) Font.drawCentered("No mod available.", screen, screen.h/2, Color.CYAN);
+		if (mods.size() == 0) Font.drawCentered("No mod available.", screen, Screen.h/2, Color.CYAN);
 		FontStyle fs = new FontStyle();
 		if (mods.size() != 0) {
-			Font.drawCentered("Name: "+mods.get(selectedIndex).Info.getString("name"), screen, screen.h-170, Color.WHITE);
-			Font.drawCentered("Version: "+mods.get(selectedIndex).Resources.manifest.getMainAttributes().getValue("Implementation-Version"), screen, screen.h-158, Color.WHITE);
+			Font.drawCentered("Name: "+mods.get(selectedIndex).Info.getString("name"), screen, Screen.h-170, Color.WHITE);
+			Font.drawCentered("Version: "+mods.get(selectedIndex).Resources.manifest.getMainAttributes().getValue("Implementation-Version"), screen, Screen.h-158, Color.WHITE);
 		}
-		fs.setXPos(screen.w/2-10);
-		fs.setYPos(screen.h-140);
+		fs.setXPos(Screen.w/2-10);
+		fs.setYPos(Screen.h-140);
 		List<String> des = new ArrayList<>();
 		if (mods.size() != 0) for (String line : Arrays.asList(mods.get(selectedIndex).Info.getString("description").split("\n"))) {
 			int br = (int)Math.ceil(line.length()/18)+1;
@@ -108,7 +108,7 @@ public class ModsDisplay extends Display {
 		}
 		pages = p;
         Font.drawParagraph(pages.get(pageIndex), screen, fs, 3);
-		if (mods.size() != 0) Font.draw("Pages: "+(pageIndex+1)+"/"+p.size(), screen, screen.w/2-10, screen.h-32);
+		if (mods.size() != 0) Font.draw("Pages: "+(pageIndex+1)+"/"+p.size(), screen, Screen.w/2-10, Screen.h-32);
 		// Help text.
 		Font.drawCentered("Use "+ Game.input.getMapping("cursor-down") + " and " + Game.input.getMapping("cursor-up") + " to select mod.", screen, Screen.h - 9, Color.WHITE);
 		Font.drawCentered("Use "+ Game.input.getMapping("cursor-left") + " and " + Game.input.getMapping("cursor-right") + " to move pages.", screen, Screen.h - 19, Color.WHITE);

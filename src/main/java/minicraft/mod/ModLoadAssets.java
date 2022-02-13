@@ -29,7 +29,7 @@ public class ModLoadAssets /*extends Item*/ {
                     Items.add(item.toBucketItem());
                     break;
                 case "Armor":
-                    for (int a = 0; a<item.itype.length; a++) Items.add(item.toArmorItem(a));
+                    Items.add(item.toArmorItem());
             }
         }
         for (Mods.Mod.Recipe recipe : Mods.Recipes) {

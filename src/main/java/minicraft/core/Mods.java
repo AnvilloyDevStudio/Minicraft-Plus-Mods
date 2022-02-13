@@ -20,13 +20,12 @@ import minicraft.core.io.ClassLoader;
 import minicraft.entity.furniture.*;
 import minicraft.entity.mob.*;
 import minicraft.gfx.MobSprite;
-import minicraft.gfx.Screen;
 import minicraft.gfx.Sprite;
 import minicraft.gfx.SpriteSheet;
 import minicraft.item.*;
-import minicraft.level.Level;
 import minicraft.level.tile.*;
 import minicraft.level.tile.ModTile.ModTileOption;
+import minicraft.level.tile.Tile.TileConnections;
 import minicraft.level.tile.farming.ModPlant;
 import minicraft.level.tile.farming.Plant;
 import minicraft.mod.ModLoadAssets;
@@ -73,7 +72,7 @@ public class Mods extends Game {
             public String[] itype;
             public int durability;
             public boolean noLevel;
-            public int[] tooltypelvl;
+            public int armorlvl;
             public boolean attack;
             public String ename;
             public int feed;
@@ -104,11 +103,10 @@ public class Mods extends Game {
                     try{durability = (Integer)Obj.getDeclaredField("durability").get(null);} catch (NoSuchFieldException e) {durability = 1;};
                     try{feed = (Integer)Obj.getDeclaredField("feed").get(null);} catch (NoSuchFieldException e) {feed = 1;};
                     try{cost = (Integer)Obj.getDeclaredField("cost").get(null);} catch (NoSuchFieldException e) {cost = 1;};
+                    try{armorlvl = (Integer)Obj.getDeclaredField("armor").get(null);} catch (NoSuchFieldException e) {armorlvl = 1;}; // Armor level
                     try{noLevel = (boolean)Obj.getDeclaredField("noLevel").get(null);} catch (NoSuchFieldException e) {noLevel = true;};
-                    try{tooltypelvl = (int[])Obj.getDeclaredField("level").get(null);} catch (NoSuchFieldException e) {tooltypelvl = new int[0];} // Item level level number
                     try{attack = (boolean)Obj.getDeclaredField("attack").get(null);} catch (NoSuchFieldException e) {attack = true;} // canAttack
                     spriteSheet = (boolean)Obj.getDeclaredField("spriteSheet").get(null); // false or ignore if sprite is separated from items.png
-                    if (itype.length!=tooltypelvl.length) new Crash(new Crash.CrashData("ModLoad", "", "Lengths of Item type and level are difference", Obj.getName()));
                     try{sprite = (int[])Obj.getDeclaredField("sprite").get(null);} catch (NoSuchFieldException e) {sprite = new int[] {0, 0};} // xPos, yPos
                 } catch (IllegalArgumentException | NullPointerException
                         | SecurityException | NoSuchFieldException | IllegalAccessException e) {
@@ -121,10 +119,7 @@ public class Mods extends Game {
             public ToolItem toToolItem(boolean instance, int index) {
                 ToolType toolType = ToolType.get(name);
                 if (toolType==null) toolType = new ToolType(name, resources.getSprite(findSpriteSheet(), sprite[0], sprite[1]), durability, attack, noLevel);
-                if (!noLevel) {
-                    ItemLevel itemLevel = ItemLevel.Levels.containsKey(itype[index])? ItemLevel.Levels.get(itype[index]): new ItemLevel(itype[index], tooltypelvl[index]);
-                    return new ToolItem(toolType, itemLevel);
-                }
+                if (!noLevel) return new ToolItem(toolType, ItemLevel.Levels.get(itype[index].toLowerCase()));
                 else return new ToolItem(toolType);
             }
             public StackableItem toStackableItem() {
@@ -139,8 +134,8 @@ public class Mods extends Game {
             public BucketItem toBucketItem() {
                 return new BucketItem(new BucketItem.Fill(name, mod.modtiles.get(ename).toTile(), resources.getSprite(findSpriteSheet(), sprite[0], sprite[1])));
             }
-            public ArmorItem toArmorItem(int index) {
-                return new ArmorItem(name, resources.getSprite(findSpriteSheet(), sprite[0], sprite[1]), durability, tooltypelvl[index]);
+            public ArmorItem toArmorItem() {
+                return new ArmorItem(name, resources.getSprite(findSpriteSheet(), sprite[0], sprite[1]), durability, armorlvl);
             }
         }
 		public static class Recipe {
@@ -321,6 +316,15 @@ public class Mods extends Game {
                     else return img;
                 }
             }
+            public static ModTileOption toOptions(Class<?> Obj) {
+                public boolean mayPass;
+                public Method mayPassMethod;
+                public Map<String, Boolean> Connections;
+                public Method render;
+                public Method tick;
+                public Method hurt;
+                public Method interact;
+            }
             Tile(Mod mod, Class<?> Obj, Resources res) {
                 resources = res;
                 this.mod = mod;
@@ -329,14 +333,13 @@ public class Mods extends Game {
                     tiletype = (String)Obj.getDeclaredField("tiletype").get(null);
                     try{drop = (String)Obj.getDeclaredField("drop").get(null);} catch (NoSuchFieldException e) {drop = null;} // xPos, yPos
                     try{seed = (String)Obj.getDeclaredField("seed").get(null);} catch (NoSuchFieldException e) {seed = null;} // xPos, yPos
-                    try{id = (Integer)Obj.getDeclaredField("id").get(null);} catch (NoSuchFieldException e) {id = -1;} // xPos, yPos
+                    id = (Integer)Obj.getDeclaredField("id").get(null); // xPos, yPos
                     for (Class<?> class1 : Obj.getDeclaredClasses()) {
-                        if (class1.getSimpleName()=="Options") options = ModTileOption.class.cast(class1);
+                        if (class1.getSimpleName().equals("Options")) options = toOptions(class1);
                     }
                     spriteSheet = (boolean)Obj.getDeclaredField("spriteSheet").get(null); // false or ignore if sprite is separated from tiles.png
                     try{sprite = (int[])Obj.getDeclaredField("sprite").get(null);} catch (NoSuchFieldException e) {sprite = new int[] {0, 0};} // xPos, yPos
                     try{ModTileGens.add(Obj.getDeclaredMethod("tilegen", short[].class,java.util.Random.class,int.class,int.class,int.class));} catch (NoSuchMethodException e) {}
-                    if (id == -1) new Crash(new Crash.CrashData("ModLoad", "", "Invalid Tile ID: -1", Obj.getName()));
                 } catch (IllegalArgumentException | NullPointerException
                         | SecurityException | NoSuchFieldException | IllegalAccessException e) {
 					if (e instanceof NoSuchFieldException) new Crash(new Crash.CrashData("ModLoad", Crash.getStackTrace(e), "Missing Tile Field", Obj.getName()));
@@ -354,6 +357,22 @@ public class Mods extends Game {
             }
             public Plant toPlant() {
                 return new ModPlant(name, seed, drop, sprite[0], sprite[1], findSpriteSheet());
+            }
+        }
+        private static void addItemLevel(Class<?> Obj) {
+            try {
+                new ItemLevel((String)Obj.getDeclaredField("name").get(null), (Integer)Obj.getDeclaredField("level").get(null));
+            } catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+        private static void addTileCClass(Class<?> Obj) {
+            try {
+                TileConnections.Classes.putOrAdd((String)Obj.getDeclaredField("name").get(null), (short[])Obj.getDeclaredField("tiles").get(null));
+            } catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
             }
         }
         public Resources Resources;
@@ -434,6 +453,14 @@ public class Mods extends Game {
                 } else if (class1.getSimpleName().equals("TileEntities")) {
                     for (Class<?> class2 : class1.getDeclaredClasses()) {
                         modtileentities.put(class2.getSimpleName(), class2);
+                    }
+                } else if (class1.getSimpleName().equals("ItemLevels")) {
+                    for (Class<?> class2 : class1.getDeclaredClasses()) {
+                        addItemLevel(class2);
+                    }
+                } else if (class1.getSimpleName().equals("TileClasses")) {
+                    for (Class<?> class2 : class1.getDeclaredClasses()) {
+                        addTileCClass(class2);
                     }
                 }
             }

@@ -12,7 +12,6 @@ import minicraft.entity.mob.Player;
 import minicraft.entity.mob.RemotePlayer;
 import minicraft.gfx.Sprite;
 import minicraft.level.Level;
-import minicraft.level.tile.OreTile;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 

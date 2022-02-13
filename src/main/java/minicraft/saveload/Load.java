@@ -692,7 +692,7 @@ public class Load {
 			}
 		} else {
 			int mobLvl = 1;
-			Class c = null;
+			Class<?> c = null;
 			if (!Crafter.names.contains(entityName)) {
 				try {
 					c = Class.forName("minicraft.entity.mob." + entityName);
@@ -709,7 +709,7 @@ public class Load {
 			Mob mob = (Mob)newEntity;
 			mob.health = Integer.parseInt(info.get(2));
 
-			Class c = null;
+			Class<?> c = null;
 			try {
 				c = Class.forName("minicraft.entity.mob." + entityName);
 			} catch (ClassNotFoundException e) {

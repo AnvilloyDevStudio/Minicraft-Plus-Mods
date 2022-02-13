@@ -189,6 +189,8 @@ public class MultiplayerDisplay extends Display {
 				if(errorMessage.length() > 0)
 					curState = State.ERROR;
 				break;
+			default:
+				break;
 		}
 		
 		if(input.getKey("exit").clicked && !Game.ISHOST) {

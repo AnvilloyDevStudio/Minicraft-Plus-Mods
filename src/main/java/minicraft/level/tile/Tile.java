@@ -69,15 +69,30 @@ public abstract class Tile {
 			public static void put(String k, ArrayList<Short> v) {
 				Map.put(k.toLowerCase(), v);
 			}
+			public static void putOrAdd(String k, short... v) {
+				if (Map.containsKey(k.toLowerCase())) add(k, v);
+				else {
+					ArrayList<Short> m = new ArrayList<>();
+					for (short value : v) m.add(value);
+					put(k, m);
+				}
+			}
+			public static void putOrAdd(String k, ArrayList<Short> v) {
+				if (Map.containsKey(k.toLowerCase())) add(k, v);
+				else put(k, v);
+			}
 			public static ArrayList<Short> get(String k) {
 				return Map.get(k.toLowerCase());
 			}
 			public static void add(String name, short... values) {
-				ArrayList<Short> m = Map.get(name);
+				ArrayList<Short> m = get(name);
 				for (short v : values) m.add(v);
 			}
 			public static void add(String name, short v) {
-				Map.get(name).add(v);
+				get(name).add(v);
+			}
+			public static void add(String name, ArrayList<Short> v) {
+				get(name).addAll(v);
 			}
 		}
 		public static class ConnectionKey {

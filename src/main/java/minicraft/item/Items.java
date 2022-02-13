@@ -6,7 +6,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import minicraft.core.Network;
-import minicraft.mod.ModLoadAssets;
 
 public class Items {
 	

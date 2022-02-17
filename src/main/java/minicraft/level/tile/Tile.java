@@ -18,7 +18,7 @@ import minicraft.item.ToolType;
 import minicraft.level.Level;
 import minicraftmodsapiinterface.ITile;
 
-public abstract class Tile {
+public abstract class Tile implements ITile {
 	public static int tickCount = 0; // A global tickCount used in the Lava & water tiles.
 	protected Random random = new Random();
 

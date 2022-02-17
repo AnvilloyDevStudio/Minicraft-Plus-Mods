@@ -79,8 +79,6 @@ public class Module {
                 public static void render(Object screen, Object level, int x, int y, Object sprite, Class<?> extra) {
                     try {
                         Object grass = Class.class.cast(extra.getDeclaredField("tiles").get(null)).getDeclaredMethod("get", String.class).invoke(null, "Grass");
-                        System.out.println(grass.getClass().getDeclaredMethod("render", screen.getClass(), level.getClass(), int.class, int.class));
-                        System.out.println(sprite.getClass().getDeclaredMethod("render", screen.getClass(), int.class, int.class));
                         grass.getClass().getDeclaredMethod("render", screen.getClass(), level.getClass(), int.class, int.class).invoke(grass, screen, level, x, y);
                         sprite.getClass().getDeclaredMethod("render", screen.getClass(), int.class, int.class).invoke(sprite, screen, x*16, y*16);
                     } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | NoSuchFieldException e) {e.printStackTrace();}
@@ -102,21 +100,21 @@ public class Module {
             	public static void hurt(Object level, int x, int y, int dmg, Class<?> extra) {
                     try {
                         Method itemget = Class.class.cast(extra.getDeclaredField("items").get(null)).getDeclaredMethod("get", String.class);
-                        Method dropItem = level.getClass().getDeclaredMethod("dropItem", int.class, int.class, int.class, int.class, itemget.invoke(null, "Apple").getClass().arrayType());
+                        Method dropItem = level.getClass().getDeclaredMethod("dropItem", int.class, int.class, int.class, int.class, itemget.invoke(null, "Apple").getClass().getSuperclass().getSuperclass().arrayType());
                         if (random.nextInt(250) == 0)
                         level.getClass().getDeclaredMethod("dropItem", int.class, int.class, itemget.invoke(null, "Apple").getClass()).invoke(level, x * 16 + 8, y * 16 + 8, itemget.invoke(null, "Apple"));
                         
                         int damage = (int)level.getClass().getDeclaredMethod("getData", int.class, int.class).invoke(level, x, y) + dmg;
                         int treeHealth = 30;
-                        if ((boolean)Class.class.cast(extra.getDeclaredField("game")).getDeclaredMethod("isMode", String.class).invoke(null, "Creative")) dmg = damage = treeHealth;
+                        if ((boolean)Class.class.cast(extra.getDeclaredField("game").get(null)).getDeclaredMethod("isMode", String.class).invoke(null, "Creative")) dmg = damage = treeHealth;
                         
                         HashMap<String, Class<?>> Particles = ((HashMap)extra.getDeclaredField("particles").get(null));
                         Method leveladd = level.getClass().getDeclaredMethod("add", Particles.get("SmashParticle").getSuperclass().getSuperclass());
-                        leveladd.invoke(Particles.get("SmashParticle").getDeclaredConstructor(int.class, int.class).newInstance(x*16, y*16));
-                        Object monsterHurt = Class.class.cast(extra.getDeclaredField("sound")).getDeclaredField("monsterHurt").get(null);
+                        leveladd.invoke(level, Particles.get("SmashParticle").getDeclaredConstructor(int.class, int.class).newInstance(x*16, y*16));
+                        Object monsterHurt = Class.class.cast(extra.getDeclaredField("sound").get(null)).getDeclaredField("monsterHurt").get(null);
                         monsterHurt.getClass().getDeclaredMethod("play", (Class[])null).invoke(monsterHurt, new Object[0]);
                 
-                        leveladd.invoke(Particles.get("TextParticle").getDeclaredConstructor(String.class, int.class, int.class, int.class).newInstance("" + dmg, x * 16 + 8, y * 16 + 8, (1 << 24) + (255 << 16) + (0 << 8) + (0)));
+                        leveladd.invoke(level, Particles.get("TextParticle").getDeclaredConstructor(String.class, int.class, int.class, int.class).newInstance("" + dmg, x * 16 + 8, y * 16 + 8, (1 << 24) + (255 << 16) + (0 << 8) + (0)));
                         if (damage >= treeHealth) {
                             dropItem.invoke(level, x * 16 + 8, y * 16 + 8, 1, 3, itemget.invoke(null, "Wood"));
                             dropItem.invoke(level, x * 16 +  8, y * 16 + 8, 0, 2, itemget.invoke(null, "Acorn"));

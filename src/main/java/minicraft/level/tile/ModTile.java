@@ -24,7 +24,7 @@ import minicraft.entity.particle.*;
 public class ModTile extends Tile {
     public static ArrayList<Tile> Instances = new ArrayList<>();
     private ModTileOption options;
-    private static class ExtraAssets {
+    public static class ExtraAssets {
         public static Class<Tiles> tiles = Tiles.class;
         public static Class<Items> items = Items.class;
         public static Class<Game> game = Game.class;

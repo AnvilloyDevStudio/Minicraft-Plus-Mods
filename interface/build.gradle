@@ -4,7 +4,7 @@ apply plugin: 'application'
 project.version = '0.1.0'
 
 sourceCompatibility = 8
-mainClassName = 'mod.Module'
+mainClassName = 'minicraftmodapiinterface'
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
 repositories {
@@ -45,13 +45,12 @@ buildscript {
 }
 
 jar {
-    archivesBaseName = 'core'
+    archivesBaseName = 'minicraft-mod-api-interface'
     archiveClassifier.set('')
     
     manifest {
         attributes('Main-Class': mainClassName,
                 'Implementation-Title': project.name,
-                'Implementation-Version': project.version,
-                'SplashScreen-Image': "Minicraft_Splash_Screen_3.png")
+                'Implementation-Version': project.version)
     }
 }

@@ -44,7 +44,6 @@ import minicraft.item.Recipes;
 import minicraft.item.StackableItem;
 import minicraft.item.TileItem;
 import minicraft.item.ToolItem;
-import minicraft.item.ToolType;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;

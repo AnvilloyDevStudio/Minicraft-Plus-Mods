@@ -16,6 +16,7 @@ import minicraft.gfx.Sprite;
 import minicraft.item.Item;
 import minicraft.item.ToolType;
 import minicraft.level.Level;
+import minicraftmodsapiinterface.ITile;
 
 public abstract class Tile {
 	public static int tickCount = 0; // A global tickCount used in the Lava & water tiles.

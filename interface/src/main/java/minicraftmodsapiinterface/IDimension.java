@@ -1,5 +1,5 @@
 package minicraftmodsapiinterface;
 
-public interface Level {
+public interface IDimension {
     
 }

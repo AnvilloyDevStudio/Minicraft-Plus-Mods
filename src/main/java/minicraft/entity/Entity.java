@@ -17,6 +17,8 @@ import minicraft.gfx.Screen;
 import minicraft.item.Item;
 import minicraft.level.Level;
 
+import minicraftmodsapiinterface.IEntity;
+
 public abstract class Entity implements Tickable {
 	
 	/* I guess I should explain something real quick. The coordinates between tiles and entities are different.

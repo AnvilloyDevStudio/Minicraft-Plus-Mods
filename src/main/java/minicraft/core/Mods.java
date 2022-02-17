@@ -7,6 +7,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
@@ -17,12 +18,15 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.json.JSONObject;
 
 import minicraft.core.io.ClassLoader;
+import minicraft.entity.Entity;
 import minicraft.entity.furniture.*;
 import minicraft.entity.mob.*;
+import minicraft.entity.particle.Particle;
 import minicraft.gfx.MobSprite;
 import minicraft.gfx.Sprite;
 import minicraft.gfx.SpriteSheet;
 import minicraft.item.*;
+import minicraft.level.Level;
 import minicraft.level.tile.*;
 import minicraft.level.tile.ModTile.ModTileOption;
 import minicraft.level.tile.Tile.TileConnections;
@@ -37,7 +41,8 @@ public class Mods extends Game {
 	public static ArrayList<Mod.Recipe> Recipes = new ArrayList<>();
     public static ArrayList<Mod.Entity> Entities = new ArrayList<>();    
     public static ArrayList<Mod.Tile> Tiles = new ArrayList<>();    
-    public static ArrayList<Method> ModTileGens = new ArrayList<>();
+    public static ArrayList<Method> ModTileUnderGens = new ArrayList<>();
+    public static ArrayList<Method> ModTileTopGens = new ArrayList<>();
     public static void init() {}
 
     static {
@@ -317,13 +322,15 @@ public class Mods extends Game {
                 }
             }
             public static ModTileOption toOptions(Class<?> Obj) {
-                public boolean mayPass;
-                public Method mayPassMethod;
-                public Map<String, Boolean> Connections;
-                public Method render;
-                public Method tick;
-                public Method hurt;
-                public Method interact;
+                ModTileOption o = new ModTileOption();
+                try{o.mayPass = (boolean)Obj.getDeclaredField("mayPass").get(null);} catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException | SecurityException e) {};
+                try{o.mayPassMethod = Obj.getDeclaredMethod("mayPassMethod", Object.class, int.class, int.class, Object.class);} catch (NoSuchMethodException e) {};
+                try{o.Connections = Map.class.cast(Obj.getDeclaredField("Connections").get(null));} catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException | SecurityException e) {};
+                try{o.render = Obj.getDeclaredMethod("render", Object.class, Object.class, int.class, int.class, Object.class, Class.class);} catch (NoSuchMethodException e) {};
+                try{o.tick = Obj.getDeclaredMethod("tick", Object.class, int.class, int.class, Class.class);} catch (NoSuchMethodException e) {};
+                try{o.hurt = Obj.getDeclaredMethod("hurt", Object.class, int.class, int.class, Object.class, int.class, Object.class, Class.class);} catch (NoSuchMethodException e) {};
+                try{o.interact = Obj.getDeclaredMethod("interact", Object.class, int.class, int.class, Object.class, Object.class, Object.class);} catch (NoSuchMethodException e) {};
+                return o;
             }
             Tile(Mod mod, Class<?> Obj, Resources res) {
                 resources = res;
@@ -339,7 +346,8 @@ public class Mods extends Game {
                     }
                     spriteSheet = (boolean)Obj.getDeclaredField("spriteSheet").get(null); // false or ignore if sprite is separated from tiles.png
                     try{sprite = (int[])Obj.getDeclaredField("sprite").get(null);} catch (NoSuchFieldException e) {sprite = new int[] {0, 0};} // xPos, yPos
-                    try{ModTileGens.add(Obj.getDeclaredMethod("tilegen", short[].class,java.util.Random.class,int.class,int.class,int.class));} catch (NoSuchMethodException e) {}
+                    try{ModTileUnderGens.add(Obj.getDeclaredMethod("tilegen", short[].class,java.util.Random.class,int.class,int.class,int.class,Class.class));} catch (NoSuchMethodException e) {}
+                    try{ModTileTopGens.add(Obj.getDeclaredMethod("tilegen", short[].class,java.util.Random.class,int.class,int.class,Class.class));} catch (NoSuchMethodException e) {}
                 } catch (IllegalArgumentException | NullPointerException
                         | SecurityException | NoSuchFieldException | IllegalAccessException e) {
 					if (e instanceof NoSuchFieldException) new Crash(new Crash.CrashData("ModLoad", Crash.getStackTrace(e), "Missing Tile Field", Obj.getName()));

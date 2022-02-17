@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+Main-Class: mod.Module
+Implementation-Title: minicrate
+Implementation-Version: 0.1.0
+SplashScreen-Image: Minicraft_Splash_Screen_3.png
+

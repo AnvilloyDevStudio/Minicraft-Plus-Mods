@@ -449,6 +449,16 @@ public class LevelGen {
 		
 		int count = 0;
 		
+		// Mod Top Map tile generation
+		for (Method method : Mods.ModTileTopGens) {
+			try {
+				System.out.println("EXETOPMODTILEGEN");
+				method.invoke(null, map, random, w, h, Tiles.class);
+			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NullPointerException e) {
+				new Crash(new Crash.CrashData("Mod Tile Genration Method Error", Crash.getStackTrace(e)));
+			}
+		}
+
 		//if (Game.debug) System.out.println("Generating stairs for surface level...");
 		
 		stairsLoop:
@@ -613,10 +623,10 @@ public class LevelGen {
 				}
 			}
 		}
-		for (Method method : Mods.ModTileGens) {
+		for (Method method : Mods.ModTileUnderGens) {
 			try {
-				System.out.println("EXEMODTILEGEN");
-				method.invoke(null, map, random, depth, w, h);
+				System.out.println("EXEUNDERMODTILEGEN");
+				method.invoke(null, map, random, depth, w, h, Tiles.class);
 			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NullPointerException e) {
 				new Crash(new Crash.CrashData("Mod Tile Genration Method Error", Crash.getStackTrace(e)));
 			}

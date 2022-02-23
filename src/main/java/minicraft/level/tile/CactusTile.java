@@ -9,10 +9,10 @@ import minicraft.entity.mob.Mob;
 import minicraft.entity.particle.SmashParticle;
 import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
-import minicraft.gfx.Screen;
 import minicraft.gfx.Sprite;
 import minicraft.item.Items;
 import minicraft.level.Level;
+import minicraftmodsapiinterface.*;
 
 public class CactusTile extends Tile {
 	private static Sprite sprite = new Sprite(6, 0, 2, 2, 1);
@@ -45,7 +45,7 @@ public class CactusTile extends Tile {
 	}
 
 	@Override
-	public void render(Screen screen, Level level, int x, int y) {
+	public void render(IScreen screen, ILevel level, int x, int y) {
 		Tiles.get("Sand").render(screen, level, x, y);
 
 		sprite.render(screen, x << 4, y << 4);

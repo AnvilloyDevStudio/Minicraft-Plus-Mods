@@ -5,7 +5,6 @@ import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
 import minicraft.entity.mob.AirWizard;
-import minicraft.entity.mob.Mob;
 import minicraft.entity.mob.Player;
 import minicraft.entity.particle.SmashParticle;
 import minicraft.entity.particle.TextParticle;
@@ -16,6 +15,7 @@ import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.ToolItem;
 import minicraft.level.Level;
+import minicraftmodsapiinterface.*;
 
 public class WallTile extends Tile {
 
@@ -39,8 +39,8 @@ public class WallTile extends Tile {
 	}
 
 	@Override
-	public boolean hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
-		if (Game.isMode("Creative") || level.depth != -3 || type != Material.Obsidian || AirWizard.beaten) {
+	public boolean hurt(ILevel level, int x, int y, IMob source, int dmg, IDirection attackDir) {
+		if (Game.isMode("Creative") || ((Level)level).depth != -3 || type != Material.Obsidian || AirWizard.beaten) {
 			hurt(level, x, y, random.nextInt(6) / 6 * dmg / 2);
 			return true;
 		} else {

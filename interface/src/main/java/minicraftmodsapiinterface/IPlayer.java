@@ -5,8 +5,6 @@ import java.util.HashMap;
 public interface IPlayer {
     public int getMultiplier();
 	
-	void resetMultiplier();
-	
 	public void addMultiplier(int value);
 	
 	public void tickMultiplier();

@@ -9,6 +9,7 @@ import minicraft.entity.mob.RemotePlayer;
 import minicraft.gfx.Sprite;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
+import minicraftmodsapiinterface.IItem;
 
 public class PotionItem extends StackableItem {
 	
@@ -59,7 +60,7 @@ public class PotionItem extends StackableItem {
 	}
 	
 	@Override
-	public boolean equals(Item other) {
+	public boolean equals(IItem other) {
 		return super.equals(other) && ((PotionItem)other).type == type;
 	}
 	

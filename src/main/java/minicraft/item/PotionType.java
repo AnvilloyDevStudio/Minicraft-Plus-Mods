@@ -5,13 +5,17 @@ import minicraft.core.World;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;
 import minicraft.level.Level;
+import minicraftmodsapiinterface.IEntity;
+import minicraftmodsapiinterface.ILevel;
+import minicraftmodsapiinterface.IPlayer;
+import minicraftmodsapiinterface.IPotionType;
 
-public enum PotionType {
+public enum PotionType implements IPotionType {
 	None (Color.get(1, 22, 22, 137), 0),
 	
 	Speed (Color.get(1, 23, 46, 23), 4200) {
-		public boolean toggleEffect(Player player, boolean addEffect) {
-			player.moveSpeed += (double)( addEffect ? 1 : (player.moveSpeed > 1 ? -1 : 0) );
+		public boolean toggleEffect(IPlayer player, boolean addEffect) {
+			((Player)player).moveSpeed += (double)( addEffect ? 1 : (((Player)player).moveSpeed > 1 ? -1 : 0) );
 			return true;
 		}
 	},
@@ -22,8 +26,8 @@ public enum PotionType {
 	Regen (Color.get(1, 168, 54, 146), 1800),
 	
 	Health (Color.get(1, 161, 46, 69), 0) {
-		public boolean toggleEffect(Player player, boolean addEffect) {
-			if(addEffect) player.heal(5);
+		public boolean toggleEffect(IPlayer player, boolean addEffect) {
+			if(addEffect) ((Player) player).heal(5);
 			return true;
 		}
 	},
@@ -34,9 +38,9 @@ public enum PotionType {
 	Haste (Color.get(1, 106, 37, 106), 4800),
 	
 	Escape (Color.get(1, 85, 62, 62), 0) {
-		public boolean toggleEffect(Player player, boolean addEffect) {
+		public boolean toggleEffect(IPlayer player, boolean addEffect) {
 			if (addEffect) {
-				int playerDepth = player.getLevel().depth;
+				int playerDepth = ((Level)((Player) player).getLevel()).depth;
 				
 				if (playerDepth == 0) {
 					if (!Game.isValidServer()) {
@@ -51,7 +55,7 @@ public enum PotionType {
 				
 				World.scheduleLevelChange(depthDiff, () -> {
 					Level plevel = World.levels[World.lvlIdx(playerDepth + depthDiff)];
-					if (plevel != null && !plevel.getTile(player.x >> 4, player.y >> 4).mayPass(plevel, player.x >> 4, player.y >> 4, player))
+					if (plevel != null && !plevel.getTile(((Player)player).x >> 4, ((Player)player).y >> 4).mayPass((ILevel)plevel, ((Player)player).x >> 4, ((Player)player).y >> 4, (IEntity)player))
 						player.findStartPos(plevel, false);
 				});
 			}
@@ -69,7 +73,7 @@ public enum PotionType {
 		else name = this + " Potion";
 	}
 	
-	public boolean toggleEffect(Player player, boolean addEffect) {
+	public boolean toggleEffect(IPlayer player, boolean addEffect) {
 		return duration > 0; // If you have no duration and do nothing, then you can't be used.
 	}
 	

@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.stream.Collectors;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -41,6 +42,7 @@ import minicraft.saveload.Load;
 import minicraft.saveload.Save;
 import minicraft.saveload.Version;
 import minicraft.screen.WorldSelectDisplay;
+import minicraftmodsapiinterface.ILevel;
 
 public class MinicraftServer extends Thread implements MinicraftProtocol {
 	
@@ -141,11 +143,11 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 		int xt = e.x >> 4, yt = e.y >> 4;
 		return getPlayersInRange(e.getLevel(), xt, yt, useTrackRange); // NOTE if "e" is a RemotePlayer, the list returned *will* contain "e".
 	}
-	public List<RemotePlayer> getPlayersInRange(Level level, int xt, int yt, boolean useTrackRange) {
+	public List<RemotePlayer> getPlayersInRange(ILevel level, int xt, int yt, boolean useTrackRange) {
 		List<RemotePlayer> players = new ArrayList<>();
 		for (MinicraftServerThread thread: getThreads()) {
 			RemotePlayer rp = thread.getClient();
-			if (useTrackRange && rp.shouldTrack(xt, yt, level) || !useTrackRange && rp.shouldSync(xt, yt, level))
+			if (useTrackRange && rp.shouldTrack(xt, yt, (Level)level) || !useTrackRange && rp.shouldSync(xt, yt, (Level)level))
 				players.add(rp);
 		}
 		
@@ -456,7 +458,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 				
 				// now, we send the INIT_W packet and notify the others clients.
 				
-				int playerlvl = World.lvlIdx(clientPlayer.getLevel() != null ? clientPlayer.getLevel().depth : 0);
+				int playerlvl = World.lvlIdx(clientPlayer.getLevel() != null ? ((Level)clientPlayer.getLevel()).depth : 0);
 				if (!Arrays.asList(World.levels[playerlvl].getEntityArray()).contains(clientPlayer) && clientPlayer != hostPlayer) // this will be true if their file was already found, since they are added in Load.loadPlayer().
 					World.levels[playerlvl].add(clientPlayer); // add to level (**id is generated here**) and also, maybe, broadcasted to other players?
 				
@@ -519,7 +521,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 				
 				StringBuilder edata = new StringBuilder();
 				for (Entity curEntity : entities) {
-					if (!clientPlayer.shouldTrack(curEntity.x >> 4, curEntity.y >> 4, curEntity.getLevel()))
+					if (!clientPlayer.shouldTrack(curEntity.x >> 4, curEntity.y >> 4, (Level)curEntity.getLevel()))
 						continue; // this is outside of the player's entity tracking range; doesn't need to know about it yet.
 					String curEntityData = "";
 					if (curEntity != clientPlayer) {
@@ -557,7 +559,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 			
 			case DROP:
 				Item dropped = Items.get(alldata);
-				Level playerLevel = clientPlayer.getLevel();
+				Level playerLevel = (Level)clientPlayer.getLevel();
 				if (playerLevel != null)
 					playerLevel.dropItem(clientPlayer.x, clientPlayer.y, dropped);
 				return true;
@@ -581,7 +583,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 					return false;
 				}
 				
-				if (!clientPlayer.shouldSync(entityToSend.x >> 4, entityToSend.y >> 4, entityToSend.getLevel())) {
+				if (!clientPlayer.shouldSync(entityToSend.x >> 4, entityToSend.y >> 4, (Level)entityToSend.getLevel())) {
 					// the requested entity is not even in range
 					return false;
 				}
@@ -625,7 +627,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 				
 				if (e instanceof DeathChest) {
 					StringBuilder itemDataB = new StringBuilder();
-					for (Item i: chest.getInventory().getItems())
+					for (Item i: chest.getInventory().getItems().stream().map(i -> {return (Item)i;}).collect(Collectors.toUnmodifiableList()))
 						itemDataB.append(i.getData()).append(";");
 					String itemData = itemDataB.toString();
 					itemData = itemData.length() == 0 ? itemData : itemData.substring(0, itemData.length() - 1);
@@ -655,8 +657,8 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 					}
 					// if here, the index is valid
 					boolean wholeStack = Boolean.parseBoolean(data[2]);
-					Item toRemove = chest.getInventory().get(itemIdx);
-					Item itemToSend = toRemove.clone();
+					Item toRemove = (Item)chest.getInventory().get(itemIdx);
+					Item itemToSend = (Item)toRemove.clone();
 					if (!wholeStack && toRemove instanceof StackableItem && ((StackableItem)toRemove).count > 1) {
 						((StackableItem)itemToSend).count = 1;
 						((StackableItem)toRemove).count--;

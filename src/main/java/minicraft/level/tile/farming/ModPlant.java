@@ -7,6 +7,7 @@ import minicraft.gfx.SpriteSheet;
 import minicraft.item.Items;
 import minicraft.level.Level;
 import minicraft.level.tile.Tiles;
+import minicraftmodsapiinterface.*;
 
 public class ModPlant extends Plant {
     private String seed;
@@ -25,16 +26,16 @@ public class ModPlant extends Plant {
     }
 
     @Override
-    public void render(Screen screen, Level level, int x, int y) {
+    public void render(IScreen screen, ILevel level, int x, int y) {
         int age = level.getData(x, y);
         int icon = age / (maxAge / 5);
 
         Tiles.get("Farmland").render(screen, level, x, y);
-
-        screen.render(x * 16 + 0, y * 16 + 0, this.xPos + this.yPos * 32 + icon, 0, this.sheet, -1, false);
-        screen.render(x * 16 + 8, y * 16 + 0, this.xPos + this.yPos * 32 + icon, 0, this.sheet, -1, false);
-        screen.render(x * 16 + 0, y * 16 + 8, this.xPos + this.yPos * 32 + icon, 1, this.sheet, -1, false);
-        screen.render(x * 16 + 8, y * 16 + 8, this.xPos + this.yPos * 32 + icon, 1, this.sheet, -1, false);
+        
+        screen.render(x * 16 + 0, y * 16 + 0, this.xPos + this.yPos * 32 + icon, 0, (ISpriteSheet)this.sheet, -1, false);
+        screen.render(x * 16 + 8, y * 16 + 0, this.xPos + this.yPos * 32 + icon, 0, (ISpriteSheet)this.sheet, -1, false);
+        screen.render(x * 16 + 0, y * 16 + 8, this.xPos + this.yPos * 32 + icon, 1, (ISpriteSheet)this.sheet, -1, false);
+        screen.render(x * 16 + 8, y * 16 + 8, this.xPos + this.yPos * 32 + icon, 1, (ISpriteSheet)this.sheet, -1, false);
     }
 
     @Override

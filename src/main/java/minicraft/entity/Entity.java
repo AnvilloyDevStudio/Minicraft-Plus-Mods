@@ -16,10 +16,9 @@ import minicraft.gfx.Rectangle;
 import minicraft.gfx.Screen;
 import minicraft.item.Item;
 import minicraft.level.Level;
+import minicraftmodsapiinterface.*;
 
-import minicraftmodsapiinterface.IEntity;
-
-public abstract class Entity implements Tickable {
+public abstract class Entity implements Tickable, IEntity {
 	
 	/* I guess I should explain something real quick. The coordinates between tiles and entities are different.
 	 * The world coordinates for tiles is 128x128
@@ -33,12 +32,12 @@ public abstract class Entity implements Tickable {
 	 * These bit shift operators are used to easily get the X & Y coordinates of a tile that the entity is standing on.
 	 */
 	
-	// Entity coordinates are per pixel, not per tile; each tile is 16x16 entity pixels.
+	// IEntity coordinates are per pixel, not per tile; each tile is 16x16 entity pixels.
 	protected final Random random = new Random();
 	public int x, y; // x, y entity coordinates on the map
 	private int xr, yr; // x, y radius of entity
-	private boolean removed; // Determines if the entity is removed from it's level; checked in Level.java
-	protected Level level; // The level that the entity is on
+	private boolean removed; // Determines if the entity is removed from it's level; checked in ILevel.java
+	protected ILevel level; // The level that the entity is on
 	public int col; // Current color.
 	
 	public int eid; // This is intended for multiplayer, but I think it could be helpful in single player, too. certainly won't harm anything, I think... as long as finding a valid id doesn't take long...
@@ -48,7 +47,7 @@ public abstract class Entity implements Tickable {
 	private long lastUpdate;
 	
 	/**
-	 * Default constructor for the Entity class.
+	 * Default constructor for the IEntity class.
 	 * Assings null/none values to the instace variables.
 	 * The exception is removed which is set to true, and
 	 * lastUpdate which is set to System.nanoTime().
@@ -67,7 +66,7 @@ public abstract class Entity implements Tickable {
 		lastUpdate = System.nanoTime();
 	}
 	
-	public abstract void render(Screen screen); // Used to render the entity on screen.
+	public abstract void render(IScreen screen); // Used to render the entity on screen.
 	
 	@Override
 	public abstract void tick(); // Used to update the entity.
@@ -82,19 +81,19 @@ public abstract class Entity implements Tickable {
 	 * Returns the level which this entity belongs in.
 	 * @return level
 	 */
-	public Level getLevel() { return level; }
+	public ILevel getLevel() { return level; }
 	
 	/** Returns a Rectangle instance using the defined bounds of the entity. */
 	protected Rectangle getBounds() { return new Rectangle(x, y, xr*2, yr*2, Rectangle.CENTER_DIMS); }
 	
 	/** Returns true if this entity is found in the rectangle specified by given two coordinates. */
-	public boolean isTouching(Rectangle area) { return area.intersects(getBounds()); }
+	public boolean isTouching(IRectangle area) { return area.intersects(getBounds()); }
 	
 	/** Returns if this entity stops other solid entities from moving. */
 	public boolean isSolid() { return true; } // Most entities are solid
 	
 	/** Determines if the given entity should prevent this entity from moving. */
-	public boolean blocks(Entity e) { return isSolid() && e.isSolid(); }
+	public boolean blocks(IEntity e) { return isSolid() && e.isSolid(); }
 	
 	public boolean canSwim() { return false; } // Determines if the entity can swim (extended in sub-classes)
 	public boolean canWool() { return false; } // This, strangely enough, determines if the entity can walk on wool; among some other things..?
@@ -103,7 +102,7 @@ public abstract class Entity implements Tickable {
 	
 	
 	/** If this entity is touched by another entity (extended by sub-classes) */
-	protected void touchedBy(Entity entity) {}
+	protected void touchedBy(IEntity entity) {}
 
 	/**
 	 * Interacts with the entity this method is called on
@@ -112,7 +111,7 @@ public abstract class Entity implements Tickable {
 	 * @param attackDir The direction to interact
 	 * @return If the interaction was successful
 	 */
-	public boolean interact(Player player, @Nullable Item item, Direction attackDir) {
+	public boolean interact(IPlayer player, @Nullable IItem item, IDirection attackDir) {
 		return false;
 	}
 	
@@ -173,30 +172,30 @@ public abstract class Entity implements Tickable {
 		}
 		
 		// These lists are named as if the entity has already moved-- it hasn't, though.
-		List<Entity> wasInside = level.getEntitiesInRect(getBounds()); // Gets all of the entities that are inside this entity (aka: colliding) before moving.
+		List<IEntity> wasInside = level.getEntitiesInRect(getBounds()); // Gets all of the entities that are inside this entity (aka: colliding) before moving.
 		
 		int xr = this.xr, yr = this.yr;
-		if (Game.isValidClient() && this instanceof Player) {
+		if (Game.isValidClient() && this instanceof IPlayer) {
 			xr++;
 			yr++;
 		}
 
-		List<Entity> isInside = level.getEntitiesInRect(new Rectangle(x+xd, y+yd, xr*2, yr*2, Rectangle.CENTER_DIMS)); // Gets the entities that this entity will touch once moved.
+		List<IEntity> isInside = level.getEntitiesInRect(new Rectangle(x+xd, y+yd, xr*2, yr*2, Rectangle.CENTER_DIMS)); // Gets the entities that this entity will touch once moved.
 		if (interact) {
-			for (Entity e : isInside) {
+			for (IEntity e : isInside) {
 				/// Cycles through entities about to be touched, and calls touchedBy(this) for each of them.
 				if (e == this) continue; // Touching yourself doesn't count.
 
-				if (e instanceof Player) {
-					if (!(this instanceof Player))
+				if (e instanceof IPlayer) {
+					if (!(this instanceof IPlayer))
 						touchedBy(e);
 				} else
-					e.touchedBy(this); // Call the method. ("touch" the entity)
+					((Entity)e).touchedBy(this); // Call the method. ("touch" the entity)
 			}
 		}
 		
 		isInside.removeAll(wasInside); // Remove all the entities that this one is already touching before moving.
-		for (Entity e : isInside) {
+		for (IEntity e : isInside) {
 			if (e == this) continue; // Can't interact with yourself
 			if (e.blocks(this)) return false; // If the entity prevents this one from movement, don't move.
 		}
@@ -224,8 +223,8 @@ public abstract class Entity implements Tickable {
 			level.remove(this);
 	}
 	
-	/** This should ONLY be called by the Level class. To properly remove an entity from a level, use level.remove(entity) */
-	public void remove(Level level) {
+	/** This should ONLY be called by the ILevel class. To properly remove an entity from a level, use level.remove(entity) */
+	public void remove(ILevel level) {
 		if (level != this.level) {
 			if(Game.debug) System.out.println("Tried to remove entity " + this + " from level it is not in: " + level + "; in level " + this.level);
 		} else {
@@ -234,13 +233,13 @@ public abstract class Entity implements Tickable {
 		}
 	}
 	
-	/** This should ONLY be called by the Level class. To properly add an entity to a level, use level.add(entity) */
-	public void setLevel(Level level, int x, int y) {
+	/** This should ONLY be called by the ILevel class. To properly add an entity to a level, use level.add(entity) */
+	public void setLevel(ILevel level, int x, int y) {
 		if (level == null) {
 			System.out.println("Tried to set level of entity " + this + " to a null level; Should use remove(level)");
 			return;
 		} else if (level != this.level && Game.isValidServer() && this.level != null) {
-			Game.server.broadcastEntityRemoval(this, this.level, !(this instanceof Player));
+			Game.server.broadcastEntityRemoval(this, (Level)this.level, !(this instanceof Player));
 		}
 		
 		this.level = level;
@@ -252,11 +251,11 @@ public abstract class Entity implements Tickable {
 			eid = Network.generateUniqueEntityId();
 	}
 	
-	public boolean isWithin(int tileRadius, Entity other) {
+	public boolean isWithin(int tileRadius, IEntity other) {
 		if (level == null || other.getLevel() == null) return false;
-		if (level.depth != other.getLevel().depth) return false; // Obviously, if they are on different levels, they can't be next to each other.
+		if (((Level)level).depth != ((Level)other.getLevel()).depth) return false; // Obviously, if they are on different levels, they can't be next to each other.
 		
-		double distance = Math.abs(Math.hypot(x - other.x, y - other.y)); // Calculate the distance between the two entities, in entity coordinates.
+		double distance = Math.abs(Math.hypot(x - ((Entity)other).x, y - ((Entity)other).y)); // Calculate the distance between the two entities, in entity coordinates.
 		
 		return Math.round(distance) >> 4 <= tileRadius; // Compare the distance (converted to tile units) with the specified radius.
 	}
@@ -265,7 +264,7 @@ public abstract class Entity implements Tickable {
 	 * Returns the closest player to this entity.
 	 * @return the closest player.
 	 */
-	protected Player getClosestPlayer() { 
+	protected IPlayer getClosestPlayer() { 
 		return getClosestPlayer(true);
 	}
 	
@@ -275,9 +274,9 @@ public abstract class Entity implements Tickable {
 	 * @param returnSelf determines if the method can return itself.
 	 * @return The closest player to this entity.
 	 */
-	protected Player getClosestPlayer(boolean returnSelf) {
-		if (this instanceof Player && returnSelf)
-			return (Player) this;
+	protected IPlayer getClosestPlayer(boolean returnSelf) {
+		if (this instanceof IPlayer && returnSelf)
+			return (IPlayer) this;
 		
 		if (level == null) return null;
 		
@@ -318,7 +317,7 @@ public abstract class Entity implements Tickable {
 				if (val.equals("null")) return true; // This means no level.
 				Level newLvl = World.levels[Integer.parseInt(val)];
 				if (newLvl != null && level != null) {
-					if (newLvl.depth == level.depth) return true;
+					if (newLvl.depth == ((Level)level).depth) return true;
 					level.remove(this);
 					newLvl.add(this);
 				}
@@ -337,7 +336,7 @@ public abstract class Entity implements Tickable {
 	protected String getUpdateString() {
 		return "x," + x + ";"
 		+ "y," + y + ";"
-		+ "level," + (level == null ? "null" : World.lvlIdx(level.depth));
+		+ "level," + (level == null ? "null" : World.lvlIdx(((Level)level).depth));
 	}
 	
 	/**
@@ -408,7 +407,7 @@ public abstract class Entity implements Tickable {
 	
 	@Override
 	public final boolean equals(Object other) {
-		return other instanceof Entity && hashCode() == other.hashCode();
+		return other instanceof IEntity && hashCode() == other.hashCode();
 	}
 	
 	@Override

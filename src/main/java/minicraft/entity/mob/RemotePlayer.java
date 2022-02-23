@@ -2,6 +2,7 @@ package minicraft.entity.mob;
 
 import java.net.InetAddress;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -176,11 +177,11 @@ public class RemotePlayer extends Player implements ClientTickable {
 		
 		/// The Math.mins and maxes make it so it doesn't try to update tiles outside of the level bounds.
 		int xmin = Math.max(xt1 - xr, 0);
-		int xmax = Math.min(xt1 + xr, level.w - 1);
+		int xmax = Math.min(xt1 + xr, ((Level)level).w - 1);
 		int ymin = Math.max(yt1 - yr, 0);
-		int ymax = Math.min(yt1 + yr, level.h - 1);
+		int ymax = Math.min(yt1 + yr, ((Level)level).h - 1);
 		
-		List<Entity> loadableEntites = level.getEntitiesInTiles(xmin, ymin, xmax, ymax);
+		List<Entity> loadableEntites = level.getEntitiesInTiles(xmin, ymin, xmax, ymax).stream().map(e -> {return (Entity)e;}).collect(Collectors.toUnmodifiableList());
 		
 		for(int y = ymin; y <= ymax; y++) {
 			for(int x = xmin; x <= xmax; x++) {

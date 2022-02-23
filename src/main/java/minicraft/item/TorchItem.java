@@ -8,6 +8,7 @@ import minicraft.gfx.Sprite;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.TorchTile;
+import minicraftmodsapiinterface.IItem;
 
 public class TorchItem extends TileItem {
 	
@@ -31,7 +32,7 @@ public class TorchItem extends TileItem {
 	}
 	
 	@Override
-	public boolean equals(Item other) {
+	public boolean equals(IItem other) {
 		return other instanceof TorchItem;
 	}
 	

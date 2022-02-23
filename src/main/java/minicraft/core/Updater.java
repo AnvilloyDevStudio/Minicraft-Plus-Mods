@@ -7,6 +7,7 @@ import minicraft.core.io.Localization;
 import minicraft.core.io.Settings;
 import minicraft.entity.furniture.Bed;
 import minicraft.entity.mob.Player;
+import minicraft.item.Inventory;
 import minicraft.item.Items;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
@@ -260,7 +261,7 @@ public class Updater extends Game {
 						if (input.getKey("creative").clicked) {
 							Settings.set("mode", "creative");
 							if (!ISONLINE)
-								Items.fillCreativeInv(player.getInventory(), false);
+								Items.fillCreativeInv((Inventory)player.getInventory(), false);
 						}
 						if (input.getKey("survival").clicked) Settings.set("mode", "survival");
 						if (input.getKey("shift-t").clicked) Settings.set("mode", "score");
@@ -293,7 +294,7 @@ public class Updater extends Game {
 						// Client-only cheats, since they are player-specific.
 						
 						if (input.getKey("shift-g").clicked) // This should not be needed, since the inventory should not be altered.
-							Items.fillCreativeInv(player.getInventory());
+							Items.fillCreativeInv((Inventory)player.getInventory());
 						
 						if (input.getKey("ctrl-h").clicked) player.health--;
 						if (input.getKey("ctrl-b").clicked) player.hunger--;

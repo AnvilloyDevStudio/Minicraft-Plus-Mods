@@ -9,6 +9,7 @@ import minicraft.gfx.Screen;
 import minicraft.item.Inventory;
 import minicraft.item.Item;
 import minicraft.item.StackableItem;
+import minicraftmodsapiinterface.IInventory;
 
 public class ContainerDisplay extends Display {
 	
@@ -18,7 +19,7 @@ public class ContainerDisplay extends Display {
 	private Chest chest;
 	
 	public ContainerDisplay(Player player, Chest chest) {
-		super(new InventoryMenu(chest, chest.getInventory(), chest.name), new InventoryMenu(player, player.getInventory(), "Inventory"));
+		super(new InventoryMenu(chest, (IInventory)chest.getInventory(), chest.name), new InventoryMenu(player, (IInventory)player.getInventory(), "Inventory"));
 		//pInv = player.getInventory();
 		//cInv = chest.getInventory();
 		this.player = player;
@@ -58,11 +59,11 @@ public class ContainerDisplay extends Display {
 			// switch inventories
 			Inventory from, to;
 			if(selection == 0) {
-				from = chest.getInventory();
-				to = player.getInventory();
+				from = (Inventory) chest.getInventory();
+				to = (Inventory) player.getInventory();
 			} else {
-				from = player.getInventory();
-				to = chest.getInventory();
+				from = (Inventory) player.getInventory();
+				to = (Inventory) chest.getInventory();
 			}
 			
 			int toSel = menus[otherIdx].getSelection();
@@ -74,11 +75,11 @@ public class ContainerDisplay extends Display {
 				return;
 			}
 			
-			Item fromItem = from.get(fromSel);
+			Item fromItem = (Item) from.get(fromSel);
 			
 			boolean transferAll = input.getKey("attack").clicked || !(fromItem instanceof StackableItem) || ((StackableItem)fromItem).count == 1;
 			
-			Item toItem = fromItem.clone();
+			Item toItem = (Item) fromItem.clone();
 			
 			if(!transferAll) {
 				((StackableItem)fromItem).count--; // this is known to be valid.

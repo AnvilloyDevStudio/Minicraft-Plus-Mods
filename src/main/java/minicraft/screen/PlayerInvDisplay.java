@@ -2,14 +2,18 @@ package minicraft.screen;
 
 import minicraft.core.Game;
 import minicraft.core.io.InputHandler;
+import minicraftmodsapiinterface.IEntity;
+import minicraftmodsapiinterface.IInventory;
+import minicraftmodsapiinterface.IPlayer;
 import minicraft.entity.mob.Player;
+import minicraft.item.Item;
 
 public class PlayerInvDisplay extends Display {
 	
-	private Player player;
+	private IPlayer player;
 	
-	public PlayerInvDisplay(Player player) {
-		super(new InventoryMenu(player, player.getInventory(), "Inventory"));
+	public PlayerInvDisplay(IPlayer player) {
+		super(new InventoryMenu((IEntity)player, (IInventory)player.getInventory(), "Inventory"));
 		this.player = player;
 	}
 	
@@ -23,7 +27,7 @@ public class PlayerInvDisplay extends Display {
 		}
 		
 		if(input.getKey("attack").clicked && menus[0].getNumOptions() > 0) {
-			player.activeItem = player.getInventory().remove(menus[0].getSelection());
+			((Player)player).activeItem = (Item) player.getInventory().remove(menus[0].getSelection());
 			Game.exitMenu();
 		}
 	}

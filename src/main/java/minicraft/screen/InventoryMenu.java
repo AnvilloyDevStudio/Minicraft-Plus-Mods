@@ -2,19 +2,20 @@ package minicraft.screen;
 
 import minicraft.core.Game;
 import minicraft.core.io.InputHandler;
-import minicraft.entity.Entity;
 import minicraft.entity.mob.Player;
 import minicraft.item.Inventory;
 import minicraft.item.Item;
 import minicraft.item.StackableItem;
 import minicraft.screen.entry.ItemEntry;
+import minicraftmodsapiinterface.*;
+import minicraft.entity.Entity;
 
 class InventoryMenu extends ItemListMenu {
 	
-	private Inventory inv;
-	private Entity holder;
+	private IInventory inv;
+	private IEntity holder;
 	
-	InventoryMenu(Entity holder, Inventory inv, String title) {
+	InventoryMenu(IEntity holder, IInventory inv, String title) {
 		super(ItemListMenu.getBuilder(), ItemEntry.useItems(inv.getItems()), title);
 		this.inv = inv;
 		this.holder = holder;
@@ -36,8 +37,8 @@ class InventoryMenu extends ItemListMenu {
 		if(getNumOptions() > 0 && (dropOne || input.getKey("drop-stack").clicked)) {
 			ItemEntry entry = ((ItemEntry)getCurEntry());
 			if(entry == null) return;
-			Item invItem = entry.getItem();
-			Item drop = invItem.clone();
+			Item invItem = (Item) entry.getItem();
+			Item drop = (Item) invItem.clone();
 			
 			if(dropOne && drop instanceof StackableItem && ((StackableItem)drop).count > 1) {
 				// just drop one from the stack
@@ -53,7 +54,7 @@ class InventoryMenu extends ItemListMenu {
 				if(Game.isValidClient())
 					Game.client.dropItem(drop);
 				else
-					holder.getLevel().dropItem(holder.x, holder.y, drop);
+					holder.getLevel().dropItem(((Entity)holder).x, ((Entity)holder).y, drop);
 			}
 		}
 	}

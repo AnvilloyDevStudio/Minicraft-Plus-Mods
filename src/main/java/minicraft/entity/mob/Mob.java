@@ -12,13 +12,14 @@ import minicraft.gfx.MobSprite;
 import minicraft.item.PotionType;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
+import minicraftmodsapiinterface.*;
 
 public abstract class Mob extends Entity {
 	
 	protected MobSprite[][] sprites; // This contains all the mob's sprites, sorted first by direction (index corresponding to the dir variable), and then by walk animation state.
 	public int walkDist = 0; // How far we've walked currently, incremented after each movement. This is used to change the sprite; "(walkDist >> 3) & 1" switches between a value of 0 and 1 every 8 increments of walkDist.
 	
-	public Direction dir = Direction.DOWN; // The direction the mob is facing, used in attacking and rendering. 0 is down, 1 is up, 2 is left, 3 is right
+	public IDirection dir = Direction.DOWN; // The direction the mob is facing, used in attacking and rendering. 0 is down, 1 is up, 2 is left, 3 is right
 	int hurtTime = 0; // A delay after being hurt, that temporarily prevents further damage for a short time
 	private int xKnockback, yKnockback; // The amount of vertical/horizontal knockback that needs to be inflicted, if it's not 0, it will be moved one pixel at a time.
 	public int health;
@@ -141,7 +142,7 @@ public abstract class Mob extends Entity {
 
 	private boolean isWooling() { // supposed to walk at half speed on wool
 		if (level == null) return false;
-		Tile tile = level.getTile(x >> 4, y >> 4);
+		ITile tile = level.getTile(x >> 4, y >> 4);
 		return tile == Tiles.get("wool");
 	}
 	
@@ -160,7 +161,7 @@ public abstract class Mob extends Entity {
 	 */
 	public boolean isSwimming() {
 		if (level == null) return false;
-		Tile tile = level.getTile(x >> 4, y >> 4); // Get the tile the mob is standing on (at x/16, y/16)
+		ITile tile = level.getTile(x >> 4, y >> 4); // Get the tile the mob is standing on (at x/16, y/16)
 		return tile == Tiles.get("water") || tile == Tiles.get("lava"); // Check if the tile is liquid, and return true if so
 	}
 
@@ -171,8 +172,8 @@ public abstract class Mob extends Entity {
 	 * @param y The x position of the mob
 	 * @param damage The amount of damage to hurt the mob with
 	 */
-	public void hurt(Tile tile, int x, int y, int damage) { // Hurt the mob, when the source of damage is a tile
-		Direction attackDir = Direction.getDirection(dir.getDir() ^ 1); // Set attackDir to our own direction, inverted. XORing it with 1 flips the rightmost bit in the variable, this effectively adds one when even, and subtracts one when odd.
+	public void hurt(ITile tile, int x, int y, int damage) { // Hurt the mob, when the source of damage is a tile
+		IDirection attackDir = Direction.getDirection(dir.getDir() ^ 1); // Set attackDir to our own direction, inverted. XORing it with 1 flips the rightmost bit in the variable, this effectively adds one when even, and subtracts one when odd.
 		if (!(tile == Tiles.get("lava") && this instanceof Player && ((Player)this).potioneffects.containsKey(PotionType.Lava)))
 			doHurt(damage, tile.mayPass(level, x, y, this) ? Direction.NONE : attackDir); // Call the method that actually performs damage, and set it to no particular direction
 	}
@@ -182,7 +183,7 @@ public abstract class Mob extends Entity {
 	 * @param mob The mob that hurt this mob
 	 * @param damage The amount of damage to hurt the mob with
 	 */
-	public void hurt(Mob mob, int damage) { hurt(mob, damage, getAttackDir(mob, this)); }
+	public void hurt(Mob mob, int damage) { hurt(mob, damage, (Direction)getAttackDir(mob, this)); }
 
 	/**
 	 * Do damage to the mob this method is called on.
@@ -203,7 +204,7 @@ public abstract class Mob extends Entity {
 	 * @param damage The amount of damage to hurt the mob with
 	 * @param attackDir The direction this mob was attacked from
 	 */
-	protected void doHurt(int damage, Direction attackDir) {
+	protected void doHurt(int damage, IDirection attackDir) {
 		if (isRemoved() || hurtTime > 0) return; // If the mob has been hurt recently and hasn't cooled down, don't continue
 		
 		health -= damage; // Actually change the health
@@ -226,14 +227,14 @@ public abstract class Mob extends Entity {
 		if (health > maxHealth) health = maxHealth; // If our health has exceeded our maximum, lower it back down to said maximum
 	}
 
-	protected static Direction getAttackDir(Entity attacker, Entity hurt) {
+	protected static IDirection getAttackDir(Entity attacker, Entity hurt) {
 		return Direction.getDirection(hurt.x - attacker.x, hurt.y - attacker.y);
 	}
 	
 	@Override
 	protected String getUpdateString() {
 		String updates = super.getUpdateString() + ";";
-		updates += "dir," + dir.ordinal() +
+		updates += "dir," + ((Direction) dir).ordinal() +
 		";health," + health +
 		";hurtTime," + hurtTime;
 		

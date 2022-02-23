@@ -5,8 +5,9 @@ import java.util.Arrays;
 import minicraft.core.Renderer;
 import minicraft.core.Updater;
 import minicraft.core.io.Settings;
+import minicraftmodsapiinterface.*;
 
-public class Screen {
+public class Screen implements IScreen {
 	
 	public static final int w = Renderer.WIDTH; // Width of the screen
 	public static final int h = Renderer.HEIGHT; // Height of the screen
@@ -28,29 +29,29 @@ public class Screen {
 	// So 0 is the start of the item sheet 1024 the start of the tile sheet, 2048 the start of the entity sheet,
 	// And 3072 the start of the gui sheet
 
-	private SpriteSheet[] sheets;
-	private SpriteSheet[] sheetsCustom;
+	private ISpriteSheet[] sheets;
+	private ISpriteSheet[] sheetsCustom;
 
-	public Screen(SpriteSheet itemSheet, SpriteSheet tileSheet, SpriteSheet entitySheet, SpriteSheet guiSheet, SpriteSheet skinsSheet) {
+	public Screen(ISpriteSheet itemSheet, ISpriteSheet tileSheet, ISpriteSheet entitySheet, ISpriteSheet guiSheet, ISpriteSheet skinsSheet) {
 
-		sheets = new SpriteSheet[]{itemSheet, tileSheet, entitySheet, guiSheet, skinsSheet};
+		sheets = new ISpriteSheet[]{itemSheet, tileSheet, entitySheet, guiSheet, skinsSheet};
 
-		/// Screen width and height are determined by the actual game window size, meaning the screen is only as big as the window.
+		/// IScreen width and height are determined by the actual game window size, meaning the screen is only as big as the window.
 		pixels = new int[Screen.w * Screen.h]; // Makes new integer array for all the pixels on the screen.
 	}
 
 	public Screen(SpriteSheet itemSheet, SpriteSheet tileSheet, SpriteSheet entitySheet, SpriteSheet guiSheet, SpriteSheet skinsSheet,
 					SpriteSheet itemSheetCustom, SpriteSheet tileSheetCustom, SpriteSheet entitySheetCustom, SpriteSheet guiSheetCustom) {
-		this(itemSheet, tileSheet, entitySheet, guiSheet, skinsSheet);
+		this((ISpriteSheet)itemSheet, (ISpriteSheet)tileSheet, (ISpriteSheet)entitySheet, (ISpriteSheet)guiSheet, (ISpriteSheet)skinsSheet);
 
-		sheetsCustom = new SpriteSheet[]{itemSheetCustom, tileSheetCustom, entitySheetCustom, guiSheetCustom};
+		sheetsCustom = new ISpriteSheet[]{(ISpriteSheet)itemSheetCustom, (ISpriteSheet)tileSheetCustom, (ISpriteSheet)entitySheetCustom, (ISpriteSheet)guiSheetCustom};
 	}
 	
 	public Screen(Screen model) {
 		this(model.sheets[0], model.sheets[1], model.sheets[2], model.sheets[3], model.sheets[4]);
 	}
 	
-	public void setSheet(SpriteSheet itemSheet, SpriteSheet tileSheet, SpriteSheet entitySheet, SpriteSheet guiSheet, SpriteSheet skinsSheet) {
+	public void setSheet(ISpriteSheet itemSheet, ISpriteSheet tileSheet, ISpriteSheet entitySheet, ISpriteSheet guiSheet, ISpriteSheet skinsSheet) {
 		if (itemSheet != null) {
 		        sheets[0] = itemSheet;
 		}
@@ -68,7 +69,7 @@ public class Screen {
 		}
 	}
 
-	public void setSheet(SpriteSheet itemSheet, SpriteSheet tileSheet, SpriteSheet entitySheet, SpriteSheet guiSheet) {
+	public void setSheet(ISpriteSheet itemSheet, ISpriteSheet tileSheet, ISpriteSheet entitySheet, ISpriteSheet guiSheet) {
 		if (itemSheet != null) {
 		        sheets[0] = itemSheet;
 		}
@@ -101,7 +102,7 @@ public class Screen {
 
 	/** This method takes care of assigning the correct spritesheet to assign to the sheet variable **/
     public void render(int xp, int yp, int tile, int bits, int sheet, int whiteTint, boolean fullbright) {
-    	SpriteSheet currentSheet;
+    	ISpriteSheet currentSheet;
 		if (Settings.get("textures").equals("Custom")) {
 			currentSheet = sheetsCustom[sheet] != null ? sheetsCustom[sheet] : sheets[sheet];
 		} else {
@@ -111,8 +112,8 @@ public class Screen {
 		render(xp, yp, tile, bits, currentSheet, whiteTint, fullbright);
     }
 
-    /** Renders an object from the sprite sheet based on screen coordinates, tile (SpriteSheet location), colors, and bits (for mirroring). I believe that xp and yp refer to the desired position of the upper-left-most pixel. */
-    public void render(int xp, int yp, int tile, int bits, SpriteSheet sheet, int whiteTint, boolean fullbright) {
+    /** Renders an object from the sprite sheet based on screen coordinates, tile (ISpriteSheet location), colors, and bits (for mirroring). I believe that xp and yp refer to the desired position of the upper-left-most pixel. */
+    public void render(int xp, int yp, int tile, int bits, ISpriteSheet sheet, int whiteTint, boolean fullbright) {
 		// xp and yp are originally in level coordinates, but offset turns them to screen coordinates.
 		xp -= xOffset; //account for screen offset
 		yp -= yOffset;
@@ -123,7 +124,7 @@ public class Screen {
 
 		int xTile = tile % 32; // Gets x position of the spritesheet "tile"
 		int yTile = tile / 32; // Gets y position
-		int toffs = xTile * 8 + yTile * 8 * sheet.width; // Gets the offset of the sprite into the spritesheet pixel array, the 8's represent the size of the box. (8 by 8 pixel sprite boxes)
+		int toffs = xTile * 8 + yTile * 8 * sheet.getWidth(); // Gets the offset of the sprite into the spritesheet pixel array, the 8's represent the size of the box. (8 by 8 pixel sprite boxes)
 
 		// THIS LOOPS FOR EVERY PIXEL
 		for (int y = 0; y < 8; y++) { // Loops 8 times (because of the height of the tile)
@@ -136,7 +137,7 @@ public class Screen {
 				int xs = x; // Current x pixel
 				if (mirrorX) xs = 7 - x; // Reverses the pixel for a mirroring effect
 
-				int col = sheet.pixels[toffs + xs + ys * sheet.width]; // Gets the color of the current pixel from the value stored in the sheet.
+				int col = sheet.getPixels()[toffs + xs + ys * sheet.getWidth()]; // Gets the color of the current pixel from the value stored in the sheet.
 
 				boolean isTransparent = (col >> 24 == 0);
 
@@ -183,7 +184,7 @@ public class Screen {
 	};
 	
 	/** Overlays the screen with pixels */
-    public void overlay(Screen screen2, int currentLevel, int xa, int ya) {
+    public void overlay(IScreen screen2, int currentLevel, int xa, int ya) {
 		double tintFactor = 0;
 		if (currentLevel >= 3 && currentLevel < 5) {
 			int transTime = Updater.dayLength / 4;
@@ -202,7 +203,7 @@ public class Screen {
 		else if(currentLevel >= 5)
 			tintFactor = -MAXDARK;
         
-		int[] oPixels = screen2.pixels;  // The Integer array of pixels to overlay the screen with.
+		int[] oPixels = ((Screen)screen2).pixels;  // The Integer array of pixels to overlay the screen with.
 		int i = 0; // Current pixel on the screen
 		for (int y = 0; y < h; y++) { // loop through height of screen
             for (int x = 0; x < w; x++) { // loop through width of screen

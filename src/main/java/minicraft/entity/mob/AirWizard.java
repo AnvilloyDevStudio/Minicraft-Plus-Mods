@@ -13,6 +13,7 @@ import minicraft.gfx.MobSprite;
 import minicraft.gfx.Screen;
 import minicraft.network.Analytics;
 import minicraft.saveload.Save;
+import minicraftmodsapiinterface.*;
 
 public class AirWizard extends EnemyMob {
 	private static MobSprite[][][] sprites;
@@ -91,7 +92,7 @@ public class AirWizard extends EnemyMob {
 			return; // Skips the rest of the code (attackTime was > 0; ie we're attacking.)
 		}
 		
-		Player player = getClosestPlayer();
+		Player player = (Player) getClosestPlayer();
 		if (player != null && randomWalkTime == 0) { // If there is a player around, and the walking is not random
 			int xd = player.x - x; // The horizontal distance between the player and the air wizard.
 			int yd = player.y - y; // The vertical distance between the player and the air wizard.
@@ -125,7 +126,7 @@ public class AirWizard extends EnemyMob {
 	}
 	
 	@Override
-	public void doHurt(int damage, Direction attackDir) {
+	public void doHurt(int damage, IDirection attackDir) {
 		super.doHurt(damage, attackDir);
 		if (attackDelay == 0 && attackTime == 0) {
 			attackDelay = 60 * 2;
@@ -133,7 +134,7 @@ public class AirWizard extends EnemyMob {
 	}
 	
 	@Override
-	public void render(Screen screen) {
+	public void render(IScreen screen) {
 		super.render(screen);
 
 		int textcol = Color.get(1, 0, 204, 0);
@@ -152,12 +153,12 @@ public class AirWizard extends EnemyMob {
 			textcol2 = Color.get(1, 51, 51, 0);
 		}
 		int textwidth = Font.textWidth(h);
-		Font.draw(h, screen, (x - textwidth/2) + 1, y - 17, textcol2);
-		Font.draw(h, screen, (x - textwidth/2), y - 18, textcol);
+		Font.draw(h, (Screen)screen, (x - textwidth/2) + 1, y - 17, textcol2);
+		Font.draw(h, (Screen)screen, (x - textwidth/2), y - 18, textcol);
 	}
 	
 	@Override
-	protected void touchedBy(Entity entity) {
+	protected void touchedBy(IEntity entity) {
 		if (entity instanceof Player) {
 			// If the entity is the Player, then deal them 1 or 2 damage points.
 			((Player)entity).hurt(this, (secondform ? 2 : 1));
@@ -166,7 +167,7 @@ public class AirWizard extends EnemyMob {
 	
 	/** What happens when the air wizard dies */
 	public void die() {
-		Player[] players = level.getPlayers();
+		Player[] players = (Player[]) level.getPlayers();
 		if (players.length > 0) { // If the player is still here
 			for (Player p: players)
 				 p.addScore((secondform ? 500000 : 100000)); // Give the player 100K or 500K points.

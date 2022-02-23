@@ -7,6 +7,7 @@ import minicraft.entity.mob.Player;
 import minicraft.gfx.Sprite;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
+import minicraftmodsapiinterface.ISprite;
 
 public class ArmorItem extends StackableItem {
 	public static ArrayList<Item> Instances = new ArrayList<>();
@@ -30,7 +31,7 @@ public class ArmorItem extends StackableItem {
 	public final int level;
 	
 	public ArmorItem(String name, Sprite sprite, float health, int level) { this(name, sprite, 1, health, level); }
-	private ArmorItem(String name, Sprite sprite, int count, float health, int level) {
+	private ArmorItem(String name, ISprite sprite, int count, float health, int level) {
 		super(name, sprite, count);
 		this.armor = health;
 		this.level = level;

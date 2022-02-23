@@ -2,6 +2,7 @@ package minicraft.entity.mob;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import minicraft.core.Game;
 import minicraft.core.io.Settings;
@@ -14,6 +15,8 @@ import minicraft.gfx.Point;
 import minicraft.gfx.Screen;
 import minicraft.item.Items;
 import minicraft.level.tile.Tiles;
+import minicraftmodsapiinterface.*;
+import minicraft.level.Level;
 
 public class Creeper extends EnemyMob {
 	private static MobSprite[][][] sprites;
@@ -60,7 +63,7 @@ public class Creeper extends EnemyMob {
 			boolean playerInRange = false; // Tells if any players are within the blast
 
 			// Find if the player is in range and store it in playerInRange.
-			for (Entity e : level.getEntitiesOfClass(Mob.class)) {
+			for (Entity e : (Entity[])level.getEntitiesOfClass(Mob.class)) {
 				Mob mob = (Mob) e;
 				int pdx = Math.abs(mob.x - x);
 				int pdy = Math.abs(mob.y - y);
@@ -87,9 +90,9 @@ public class Creeper extends EnemyMob {
 				int lvlDamage = BLAST_DAMAGE * lvl;
 
 				// Hurt all the entities
-				List<Entity> entitiesInRange = level.getEntitiesInTiles(xt, yt, radius);
+				List<Entity> entitiesInRange = level.getEntitiesInTiles(xt, yt, radius).stream().map(e -> {return (Entity)e;}).collect(Collectors.toUnmodifiableList());
 				List<Entity> spawners = new ArrayList<>();
-				Point[] tilePositions = level.getAreaTilePositions(xt, yt, radius);
+				Point[] tilePositions = (Point[]) level.getAreaTilePositions(xt, yt, radius);
 
 				for (Entity entity : entitiesInRange) { // Hurts entities in range
 					if (entity instanceof Mob) {
@@ -119,7 +122,7 @@ public class Creeper extends EnemyMob {
 						}
 					}
 					if (!hasSpawner) {
-						if (level.depth != 1) {
+						if (((Level)level).depth != 1) {
 							level.setAreaTiles(tilePosition.x, tilePosition.y, 0, Tiles.get("hole"), 0);
 						} else {
 							level.setAreaTiles(tilePosition.x, tilePosition.y, 0, Tiles.get("Infinite Fall"), 0);
@@ -137,7 +140,7 @@ public class Creeper extends EnemyMob {
 	}
 
 	@Override
-	public void render(Screen screen) {
+	public void render(IScreen screen) {
 		/*if (fuseLit && fuseTime % 6 == 0) {
 			super.lvlcols[lvl-1] = Color.get(-1, 252);
 		}
@@ -150,7 +153,7 @@ public class Creeper extends EnemyMob {
 	}
 
 	@Override
-	protected void touchedBy(Entity entity) {
+	protected void touchedBy(IEntity entity) {
 		if (Game.isMode("Creative")) return;
 
 		if (entity instanceof Player) {

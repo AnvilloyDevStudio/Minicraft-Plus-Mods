@@ -19,6 +19,8 @@ import minicraft.item.Inventory;
 import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.StackableItem;
+import minicraft.level.Level;
+import minicraftmodsapiinterface.*;
 
 public class DungeonChest extends Chest {
 	private static final Sprite openSprite = new Sprite(14, 24, 2, 2, 2);
@@ -69,8 +71,8 @@ public class DungeonChest extends Chest {
 				
 				level.add(new SmashParticle(x * 16, y * 16));
 				level.add(new TextParticle("-1 key", x, y, Color.RED));
-				level.chestCount--;
-				if (level.chestCount == 0) { // If this was the last chest...
+				((Level)level).chestCount--;
+				if (((Level)level).chestCount == 0) { // If this was the last chest...
 					level.dropItem(x, y, 5, Items.get("Gold Apple"));
 					
 					Updater.notifyAll("You hear a noise from the surface!", - 100); // Notify the player of the developments
@@ -93,7 +95,7 @@ public class DungeonChest extends Chest {
 	 * Populate the inventory of the DungeonChest using the loot table system
 	 */
 	private void populateInv() {
-		Inventory inv = getInventory(); // Yes, I'm that lazy. ;P
+		Inventory inv = (Inventory) getInventory(); // Yes, I'm that lazy. ;P
 		inv.clearInv(); // clear the inventory.
 
 		populateInvRandom("dungeonchest", 0);
@@ -112,13 +114,13 @@ public class DungeonChest extends Chest {
 	
 	/** what happens if the player tries to push a Dungeon Chest. */
 	@Override
-	protected void touchedBy(Entity entity) {
+	protected void touchedBy(IEntity entity) {
 		if(!isLocked) // can only be pushed if unlocked.
 			super.touchedBy(entity);
 	}
 
 	@Override
-	public boolean interact(Player player, @Nullable Item item, Direction attackDir) {
+	public boolean interact(IPlayer player, @Nullable IItem item, IDirection attackDir) {
 		if(!isLocked)
 			return super.interact(player, item, attackDir);
 		return false;

@@ -90,7 +90,7 @@ public class Bed extends Furniture {
 		Bed bed = sleepingPlayers.get(player);
 		if (bed == null)
 			return null;
-		return bed.getLevel();
+		return (Level)bed.getLevel();
 	}
 	
 	// Get the player "out of bed"; used on the client only.

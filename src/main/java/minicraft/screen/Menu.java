@@ -330,7 +330,7 @@ public class Menu {
 			ListEntry entry = entries.get(idx);
 			
 			if(!(entry instanceof BlankEntry)) {
-				Point pos = entryPos.positionRect(new Dimension(entry.getWidth(), ListEntry.getHeight()), new Rectangle(entryBounds.getLeft(), y, entryBounds.getWidth(), ListEntry.getHeight(), Rectangle.CORNER_DIMS));
+				Point pos = (Point)entryPos.positionRect(new Dimension(entry.getWidth(), ListEntry.getHeight()), new Rectangle(entryBounds.getLeft(), y, entryBounds.getWidth(), ListEntry.getHeight(), Rectangle.CORNER_DIMS));
 				boolean selected = idx == selection;
 				if (searcherBarActive && useSearcherBar) {
 					entry.render(screen, pos.x, pos.y, selected, typingSearcher, Color.YELLOW);
@@ -443,8 +443,8 @@ public class Menu {
 		public Builder setMenuSize(Dimension d) { menuSize = d; return this; } // can be used to set the size to null
 		
 		public Builder setBounds(Rectangle rect) {
-			menuSize = rect.getSize();
-			setPositioning(rect.getCenter(), RelPos.CENTER); // because the anchor represents the center of the rectangle.
+			menuSize = (Dimension) rect.getSize();
+			setPositioning((Point)rect.getCenter(), RelPos.CENTER); // because the anchor represents the center of the rectangle.
 			return this;
 		}
 		
@@ -618,11 +618,11 @@ public class Menu {
 				menu.displayLength = (entrySize.height + menu.spacing) / (ListEntry.getHeight() + menu.spacing);
 				
 			// based on the menu centering, and the anchor, determine the upper-left point from which to draw the menu.
-			menu.bounds = menuPos.positionRect(menuSize, anchor, new Rectangle()); // reset to a value that is actually useful to the menu
+			menu.bounds = (Rectangle) menuPos.positionRect(menuSize, anchor, new Rectangle()); // reset to a value that is actually useful to the menu
 			
 			menu.entryBounds = border.subtractFrom(menu.bounds);
 			
-			menu.titleLoc = titlePos.positionRect(titleDim, menu.bounds);
+			menu.titleLoc = (Point) titlePos.positionRect(titleDim, menu.bounds);
 			
 			if(titlePos.xIndex == 0 && titlePos.yIndex != 1)
 				menu.titleLoc.x += SpriteSheet.boxWidth;

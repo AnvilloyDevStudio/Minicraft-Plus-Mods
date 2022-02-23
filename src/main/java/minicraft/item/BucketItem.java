@@ -10,6 +10,7 @@ import minicraft.gfx.Sprite;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
+import minicraftmodsapiinterface.IItem;
 
 public class BucketItem extends StackableItem {
 	
@@ -104,7 +105,7 @@ public class BucketItem extends StackableItem {
 		return this;
 	}
 	
-	public boolean equals(Item other) {
+	public boolean equals(IItem other) {
 		return super.equals(other) && filling == ((BucketItem)other).filling;
 	}
 	

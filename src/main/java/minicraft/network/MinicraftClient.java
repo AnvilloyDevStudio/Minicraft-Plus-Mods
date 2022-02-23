@@ -43,6 +43,7 @@ import minicraft.saveload.Save;
 import minicraft.saveload.Version;
 import minicraft.screen.ContainerDisplay;
 import minicraft.screen.MultiplayerDisplay;
+import minicraftmodsapiinterface.ILevel;
 
 // This class is only used by the client runtime; the server runtime doesn't touch it.
 public class MinicraftClient extends MinicraftConnection {
@@ -284,7 +285,7 @@ public class MinicraftClient extends MinicraftConnection {
 				Bed.setPlayersAwake(Integer.parseInt(data[6]));
 				
 				if (Game.isMode("creative"))
-					Items.fillCreativeInv(Game.player.getInventory(), false);
+					Items.fillCreativeInv((Inventory)Game.player.getInventory(), false);
 				
 				return true;
 			
@@ -413,8 +414,8 @@ public class MinicraftClient extends MinicraftConnection {
 				
 				Entity toRemove = Network.getEntity(eid);
 				if (toRemove != null) {
-					if (entityLevelDepth != null && toRemove.getLevel() != null && toRemove.getLevel().depth != entityLevelDepth) {
-						if (Game.debug) System.out.println("CLIENT: Not removing entity " + toRemove + " because it is not on the specified level depth, " + entityLevelDepth + "; current depth = " + toRemove.getLevel().depth + ". Removing from specified level only...");
+					if (entityLevelDepth != null && toRemove.getLevel() != null && ((Level)toRemove.getLevel()).depth != entityLevelDepth) {
+						if (Game.debug) System.out.println("CLIENT: Not removing entity " + toRemove + " because it is not on the specified level depth, " + entityLevelDepth + "; current depth = " + ((Level)toRemove.getLevel()).depth + ". Removing from specified level only...");
 						Level l = World.levels[World.lvlIdx(entityLevelDepth)];
 						if (l != null)
 							l.remove(toRemove);
@@ -446,10 +447,10 @@ public class MinicraftClient extends MinicraftConnection {
 						entityRequests.put(entityid, (long)(System.nanoTime() - 7L*1E8)); // should "advance" the time so that it only takes 0.8 seconds after the first attempt to issue the actual request.
 					return false;
 				}
-				else if (!((RemotePlayer)Game.player).shouldSync(entity.x >> 4, entity.y >> 4, entity.getLevel())) { // the entity is out of sync range; but not necessarily out of the tracking range, so it's *not* removed from the level here.
+				else if (!((RemotePlayer)Game.player).shouldSync(entity.x >> 4, entity.y >> 4, (Level)entity.getLevel())) { // the entity is out of sync range; but not necessarily out of the tracking range, so it's *not* removed from the level here.
 					return false;
 				}
-				else if (!((RemotePlayer)Game.player).shouldTrack(entity.x >> 4, entity.y >> 4, entity.getLevel())) { // the entity is out of tracking range, and so may as well be removed from the level.
+				else if (!((RemotePlayer)Game.player).shouldTrack(entity.x >> 4, entity.y >> 4, (Level)entity.getLevel())) { // the entity is out of tracking range, and so may as well be removed from the level.
 					entity.remove();
 					return false;
 				}
@@ -464,7 +465,7 @@ public class MinicraftClient extends MinicraftConnection {
 				if (Game.debug) System.out.println("CLIENT: Setting player vars from packet...");
 				
 				if (!(playerinv.size() == 1 && playerinv.get(0).equals("null")))
-					load.loadInventory(Game.player.getInventory(), playerinv);
+					load.loadInventory((Inventory)Game.player.getInventory(), playerinv);
 				load.loadPlayer(Game.player, playerinfo);
 				
 				if (curState == State.RESPAWNING)
@@ -490,7 +491,7 @@ public class MinicraftClient extends MinicraftConnection {
 				if (curState != State.PLAY) return false; // shouldn't happen.
 				Item item = Items.get(data[0]);
 				int idx = Integer.parseInt(data[1]);
-				Inventory playerInv = Game.player.getInventory();
+				Inventory playerInv = (Inventory) Game.player.getInventory();
 				if (idx > playerInv.invSize())
 					idx = playerInv.invSize();
 				if (!Game.isMode("creative")) {
@@ -501,7 +502,7 @@ public class MinicraftClient extends MinicraftConnection {
 				return true;
 			
 			case ADDITEMS:
-				Inventory inv = Game.player.getInventory();
+				Inventory inv = (Inventory) Game.player.getInventory();
 				for (String itemStr: data)
 					inv.add(Items.get(itemStr));
 				return true;
@@ -560,7 +561,7 @@ public class MinicraftClient extends MinicraftConnection {
 	// The below methods are all about sending data to the server, *not* setting any game values.
 	
 	public void move(Player player, int x, int y) {
-		String movedata = x+ ";" +y+ ";" +player.dir.ordinal()+ ";" +World.lvlIdx(player.getLevel().depth);
+		String movedata = x+ ";" +y+ ";" +((Direction)player.dir).ordinal()+ ";" +World.lvlIdx(((Level)player.getLevel()).depth);
 		sendData(InputType.MOVE, movedata);
 	}
 	
@@ -571,9 +572,9 @@ public class MinicraftClient extends MinicraftConnection {
 		sendData(InputType.INTERACT, itemString+ ";" +player.stamina+ ";" +player.getInventory().count(Items.arrowItem));
 	}
 	
-	public void requestTile(Level level, int xt, int yt) {
-		if (level == null) return;
-		sendData(InputType.TILE, level.depth+ ";" +xt+ ";" +yt);
+	public void requestTile(ILevel iLevel, int xt, int yt) {
+		if (iLevel == null) return;
+		sendData(InputType.TILE, ((Level)iLevel).depth+ ";" +xt+ ";" +yt);
 	}
 	
 	public void dropItem(Item drop) { sendData(InputType.DROP, drop.getData()); }

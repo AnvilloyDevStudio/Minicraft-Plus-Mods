@@ -3,8 +3,11 @@ package minicraft.entity.mob;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import minicraft.util.Vector2;
+import minicraftmodsapiinterface.*;
+
 import org.jetbrains.annotations.Nullable;
 
 import minicraft.core.Game;
@@ -57,7 +60,7 @@ import minicraft.screen.PlayerInvDisplay;
 import minicraft.screen.SkinDisplay;
 import minicraft.screen.WorldSelectDisplay;
 
-public class Player extends Mob implements ItemHolder, ClientTickable {
+public class Player extends Mob implements ItemHolder, ClientTickable, IPlayer {
 	protected InputHandler input;
 	
 	private static final int playerHurtTime = 30;
@@ -96,7 +99,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	private Item prevItem; // Holds the item held before using the POW glove.
 	
 	int attackTime;
-	public Direction attackDir;
+	public IDirection attackDir;
 	
 	private int onStairDelay; // The delay before changing levels.
 	private int onFallDelay; // The delay before falling b/c we're on an InfiniteFallTile
@@ -119,7 +122,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	private int hungerChargeDelay; // The delay between each time the hunger bar increases your health
 	private int hungerStarveDelay; // The delay between each time the hunger bar decreases your health
 	
-	public HashMap<PotionType, Integer> potioneffects; // The potion effects currently applied to the player
+	public HashMap<IPotionType, Integer> potioneffects; // The potion effects currently applied to the player
 	public boolean showpotioneffects; // Whether to display the current potion effects on screen
 	private int cooldowninfo; // Prevents you from toggling the info pane on and off super fast.
 	private int regentick; // Counts time between each time the regen potion effect heals you.
@@ -136,7 +139,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	
 	public String getDebugHunger() { return hungerStamCnt+"_"+stamHungerTicks; }
 
-	public Player(@Nullable Player previousInstance, InputHandler input) {
+	public Player(@Nullable IPlayer previousInstance, InputHandler input) {
 		super(sprites, Player.maxHealth);
 
 		x = 24;
@@ -145,7 +148,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		inventory = new Inventory() {
 			
 			@Override
-			public void add(int idx, Item item) {
+			public void add(int idx, IItem item) {
 				if (Game.isMode("creative")) {
 					if (count(item) > 0) return;
 					item = item.clone();
@@ -156,9 +159,9 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			}
 			
 			@Override
-			public Item remove(int idx) {
+			public IItem remove(int idx) {
 				if (Game.isMode("creative")) {
-					Item cur = get(idx);
+					IItem cur = get(idx);
 					if (cur instanceof StackableItem)
 						((StackableItem)cur).count = 1;
 					if (count(cur) == 1) {
@@ -194,8 +197,8 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			Items.fillCreativeInv(inventory);
 		
 		if (previousInstance != null) {
-			spawnx = previousInstance.spawnx;
-			spawny = previousInstance.spawny;
+			spawnx = ((Player)previousInstance).spawnx;
+			spawny = ((Player)previousInstance).spawny;
 		}
 
 		suitOn = (boolean) Settings.get("skinon");
@@ -242,7 +245,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	 * @param type Type of potion.
 	 * @param duration How long the effect lasts.
 	 */
-	public void addPotionEffect(PotionType type, int duration) {
+	public void addPotionEffect(IPotionType type, int duration) {
 		potioneffects.put(type, duration);
 	}
 	
@@ -250,15 +253,15 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	 * Adds a potion effect to the player.
 	 * @param type Type of effect.
 	 */
-	public void addPotionEffect(PotionType type) {
-		addPotionEffect(type, type.duration);
+	public void addPotionEffect(IPotionType type) {
+		addPotionEffect(type, ((PotionType)type).duration);
 	}
 	
 	/**
 	 * Returns all the potion effects currently affecting the player.
 	 * @return all potion effects on the player.
 	 */
-	public HashMap<PotionType, Integer> getPotionEffects() { return potioneffects; }
+	public HashMap<IPotionType, Integer> getPotionEffects() { return potioneffects; }
 	
 	@Override
 	public void tick() {
@@ -272,9 +275,9 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			tickMultiplier();
 		
 		if (potioneffects.size() > 0 && !Bed.inBed(this)) {
-			for (PotionType potionType: potioneffects.keySet().toArray(new PotionType[0])) {
+			for (IPotionType potionType: potioneffects.keySet().toArray(new IPotionType[0])) {
 				if (potioneffects.get(potionType) <= 1) // If time is zero (going to be set to 0 in a moment)...
-					PotionItem.applyPotion(this, potionType, false); // Automatically removes this potion effect.
+					PotionItem.applyPotion(this, (PotionType)potionType, false); // Automatically removes this potion effect.
 				else potioneffects.put(potionType, potioneffects.get(potionType) - 1); // Otherwise, replace it with one less.
 			}
 		}
@@ -301,7 +304,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			showpotioneffects = !showpotioneffects;
 		}
 		
-		Tile onTile = level.getTile(x >> 4, y >> 4); // Gets the current tile the player is on.
+		Tile onTile = (Tile) level.getTile(x >> 4, y >> 4); // Gets the current tile the player is on.
 		if (onTile == Tiles.get("Stairs Down") || onTile == Tiles.get("Stairs Up")) {
 			if (onStairDelay <= 0) { // When the delay time has passed...
 				World.scheduleLevelChange((onTile == Tiles.get("Stairs Up")) ? 1 : -1); // Decide whether to go up or down.
@@ -436,8 +439,8 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 				int xd = (int) (vec.x * spd);
 				int yd = (int) (vec.y * spd);
 
-				Direction newDir = Direction.getDirection(xd, yd);
-				if (newDir == Direction.NONE) newDir = dir;
+				Direction newDir = (Direction) Direction.getDirection(xd, yd);
+				if (newDir == Direction.NONE) newDir = (Direction) dir;
 
 				// On multiplayer move the local player.
 				if ((xd != 0 || yd != 0 || newDir != dir) && Game.isConnectedClient() && this == Game.player)
@@ -455,7 +458,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			}
 			
 			if (activeItem != null && (input.getKey("drop-one").clicked || input.getKey("drop-stack").clicked)) {
-				Item drop = activeItem.clone();
+				Item drop = (Item) activeItem.clone();
 				
 				if (input.getKey("drop-one").clicked && drop instanceof StackableItem && ((StackableItem)drop).count > 1) {
 					// Drop one from stack
@@ -503,10 +506,10 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 				}
 				//debug feature:
 				if (Game.debug && input.getKey("shift-p").clicked) { // Remove all potion effects
-					for (PotionType potionType : potioneffects.keySet()) {
-						PotionItem.applyPotion(this, potionType, false);
+					for (IPotionType potionType : potioneffects.keySet()) {
+						PotionItem.applyPotion(this, (PotionType)potionType, false);
 						if (Game.isConnectedClient() && this == Game.player)
-							Game.client.sendPotionEffect(potionType, false);
+							Game.client.sendPotionEffect((PotionType)potionType, false);
 					}
 				}
 
@@ -563,7 +566,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		// Bit of a FIXME for fishing to work on servers
 		if (activeItem instanceof FishingRodItem && Game.isValidClient()) {
 			Point t = getInteractionTile();
-			Tile tile = level.getTile(t.x, t.y);
+			Tile tile = (Tile) level.getTile(t.x, t.y);
 			activeItem.interactOn(tile, level, t.x, t.y, this, attackDir);
 		}
 
@@ -613,7 +616,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 				if (tool.type.name.equals("bow") && tool.dur > 0 && inventory.count(Items.arrowItem) > 0) {
 					
 					if (!Game.isMode("creative")) inventory.removeItem(Items.arrowItem);
-					level.add(new Arrow(this, attackDir, tool.level.level));
+					level.add(new Arrow(this, (Direction)attackDir, tool.level.level));
 					attackTime = 10;
 					
 					if (!Game.isMode("creative")) tool.dur--;
@@ -628,14 +631,14 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			Point t = getInteractionTile();
 
 			// If the target coordinates are a valid tile.
-			if (t.x >= 0 && t.y >= 0 && t.x < level.w && t.y < level.h) {
+			if (t.x >= 0 && t.y >= 0 && t.x < ((Level)level).w && t.y < ((Level)level).h) {
 
 				// Get any entities (except dropped items) on the tile.
-				List<Entity> tileEntities = level.getEntitiesInTiles(t.x, t.y, t.x, t.y, false, ItemEntity.class);
+				List<Entity> tileEntities = level.getEntitiesInTiles(t.x, t.y, t.x, t.y, false, ItemEntity.class).stream().map(e -> {return (Entity)e;}).collect(Collectors.toUnmodifiableList());
 
 				// If there are no other entities than us on the tile.
 				if (tileEntities.size() == 0 || tileEntities.size() == 1 && tileEntities.get(0) == this) {
-					Tile tile = level.getTile(t.x, t.y);
+					Tile tile = (Tile) level.getTile(t.x, t.y);
 
 					// If the item successfully interacts with the target tile.
 					if (activeItem.interactOn(tile, level, t.x, t.y, this, attackDir)) {
@@ -649,7 +652,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 				
 				if (Game.isValidServer() && this instanceof RemotePlayer) { // Only do this if no interaction was actually made; b/c a tile update packet will generally happen then anyway.
 					minicraft.network.MinicraftServerThread thread = Game.server.getAssociatedThread((RemotePlayer)this);
-					thread.sendTileUpdate(level, t.x, t.y); /// FIXME this part is as a semi-temporary fix for those odd tiles that don't update when they should; instead of having to make another system like the entity additions and removals (and it wouldn't quite work as well for this anyway), this will just update whatever tile the player interacts with (and fails, since a successful interaction changes the tile and therefore updates it anyway).
+					thread.sendTileUpdate((Level)level, t.x, t.y); /// FIXME this part is as a semi-temporary fix for those odd tiles that don't update when they should; instead of having to make another system like the entity additions and removals (and it wouldn't quite work as well for this anyway), this will just update whatever tile the player interacts with (and fails, since a successful interaction changes the tile and therefore updates it anyway).
 				}
 				
 				if (!Game.isMode("creative") && activeItem.isDepleted()) {
@@ -669,9 +672,9 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			Point t = getInteractionTile();
 
 			// Check if tile is in bounds of the map.
-			if (t.x >= 0 && t.y >= 0 && t.x < level.w && t.y < level.h) {
-				Tile tile = level.getTile(t.x, t.y);
-				used = tile.hurt(level, t.x, t.y, this, random.nextInt(3) + 1, attackDir) || used;
+			if (t.x >= 0 && t.y >= 0 && t.x < ((Level)level).w && t.y < ((Level)level).h) {
+				Tile tile = (Tile) level.getTile(t.x, t.y);
+				used = tile.hurt(level, t.x, t.y, (IMob)this, random.nextInt(3) + 1, attackDir) || used;
 			}
 			
 			if (used && activeItem instanceof ToolItem)
@@ -762,7 +765,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	
 	/** called by other use method; this serves as a buffer in case there is no entity in front of the player. */
 	private boolean use(Rectangle area) {
-		List<Entity> entities = level.getEntitiesInRect(area); // Gets the entities within the 4 points
+		List<Entity> entities = level.getEntitiesInRect(area).stream().map(e -> {return (Entity)e;}).collect(Collectors.toUnmodifiableList());// Gets the entities within the 4 points
 		for (Entity e : entities) {
 			if (e instanceof Furniture && ((Furniture) e).use(this)) return true; // If the entity is not the player, then call it's use method, and return the result. Only some furniture classes use this.
 		}
@@ -771,7 +774,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	
 	/** same, but for interaction. */
 	private boolean interact(Rectangle area) {
-		List<Entity> entities = level.getEntitiesInRect(area);
+		List<Entity> entities = level.getEntitiesInRect(area).stream().map(e -> {return (Entity)e;}).collect(Collectors.toUnmodifiableList());
 		for (Entity e : entities) {
 			if (e != this && e.interact(this, activeItem, attackDir)) return true; // This is the ONLY place that the Entity.interact method is actually called.
 		}
@@ -780,13 +783,13 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	
 	/** same, but for attacking. */
 	private boolean hurt(Rectangle area) {
-		List<Entity> entities = level.getEntitiesInRect(area);
+		List<Entity> entities = level.getEntitiesInRect(area).stream().map(e -> {return (Entity)e;}).collect(Collectors.toUnmodifiableList());
 		int maxDmg = 0;
 		for (Entity e : entities) {
 			if (e != this && e instanceof Mob) {
 				int dmg = getAttackDamage(e);
 				maxDmg = Math.max(dmg, maxDmg);
-				((Mob) e).hurt(this, dmg, attackDir);
+				((Mob) e).hurt(this, dmg, (Direction)attackDir);
 			}
 			if (e instanceof Furniture)
 				e.interact(this, null, attackDir);
@@ -808,7 +811,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	}
 
 	@Override
-	public void render(Screen screen) {
+	public void render(IScreen screen) {
 		MobSprite[][] spriteSet;
 
         if (activeItem instanceof FurnitureItem) {
@@ -867,7 +870,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 		// Renders slashes:
 		if (attackTime > 0) {
-			switch (attackDir) {
+			switch ((Direction)attackDir) {
 				case UP:  // If currently attacking upwards...
 					screen.render(xo + 0, yo - 4, 3 + 2 * 32, 0, 3); // Render left half-slash
 					screen.render(xo + 8, yo - 4, 3 + 2 * 32, 1, 3); // Render right half-slash (mirror of left).
@@ -903,7 +906,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 
 		// Renders the fishing rods when fishing
 		if (isFishing) {
-			switch (dir) {
+			switch ((Direction)dir) {
 				case UP:
 					screen.render(xo + 4, yo - 4, fishingLevel + 11 * 32, 1);
 					break;
@@ -931,8 +934,8 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	}
 
 	/** What happens when the player interacts with a itemEntity */
-	public void pickupItem(ItemEntity itemEntity) {
-		
+	public void pickupItem(IItemEntity iitemEntity) {
+		ItemEntity itemEntity = (ItemEntity)iitemEntity;
 		Sound.pickup.play();
 		
 		itemEntity.remove();
@@ -956,7 +959,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	 * @param level Level which the player wants to start in.
 	 * @param spawnSeed Spawnseed.
 	 */
-	public void findStartPos(Level level, long spawnSeed) {
+	public void findStartPos(ILevel level, long spawnSeed) {
 		random.setSeed(spawnSeed);
 		findStartPos(level);
 	}
@@ -965,21 +968,21 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	 * Finds the starting position for the player in a level.
 	 * @param level The level.
 	 */
-	public void findStartPos(Level level) { findStartPos(level, true); }
-	public void findStartPos(Level level, boolean setSpawn) {
+	public void findStartPos(ILevel level) { findStartPos(level, true); }
+	public void findStartPos(ILevel level, boolean setSpawn) {
 		Point spawnPos;
 
-		List<Point> spawnTilePositions = level.getMatchingTiles(Tiles.get("grass"));
+		List<Point> spawnTilePositions = level.getMatchingTiles(Tiles.get("grass")).stream().map(p -> {return (Point)p;}).collect(Collectors.toUnmodifiableList());
 
 		if (spawnTilePositions.size() == 0)
-			spawnTilePositions.addAll(level.getMatchingTiles((t, x, y) -> t.maySpawn()));
+			spawnTilePositions.addAll(level.getMatchingTiles((t, x, y) -> t.maySpawn()).stream().map(p -> {return (Point)p;}).collect(Collectors.toUnmodifiableList()));
 
 		if (spawnTilePositions.size() == 0)
-			spawnTilePositions.addAll(level.getMatchingTiles((t, x, y) -> t.mayPass(level, x, y, Player.this)));
+			spawnTilePositions.addAll(level.getMatchingTiles((t, x, y) -> t.mayPass(level, x, y, Player.this)).stream().map(p -> {return (Point)p;}).collect(Collectors.toUnmodifiableList()));
 
 		// There are no tiles in the entire map which the player is allowed to stand on. Not likely.
 		if (spawnTilePositions.size() == 0) {
-			spawnPos = new Point(random.nextInt(level.w/4)+level.w*3/8, random.nextInt(level.h/4)+level.h*3/8);
+			spawnPos = new Point(random.nextInt(((Level)level).w/4)+((Level)level).w*3/8, random.nextInt(((Level)level).h/4)+((Level)level).h*3/8);
 			level.setTile(spawnPos.x, spawnPos.y, Tiles.get("grass"));
 		}
 		else // Gets random valid spawn tile position.
@@ -1000,7 +1003,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	 * @param level The level.
 	 * @return true
 	 */
-	public boolean respawn(Level level) {
+	public boolean respawn(ILevel level) {
 		if (!level.getTile(spawnx, spawny).maySpawn())
 			findStartPos(level); // If there's no bed to spawn from, and the stored coordinates don't point to a grass tile, then find a new point.
 
@@ -1069,8 +1072,8 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	}
 
 	@Override
-	public void hurt(Tnt tnt, int dmg) {
-		super.hurt(tnt, dmg);
+	public void hurt(ITnt tnt, int dmg) {
+		super.hurt((Tnt)tnt, dmg);
 		payStamina(dmg * 2);
 	}
 
@@ -1078,15 +1081,15 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	 * @param damage How much damage to do to player.
 	 * @param attackDir What direction to attack.
 	 */
-	public void hurt(int damage, Direction attackDir) { doHurt(damage, attackDir); }
+	public void hurt(int damage, IDirection attackDir) { doHurt(damage, attackDir); }
 
 	@Override
-	protected void doHurt(int damage, Direction attackDir) {
+	protected void doHurt(int damage, IDirection attackDir) {
 		if (Game.isMode("creative") || hurtTime > 0 || Bed.inBed(this)) return; // Can't get hurt in creative, hurt cooldown, or while someone is in bed
 
 		if (Game.isValidServer() && this instanceof RemotePlayer) {
 			// Let the clients deal with it.
-			Game.server.broadcastPlayerHurt(eid, damage, attackDir);
+			Game.server.broadcastPlayerHurt(eid, damage, (Direction)attackDir);
 			return;
 		}
 
@@ -1146,7 +1149,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 		";health," + health +
 		";hunger," + hunger +
 		";attackTime," + attackTime +
-		";attackDir," + attackDir.ordinal() +
+		";attackDir," + ((Direction)attackDir).ordinal() +
 		";activeItem," + (activeItem == null ? "null" : activeItem.getData()) +
 		";isFishing," + (isFishing ? "1" : "0");
 
@@ -1208,8 +1211,8 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 	}
 
 	@Override
-	public Inventory getInventory() {
-		return inventory;
+	public IInventory getInventory() {
+		return (IInventory) inventory;
 	}
 
 }

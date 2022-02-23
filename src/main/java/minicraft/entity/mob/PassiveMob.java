@@ -8,6 +8,7 @@ import minicraft.gfx.Screen;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
+import minicraftmodsapiinterface.IScreen;
 
 public class PassiveMob extends MobAi {
 	protected int color;
@@ -32,7 +33,7 @@ public class PassiveMob extends MobAi {
 	}
 	
 	@Override
-	public void render(Screen screen) {
+	public void render(IScreen screen) {
 		super.render(screen);
 	}
 	
@@ -66,7 +67,7 @@ public class PassiveMob extends MobAi {
 		if (!MobAi.checkStartPos(level, x, y, 80, r))
 			return false;
 		
-		Tile tile = level.getTile(x >> 4, y >> 4);
+		Tile tile = (Tile) level.getTile(x >> 4, y >> 4);
 		return tile == Tiles.get("grass") || tile == Tiles.get("flower");
 		
 	}

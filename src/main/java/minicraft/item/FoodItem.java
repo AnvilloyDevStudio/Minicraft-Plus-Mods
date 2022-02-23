@@ -2,11 +2,10 @@ package minicraft.item;
 
 import java.util.ArrayList;
 
-import minicraft.entity.Direction;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Sprite;
-import minicraft.level.Level;
-import minicraft.level.tile.Tile;
+import minicraftmodsapiinterface.*;
+
 
 public class FoodItem extends StackableItem {
 	public static ArrayList<Item> Instances = new ArrayList<>();
@@ -32,9 +31,9 @@ public class FoodItem extends StackableItem {
 	private int feed; // The amount of hunger the food "satisfies" you by.
 	private int staminaCost; // The amount of stamina it costs to consume the food.
 	
-	private FoodItem(String name, Sprite sprite, int feed) { this(name, sprite, 1, feed); }
-	private FoodItem(String name, Sprite sprite, int count, int feed) { this(name, sprite, 1, feed, 5); }
-	public FoodItem(String name, Sprite sprite, int count, int feed, int cost) {
+	private FoodItem(String name, ISprite sprite, int feed) { this(name, sprite, 1, feed); }
+	private FoodItem(String name, ISprite sprite, int count, int feed) { this(name, sprite, 1, feed, 5); }
+	public FoodItem(String name, ISprite sprite, int count, int feed, int cost) {
 		super(name, sprite, count);
 		this.feed = feed;
 		staminaCost = cost;
@@ -42,8 +41,9 @@ public class FoodItem extends StackableItem {
 	}
 	
 	/** What happens when the player uses the item on a tile */
-	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
+	public boolean interactOn(ITile tile, ILevel level, int xt, int yt, IPlayer Iplayer, IDirection attackDir) {
 		boolean success = false;
+		Player player = (Player) Iplayer;
 		if (count > 0 && player.hunger < Player.maxHunger && player.payStamina(staminaCost)) { // If the player has hunger to fill, and stamina to pay...
 			player.hunger = Math.min(player.hunger + feed, Player.maxHunger); // Restore the hunger
 			success = true;

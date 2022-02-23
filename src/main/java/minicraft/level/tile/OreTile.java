@@ -59,7 +59,7 @@ public class OreTile extends Tile {
 		}
 		
 		protected Item getOre() {
-			return drop.clone();
+			return (Item)drop.clone();
 		}
     }
 	

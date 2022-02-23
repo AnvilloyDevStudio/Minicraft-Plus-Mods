@@ -11,6 +11,7 @@ import minicraft.gfx.Screen;
 import minicraft.item.Item;
 import minicraft.item.PotionType;
 import minicraft.level.Level;
+import minicraftmodsapiinterface.*;
 
 public abstract class MobAi extends Mob {
 	
@@ -62,7 +63,7 @@ public abstract class MobAi extends Mob {
 		
 		if (getLevel() != null) {
 			boolean foundPlayer = false;
-			for (Player p: level.getPlayers()) {
+			for (Player p: (Player[])level.getPlayers()) {
 				if (p.isWithin(8, this) && p.potioneffects.containsKey(PotionType.Time)) {
 					foundPlayer = true;
 					break;
@@ -87,15 +88,15 @@ public abstract class MobAi extends Mob {
 	}
 	
 	@Override
-	public void render(Screen screen) {
+	public void render(IScreen screen) {
 		int xo = x - 8;
 		int yo = y - 11;
 		
 		MobSprite curSprite = sprites[dir.getDir()][(walkDist >> 3) % sprites[dir.getDir()].length];
 		if (hurtTime > 0) {
-			curSprite.render(screen, xo, yo, true);
+			curSprite.render((Screen)screen, xo, yo, true);
 		} else {
-			curSprite.render(screen, xo, yo);
+			curSprite.render((Screen)screen, xo, yo);
 		}
 	}
 	
@@ -108,10 +109,10 @@ public abstract class MobAi extends Mob {
 	}
 	
 	@Override
-	public void doHurt(int damage, Direction attackDir) {
+	public void doHurt(int damage, IDirection attackDir) {
 		if (isRemoved() || hurtTime > 0) return; // If the mob has been hurt recently and hasn't cooled down, don't continue
 		
-		Player player = getClosestPlayer();
+		Player player = (Player) getClosestPlayer();
 		if (player != null) { // If there is a player in the level
 			
 			/// Play the hurt sound only if the player is less than 80 entity coordinates away; or 5 tiles away.
@@ -169,7 +170,7 @@ public abstract class MobAi extends Mob {
 	 * @return true if the mob can spawn, false if not.
 	 */
 	protected static boolean checkStartPos(Level level, int x, int y, int playerDist, int soloRadius) {
-		Player player = level.getClosestPlayer(x, y);
+		Player player = (Player) level.getClosestPlayer(x, y);
 		if (player != null) {
 			int xd = player.x - x;
 			int yd = player.y - y;
@@ -193,7 +194,7 @@ public abstract class MobAi extends Mob {
 	
 	protected void die(int points) { die(points, 0); }
 	protected void die(int points, int multAdd) {
-		for (Player p: level.getPlayers()) {
+		for (Player p: (Player[])level.getPlayers()) {
 			p.addScore(points); // Add score for mob death
 			if (multAdd != 0)
 				p.addMultiplier(multAdd);

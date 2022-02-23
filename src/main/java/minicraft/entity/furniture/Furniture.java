@@ -13,10 +13,11 @@ import minicraft.gfx.Sprite;
 import minicraft.item.FurnitureItem;
 import minicraft.item.Item;
 import minicraft.item.PowerGloveItem;
+import minicraftmodsapiinterface.*;
 
 /** Many furniture classes are very similar; they might not even need to be there at all... */
 
-public class Furniture extends Entity {
+public class Furniture extends Entity implements IFurniture {
 	
 	protected int pushTime = 0, multiPushTime = 0; // Time for each push; multi is for multiplayer, to make it so not so many updates are sent.
 	private Direction pushDir = Direction.NONE; // The direction to push the furniture
@@ -70,18 +71,18 @@ public class Furniture extends Entity {
 	}
 	
 	/** Draws the furniture on the screen. */
-	public void render(Screen screen) { sprite.render(screen, x-8, y-8); }
+	public void render(IScreen screen) { sprite.render(screen, x-8, y-8); }
 	
 	/** Called when the player presses the MENU key in front of this. */
-	public boolean use(Player player) { return false; }
+	public boolean use(IPlayer player) { return false; }
 	
 	@Override
-	public boolean blocks(Entity e) {
+	public boolean blocks(IEntity e) {
 		return true; // Furniture blocks all entities, even non-solid ones like arrows.
 	}
 	
 	@Override
-	protected void touchedBy(Entity entity) {
+	protected void touchedBy(IEntity entity) {
 		if (entity instanceof Player)
 			tryPush((Player) entity);
 	}
@@ -91,7 +92,8 @@ public class Furniture extends Entity {
 	 * @param player The player picking up the furniture.
 	 */
 	@Override
-	public boolean interact(Player player, @Nullable Item item, Direction attackDir) {
+	public boolean interact(IPlayer iplayer, @Nullable IItem item, IDirection attackDir) {
+		Player player = (Player)iplayer;
 		if (item instanceof PowerGloveItem) {
 			Sound.monsterHurt.play();
 			if (!Game.ISONLINE) {
@@ -114,9 +116,9 @@ public class Furniture extends Entity {
 	 * Tries to let the player push this furniture.
 	 * @param player The player doing the pushing.
 	 */
-	public void tryPush(Player player) {
+	public void tryPush(IPlayer player) {
 		if (pushTime == 0) {
-			pushDir = player.dir; // Set pushDir to the player's dir.
+			pushDir = (Direction) ((Player)player).dir; // Set pushDir to the player's dir.
 			pushTime = multiPushTime = 10; // Set pushTime to 10.
 			
 			if (Game.isConnectedClient())

@@ -63,7 +63,7 @@ public class CraftingDisplay extends Display {
 		menus[2].setColors(prev);
 		
 		menus[1] = itemCountMenu
-			.setEntries(new ItemListing(recipes[recipeMenu.getSelection()].getProduct(), String.valueOf(getCurItemCount())))
+			.setEntries(new ItemListing((Item)recipes[recipeMenu.getSelection()].getProduct(), String.valueOf(getCurItemCount())))
 			.createMenu();
 		menus[1].setColors(prev);
 	}

@@ -10,6 +10,7 @@ import minicraft.gfx.Screen;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
+import minicraftmodsapiinterface.*;
 
 public class EnemyMob extends MobAi {
 	
@@ -71,7 +72,7 @@ public class EnemyMob extends MobAi {
 	public void tick() {
 		super.tick();
 		
-		Player player = getClosestPlayer();
+		Player player = (Player) getClosestPlayer();
 		if (player != null && !Bed.sleeping() && randomWalkTime <= 0 && !Game.isMode("Creative")) { // Checks if player is on zombie's level, if there is no time left on randonimity timer, and if the player is not in creative.
 			int xd = player.x - x;
 			int yd = player.y - y;
@@ -93,13 +94,13 @@ public class EnemyMob extends MobAi {
 	}
 	
 	@Override
-	public void render(Screen screen) {
+	public void render(IScreen screen) {
 		sprites = lvlSprites[lvl - 1];
 		super.render(screen);
 	}
 	
 	@Override
-	protected void touchedBy(Entity entity) { // If an entity (like the player) touches the enemy mob
+	protected void touchedBy(IEntity entity) { // If an entity (like the player) touches the enemy mob
 		super.touchedBy(entity);
 		// Hurts the player, damage is based on lvl.
 		if(entity instanceof Player) {
@@ -127,7 +128,7 @@ public class EnemyMob extends MobAi {
 		x = x >> 4;
 		y = y >> 4;
 		
-		Tile t = level.getTile(x, y);
+		Tile t = (Tile) level.getTile(x, y);
 		
 		if(level.depth == -4) {
 			if (t != Tiles.get("Obsidian")) return false;

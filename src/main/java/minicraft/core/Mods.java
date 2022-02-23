@@ -18,21 +18,19 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.json.JSONObject;
 
 import minicraft.core.io.ClassLoader;
-import minicraft.entity.Entity;
 import minicraft.entity.furniture.*;
 import minicraft.entity.mob.*;
-import minicraft.entity.particle.Particle;
 import minicraft.gfx.MobSprite;
 import minicraft.gfx.Sprite;
 import minicraft.gfx.SpriteSheet;
 import minicraft.item.*;
-import minicraft.level.Level;
 import minicraft.level.tile.*;
 import minicraft.level.tile.ModTile.ModTileOption;
 import minicraft.level.tile.Tile.TileConnections;
 import minicraft.level.tile.farming.ModPlant;
 import minicraft.level.tile.farming.Plant;
 import minicraft.mod.ModLoadAssets;
+import minicraftmodsapiinterface.ISpriteSheet;
 
 public class Mods extends Game {
     private Mods() {}
@@ -123,24 +121,24 @@ public class Mods extends Game {
             }
             public ToolItem toToolItem(boolean instance, int index) {
                 ToolType toolType = ToolType.get(name);
-                if (toolType==null) toolType = new ToolType(name, resources.getSprite(findSpriteSheet(), sprite[0], sprite[1]), durability, attack, noLevel);
+                if (toolType==null) toolType = new ToolType(name, resources.getSprite((ISpriteSheet)findSpriteSheet(), sprite[0], sprite[1]), durability, attack, noLevel);
                 if (!noLevel) return new ToolItem(toolType, ItemLevel.Levels.get(itype[index].toLowerCase()));
                 else return new ToolItem(toolType);
             }
             public StackableItem toStackableItem() {
-                return new StackableItem(name, resources.getSprite(findSpriteSheet(), sprite[0], sprite[1]));
+                return new StackableItem(name, resources.getSprite((ISpriteSheet)findSpriteSheet(), sprite[0], sprite[1]));
             }
             public FurnitureItem toFurnitureItem() {
                 return new FurnitureItem(mod.modentities.get(ename).toFurniture());
             }
             public FoodItem toFoodItem() {
-                return new FoodItem(name, resources.getSprite(findSpriteSheet(), sprite[0], sprite[1]), 1, feed, cost);
+                return new FoodItem(name, resources.getSprite((ISpriteSheet)findSpriteSheet(), sprite[0], sprite[1]), 1, feed, cost);
             }
             public BucketItem toBucketItem() {
-                return new BucketItem(new BucketItem.Fill(name, mod.modtiles.get(ename).toTile(), resources.getSprite(findSpriteSheet(), sprite[0], sprite[1])));
+                return new BucketItem(new BucketItem.Fill(name, mod.modtiles.get(ename).toTile(), resources.getSprite((ISpriteSheet)findSpriteSheet(), sprite[0], sprite[1])));
             }
             public ArmorItem toArmorItem() {
-                return new ArmorItem(name, resources.getSprite(findSpriteSheet(), sprite[0], sprite[1]), durability, armorlvl);
+                return new ArmorItem(name, resources.getSprite((ISpriteSheet)findSpriteSheet(), sprite[0], sprite[1]), durability, armorlvl);
             }
         }
 		public static class Recipe {
@@ -261,13 +259,13 @@ public class Mods extends Game {
             public Furniture toFurniture() {
                 switch (type) {
                     case "Crafter":
-                        return new Crafter(new Crafter.Type(name, resources.getSprite2(findSpriteSheet(), sprite[0], sprite[1]), xr, yr, minicraft.item.Recipes.modRecipes.get(name)));
+                        return new Crafter(new Crafter.Type(name, resources.getSprite2((ISpriteSheet)findSpriteSheet(), sprite[0], sprite[1]), xr, yr, minicraft.item.Recipes.modRecipes.get(name)));
                     case "Lantern":
-                        return new Lantern(new Lantern.Type(name, title, light, resources.getSprite2(findSpriteSheet(), sprite[0], sprite[1])));
+                        return new Lantern(new Lantern.Type(name, title, light, resources.getSprite2((ISpriteSheet)findSpriteSheet(), sprite[0], sprite[1])));
                     case "Spawner":
                         return new Spawner(mod.modentities.get(title).toMobAi(0));
                     default:
-                        return new Furniture(name, resources.getSprite2(findSpriteSheet(), sprite[0], sprite[1]), xr, yr);
+                        return new Furniture(name, resources.getSprite2((ISpriteSheet)findSpriteSheet(), sprite[0], sprite[1]), xr, yr);
                 }
             }
             public MobAi toMobAi(int lvl) {
@@ -357,11 +355,11 @@ public class Mods extends Game {
 				}
             }
             public minicraft.level.tile.Tile toTile() {
-                if (options!=null) return new ModTile(name, resources.getSprite2(findSpriteSheet(), sprite[0], sprite[1]), options);
-                else return new ModTile(name, resources.getSprite2(findSpriteSheet(), sprite[0], sprite[1]));
+                if (options!=null) return new ModTile(name, resources.getSprite2((ISpriteSheet)findSpriteSheet(), sprite[0], sprite[1]), options);
+                else return new ModTile(name, resources.getSprite2((ISpriteSheet)findSpriteSheet(), sprite[0], sprite[1]));
             }
             public OreTile toOreTile() {
-                return new OreTile(new OreTile.OreType(name, mod.moditems.get(drop).toStackableItem(), resources.getSprite2(findSpriteSheet(), sprite[0], sprite[1])));
+                return new OreTile(new OreTile.OreType(name, mod.moditems.get(drop).toStackableItem(), resources.getSprite2((ISpriteSheet)findSpriteSheet(), sprite[0], sprite[1])));
             }
             public Plant toPlant() {
                 return new ModPlant(name, seed, drop, sprite[0], sprite[1], findSpriteSheet());
@@ -400,13 +398,13 @@ public class Mods extends Game {
                 new SpriteSheet(ImageIO.read(Game.class.getResourceAsStream("/resources/textures/gui.png"))),
                 new SpriteSheet(ImageIO.read(Game.class.getResourceAsStream("/resources/textures/skins.png")))
             };
-            public Sprite getSprite(SpriteSheet sheet, int x, int y) {
+            public Sprite getSprite(ISpriteSheet sheet, int x, int y) {
                 return new Sprite(new Sprite.Px[][]{new Sprite.Px[]{new Sprite.Px(x, y, 0, sheet)}});
             }
-            public Sprite getSprite2(SpriteSheet sheet, int x, int y) {
+            public Sprite getSprite2(ISpriteSheet sheet, int x, int y) {
                 return new Sprite(new Sprite.Px[][]{
-                    new Sprite.Px[]{new Sprite.Px(x, y, 0, sheet), new Sprite.Px(x+1, y, 0, sheet)},
-                    new Sprite.Px[]{new Sprite.Px(x, y+1, 0, sheet), new Sprite.Px(x+1, y+1, 0, sheet)}
+                    {new Sprite.Px(x, y, 0, sheet), new Sprite.Px(x+1, y, 0, sheet)},
+                    {new Sprite.Px(x, y+1, 0, sheet), new Sprite.Px(x+1, y+1, 0, sheet)}
                 });
             }
             public Resources(JarFile jar, Manifest man) throws IOException {

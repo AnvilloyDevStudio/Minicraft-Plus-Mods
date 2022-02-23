@@ -35,12 +35,14 @@ import minicraft.entity.particle.Particle;
 import minicraft.entity.particle.TextParticle;
 import minicraft.item.Inventory;
 import minicraft.item.Item;
-import minicraft.item.PotionType;
 import minicraft.network.MinicraftServer;
 import minicraft.screen.LoadingDisplay;
 import minicraft.screen.MultiplayerDisplay;
 import minicraft.screen.SkinDisplay;
 import minicraft.screen.WorldSelectDisplay;
+import minicraftmodsapiinterface.IPotionType;
+import minicraft.level.tile.Tile;
+import minicraft.level.Level;
 
 public class Save {
 
@@ -229,7 +231,7 @@ public class Save {
 			
 			for (int x = 0; x < World.levels[l].w; x++) {
 				for (int y = 0; y < World.levels[l].h; y++) {
-					data.add(String.valueOf(World.levels[l].getTile(x, y).name));
+					data.add(String.valueOf(((Tile)World.levels[l].getTile(x, y)).name));
 				}
 			}
 			
@@ -270,7 +272,7 @@ public class Save {
 		
 		StringBuilder subdata = new StringBuilder("PotionEffects[");
 		
-		for (java.util.Map.Entry<PotionType, Integer> potion: player.potioneffects.entrySet())
+		for (java.util.Map.Entry<IPotionType, Integer> potion: player.potioneffects.entrySet())
 			subdata.append(potion.getKey()).append(";").append(potion.getValue()).append(":");
 		
 		if (player.potioneffects.size() > 0)
@@ -292,7 +294,7 @@ public class Save {
 			data.add(player.activeItem.getData());
 		}
 		
-		Inventory inventory = player.getInventory();
+		Inventory inventory = (Inventory) player.getInventory();
 		
 		for (int i = 0; i < inventory.invSize(); i++) {
 			data.add(inventory.get(i).getData());
@@ -302,7 +304,7 @@ public class Save {
 	private void writeEntities(String filename) {
 		LoadingDisplay.setMessage("Entities");
 		for (int l = 0; l < World.levels.length; l++) {
-			for (Entity e: World.levels[l].getEntitiesToSave()) {
+			for (Entity e: (Entity[])World.levels[l].getEntitiesToSave()) {
 				String saved = writeEntity(e, true);
 				if (saved.length() > 0)
 					data.add(saved);
@@ -344,7 +346,7 @@ public class Save {
 			Chest chest = (Chest)e;
 			
 			for(int ii = 0; ii < chest.getInventory().invSize(); ii++) {
-				Item item = chest.getInventory().get(ii);
+				Item item = (Item)chest.getInventory().get(ii);
 				extradata.append(":").append(item.getData());
 			}
 			
@@ -379,7 +381,7 @@ public class Save {
 		if (e.getLevel() == null)
 			System.out.println("WARNING: Saving entity with no level reference: " + e + "; setting level to surface");
 		else
-			depth = e.getLevel().depth;
+			depth = ((Level)e.getLevel()).depth;
 		
 		extradata.append(":").append(World.lvlIdx(depth));
 		

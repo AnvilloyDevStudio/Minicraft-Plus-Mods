@@ -1,6 +1,8 @@
 package minicraft.gfx;
 
-public class Point {
+import minicraftmodsapiinterface.IPoint;
+
+public class Point implements IPoint {
 	
 	public int x, y;
 	
@@ -33,4 +35,12 @@ public class Point {
 	
 	@Override
 	public int hashCode() { return x * 71 + y; }
+	@Override
+	public int getX() {
+		return x;
+	}
+	@Override
+	public int getY() {
+		return y;
+	}
 }

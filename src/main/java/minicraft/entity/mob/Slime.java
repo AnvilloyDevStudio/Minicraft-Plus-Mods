@@ -6,6 +6,7 @@ import minicraft.entity.Direction;
 import minicraft.gfx.MobSprite;
 import minicraft.gfx.Screen;
 import minicraft.item.Items;
+import minicraftmodsapiinterface.IScreen;
 
 public class Slime extends EnemyMob {
 	private static MobSprite[][][] sprites;
@@ -57,7 +58,7 @@ public class Slime extends EnemyMob {
 	}
 	
 	@Override
-	public void render(Screen screen) {
+	public void render(IScreen screen) {
 		int oldy = y;
 		if (jumpTime > 0) {
 			walkDist = 8; // Set to jumping sprite.

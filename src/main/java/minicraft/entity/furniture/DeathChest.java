@@ -9,6 +9,7 @@ import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
 import minicraft.gfx.Sprite;
+import minicraftmodsapiinterface.IEntity;
 
 public class DeathChest extends Chest {
 	private static Sprite normalSprite = new Sprite(10, 26, 2, 2, 2);
@@ -86,8 +87,8 @@ public class DeathChest extends Chest {
 	public void take(Player player) {} // can't grab a death chest.
 	
 	@Override
-	public void touchedBy(Entity other) {
-		if(other instanceof Player) {
+	public void touchedBy(IEntity other) {
+		if((Player)other instanceof Player) {
 			if(!Game.ISONLINE) {
 				((Player)other).getInventory().addAll(getInventory());
 				remove();

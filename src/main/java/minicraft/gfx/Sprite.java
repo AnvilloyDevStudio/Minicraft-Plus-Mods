@@ -3,7 +3,9 @@ package minicraft.gfx;
 import java.awt.Rectangle;
 import java.util.Random;
 
-public class Sprite {
+import minicraftmodsapiinterface.*;
+
+public class Sprite implements ISprite {
 	/**
 		This class needs to store a list of similar segments that make up a sprite, just once for everything. There's usually four groups, but the components are:
 			-spritesheet location (x, y)
@@ -90,24 +92,24 @@ public class Sprite {
 		return sheetLoc.getSize();
 	}
 
-	public void render(Screen screen, int x, int y) {
+	public void render(IScreen screen, int x, int y) {
 		// Here, x and y are screen coordinates.
 		for (int row = 0; row < spritePixels.length; row++) { // Loop down through each row
 			renderRow(row, screen, x, y + row * 8);
 		}
 	}
-	public void render(Screen screen, int x, int y, int mirror) {
+	public void render(IScreen screen, int x, int y, int mirror) {
 		for (int row = 0; row < spritePixels.length; row++) {
 			renderRow(row, screen, x, y + row * 8, mirror);
 		}
 	}
-	public void render(Screen screen, int x, int y, int mirror, int whiteTint) {
+	public void render(IScreen screen, int x, int y, int mirror, int whiteTint) {
 		for (int row = 0; row < spritePixels.length; row++) {
 			renderRow(row, screen, x, y + row * 8, mirror, whiteTint);
 		}
 	}
 
-	public void renderRow(int r, Screen screen, int x, int y) {
+	public void renderRow(int r, IScreen screen, int x, int y) {
 		Px[] row = spritePixels[r];
 		for (int c = 0; c < row.length; c++) { // Loop across through each column
 			if (row[c].spriteSheet != null) {
@@ -117,7 +119,7 @@ public class Sprite {
 			}
 		}
 	}
-	public void renderRow(int r, Screen screen, int x, int y, int mirror) {
+	public void renderRow(int r, IScreen screen, int x, int y, int mirror) {
 		Px[] row = spritePixels[r];
 		for (int c = 0; c < row.length; c++) { // Loop across through each column
 			if (row[c].spriteSheet != null) {
@@ -127,7 +129,7 @@ public class Sprite {
 			}
 		}
 	}
-	public void renderRow(int r, Screen screen, int x, int y, int mirror, int whiteTint) {
+	public void renderRow(int r, IScreen screen, int x, int y, int mirror, int whiteTint) {
 		Px[] row = spritePixels[r];
 		for (int c = 0; c < row.length; c++) {
 			if (row[c].spriteSheet != null) {
@@ -138,13 +140,13 @@ public class Sprite {
 		}
 	}
 
-	protected void renderPixel(int c, int r, Screen screen, int x, int y) {
+	protected void renderPixel(int c, int r, IScreen screen, int x, int y) {
 		renderPixel(c, r, screen, x, y, spritePixels[r][c].mirror);
 	}
-	protected void renderPixel(int c, int r, Screen screen, int x, int y, int mirror) {
+	protected void renderPixel(int c, int r, IScreen screen, int x, int y, int mirror) {
 		renderPixel(c, r, screen, x, y, mirror, this.color);
 	}
-	protected void renderPixel(int c, int r, Screen screen, int x, int y, int mirror, int whiteTint) {
+	protected void renderPixel(int c, int r, IScreen screen, int x, int y, int mirror, int whiteTint) {
 		if (spritePixels[r][c].spriteSheet != null) {
 			screen.render(x, y, spritePixels[r][c].sheetPos, mirror, spritePixels[r][c].spriteSheet, whiteTint, false); // Render the sprite pixel.
 		} else {
@@ -164,7 +166,7 @@ public class Sprite {
 	
 	public static class Px {
 		protected int sheetPos, mirror, spriteSheetNum;
-		protected SpriteSheet spriteSheet;
+		protected ISpriteSheet spriteSheet;
 
 		public Px(int sheetX, int sheetY, int mirroring, int sheet) {
 			// pixelX and pixelY are the relative positions each pixel should have relative to the top-left-most pixel of the sprite.
@@ -173,7 +175,7 @@ public class Sprite {
 			this.spriteSheetNum = sheet;
 		}
 
-		public Px(int sheetX, int sheetY, int mirroring, SpriteSheet sheet) {
+		public Px(int sheetX, int sheetY, int mirroring, ISpriteSheet sheet) {
 			// pixelX and pixelY are the relative positions each pixel should have relative to the top-left-most pixel of the sprite.
 			sheetPos = sheetX + 32 * sheetY;
 			mirror = mirroring;

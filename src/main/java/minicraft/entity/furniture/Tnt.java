@@ -3,6 +3,7 @@ package minicraft.entity.furniture;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.swing.Timer;
 
@@ -18,8 +19,9 @@ import minicraft.gfx.Sprite;
 import minicraft.item.Item;
 import minicraft.level.Level;
 import minicraft.level.tile.Tiles;
+import minicraftmodsapiinterface.*;
 
-public class Tnt extends Furniture implements ActionListener {
+public class Tnt extends Furniture implements ActionListener, ITnt {
 	private static int FUSE_TIME = 90;
 	private static int BLAST_RADIUS = 32;
 	private static int BLAST_DAMAGE = 30;
@@ -51,7 +53,7 @@ public class Tnt extends Furniture implements ActionListener {
 			
 			if (ftik >= FUSE_TIME) {
 				// Blow up
-				List<Entity> entitiesInRange = level.getEntitiesInRect(new Rectangle(x, y, BLAST_RADIUS * 2, BLAST_RADIUS * 2, Rectangle.CENTER_DIMS));
+				List<Entity> entitiesInRange = level.getEntitiesInRect(new Rectangle(x, y, BLAST_RADIUS * 2, BLAST_RADIUS * 2, Rectangle.CENTER_DIMS)).stream().map(e -> {return (Entity)e;}).collect(Collectors.toUnmodifiableList());
 				
 				for (Entity e: entitiesInRange) {
 					 float dist = (float) Math.hypot(e.x - x, e.y - y);
@@ -75,7 +77,7 @@ public class Tnt extends Furniture implements ActionListener {
 
 				level.setAreaTiles(xt, yt, 1, Tiles.get("explode"), 0, explosionBlacklist);
 				
-				levelSave = level;
+				levelSave = (Level) level;
 				explodeTimer.start();
 				super.remove();
 			}
@@ -83,7 +85,7 @@ public class Tnt extends Furniture implements ActionListener {
 	}
 	
 	@Override
-	public void render(Screen screen) {
+	public void render(IScreen screen) {
 		if (fuseLit) {
 			int colFctr = 100 * ((ftik%15)/5) + 200;
 			col = Color.get(-1, colFctr, colFctr + 100, 555);
@@ -107,7 +109,7 @@ public class Tnt extends Furniture implements ActionListener {
 	}
 	
 	@Override
-	public boolean interact(Player player, Item heldItem, Direction attackDir) {
+	public boolean interact(IPlayer player, IItem heldItem, IDirection attackDir) {
 		if (!fuseLit) {
 			fuseLit = true;
 			Sound.fuse.play();

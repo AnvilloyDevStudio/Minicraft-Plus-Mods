@@ -1,9 +1,10 @@
 package minicraft.entity;
 
 import minicraft.item.Inventory;
+import minicraftmodsapiinterface.IInventory;
 
 public interface ItemHolder {
 	
-	Inventory getInventory();
+	IInventory getInventory();
 	
 }

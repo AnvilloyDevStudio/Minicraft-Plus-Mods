@@ -5,7 +5,6 @@ import java.util.Random;
 
 import minicraft.core.Game;
 import minicraft.core.io.Sound;
-import minicraft.entity.Direction;
 import minicraft.entity.mob.EnemyMob;
 import minicraft.entity.mob.MobAi;
 import minicraft.entity.mob.Player;
@@ -15,10 +14,11 @@ import minicraft.gfx.Color;
 import minicraft.gfx.Point;
 import minicraft.gfx.Sprite;
 import minicraft.item.FurnitureItem;
-import minicraft.item.Item;
 import minicraft.item.PotionType;
 import minicraft.item.PowerGloveItem;
 import minicraft.item.ToolItem;
+import minicraft.level.Level;
+import minicraftmodsapiinterface.*;
 
 public class Spawner extends Furniture {
 	
@@ -80,7 +80,7 @@ public class Spawner extends Furniture {
 		
 		spawnTick--;
 		if (spawnTick <= 0) {
-			int chance = (int) (minMobSpawnChance * Math.pow(level.mobCount, 2) / Math.pow(level.maxMobCount, 2)); // This forms a quadratic function that determines the mob spawn chance.
+			int chance = (int) (minMobSpawnChance * Math.pow(((Level)level).mobCount, 2) / Math.pow(((Level)level).maxMobCount, 2)); // This forms a quadratic function that determines the mob spawn chance.
 			if (chance <= 0 || random.nextInt(chance) == 0)
 				trySpawn();
 			resetSpawnInterval();
@@ -99,9 +99,9 @@ public class Spawner extends Furniture {
 	 */
 	private void trySpawn() {
 		if (level == null || Game.isValidClient()) return;
-		if (level.mobCount >= level.maxMobCount) return; // Can't spawn more entities
+		if (((Level)level).mobCount >= ((Level)level).maxMobCount) return; // Can't spawn more entities
 		
-		Player player = getClosestPlayer();
+		Player player = (Player) getClosestPlayer();
 		if (player == null) return;
 		int xd = player.x - x;
 		int yd = player.y - y;
@@ -122,7 +122,7 @@ public class Spawner extends Furniture {
 		}
 		
 		Point pos = new Point(x >> 4, y >> 4);
-		Point[] areaPositions = level.getAreaTilePositions(pos.x, pos.y, 1);
+		Point[] areaPositions = (Point[]) level.getAreaTilePositions(pos.x, pos.y, 1);
 		ArrayList<Point> validPositions = new ArrayList<>();
 		for (Point p: areaPositions)
 			if (!( !level.getTile(p.x, p.y).mayPass(level, p.x, p.y, newmob) || mob instanceof EnemyMob && level.getTile(p.x, p.y).getLightRadius(level, p.x, p.y) > 0 ))
@@ -146,7 +146,8 @@ public class Spawner extends Furniture {
 	}
 	
 	@Override
-	public boolean interact(Player player, Item item, Direction attackDir) {
+	public boolean interact(IPlayer iplayer, IItem item, IDirection attackDir) {
+		Player player = (Player)iplayer;
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem)item;
 			
@@ -191,7 +192,7 @@ public class Spawner extends Furniture {
 	
 	@Override
 	@SuppressWarnings("JavaReflectionMemberAccess")
-	public boolean use(Player player) {
+	public boolean use(IPlayer player) {
 		if (Game.isMode("creative") && mob instanceof EnemyMob) {
 			lvl++;
 			if (lvl > maxMobLevel) lvl = 1;

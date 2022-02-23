@@ -49,12 +49,12 @@ public class FontStyle {
 		/// For centering
 		Dimension size = new Dimension(Font.textWidth(msg), Font.textHeight());
 		
-		Rectangle textBounds = relTextPos.positionRect(size, anchor, new Rectangle());
+		Rectangle textBounds = (Rectangle) relTextPos.positionRect(size, anchor, new Rectangle());
 		
 		if (padX != 0 || padY != 0) {
 			size.width += padX;
 			size.height += padY;
-			Rectangle textBox = relTextPos.positionRect(size, anchor, new Rectangle());
+			Rectangle textBox = (Rectangle) relTextPos.positionRect(size, anchor, new Rectangle());
 			
 			relLinePos.positionRect(textBounds.getSize(), textBox, textBounds);
 		}
@@ -81,7 +81,7 @@ public class FontStyle {
 		// Either way, the draw method needs to use a different position.
 		
 		Dimension size = new Dimension(Font.textWidth(para), para.length*(Font.textHeight()+spacing));
-		paraBounds = relTextPos.positionRect(size, anchor, new Rectangle());
+		paraBounds = (Rectangle) relTextPos.positionRect(size, anchor, new Rectangle());
 	}
 	
 	public void setupParagraphLine(String[] para, int line, int spacing) {
@@ -100,7 +100,7 @@ public class FontStyle {
 		textArea.setSize(textArea.getWidth(), Font.textHeight()+spacing, RelPos.TOP_LEFT);
 		textArea.translate(0, line*textArea.getHeight());
 		
-		anchor = textArea.getPosition(relTextPos.getOpposite()); // For the relpos to put the rect in the correct pos, the anchor should be fetched using to opposite relpos. 
+		anchor = (Point) textArea.getPosition(relTextPos.getOpposite()); // For the relpos to put the rect in the correct pos, the anchor should be fetched using to opposite relpos. 
 		
 		padX = paraBounds.getWidth() - Font.textWidth(para[line]);
 		padY = spacing;

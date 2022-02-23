@@ -1,12 +1,13 @@
 package minicraft.screen;
 
 import minicraft.core.MyUtils;
+import minicraft.gfx.Rectangle;
+import minicraftmodsapiinterface.*;
 import minicraft.gfx.Dimension;
 import minicraft.gfx.Point;
-import minicraft.gfx.Rectangle;
 
 // stands for "Relative Position"
-public enum RelPos {
+public enum RelPos implements IRelPos {
 	TOP_LEFT, TOP, TOP_RIGHT,
 	LEFT, CENTER, RIGHT,
 	BOTTOM_LEFT, BOTTOM, BOTTOM_RIGHT;
@@ -33,32 +34,32 @@ public enum RelPos {
 	}
 	
 	/** positions the given rect around the given anchor. The double size is what aligns it to a point rather than a rect. */
-	public Point positionRect(Dimension rectSize, Point anchor) {
-		Rectangle bounds = new Rectangle(anchor.x, anchor.y, rectSize.width*2, rectSize.height*2, Rectangle.CENTER_DIMS);
+	public IPoint positionRect(IDimension rectSize, IPoint anchor) {
+		IRectangle bounds = new Rectangle(anchor.getX(), anchor.getY(), ((Dimension)rectSize).width*2, ((Dimension)rectSize).height*2, Rectangle.CENTER_DIMS);
 		return positionRect(rectSize, bounds);
 	}
 	// the point is returned as a rectangle with the given dimension and the found location, within the provided dummy rectangle.
-	public Rectangle positionRect(Dimension rectSize, Point anchor, Rectangle dummy) {
-		Point pos = positionRect(rectSize, anchor);
+	public IRectangle positionRect(IDimension rectSize, IPoint anchor, IRectangle dummy) {
+		IPoint pos = positionRect(rectSize, anchor);
 		dummy.setSize(rectSize, RelPos.TOP_LEFT);
 		dummy.setPosition(pos, RelPos.TOP_LEFT);
 		return dummy;
 	}
 	
 	/** positions the given rect to a relative position in the container. */ 
-	public Point positionRect(Dimension rectSize, Rectangle container) {
-		Point tlcorner = container.getCenter();
+	public IPoint positionRect(IDimension rectSize, IRectangle container) {
+		Point tlcorner = (Point)container.getCenter();
 		
 		// this moves the inner box correctly
-		tlcorner.x += ((xIndex -1) * container.getWidth() / 2) - (xIndex * rectSize.width / 2);
-		tlcorner.y += ((yIndex -1) * container.getHeight() / 2) - (yIndex * rectSize.height / 2);
+		tlcorner.x += ((xIndex -1) * container.getWidth() / 2) - (xIndex * ((Dimension)rectSize).width / 2);
+		tlcorner.y += ((yIndex -1) * container.getHeight() / 2) - (yIndex * ((Dimension)rectSize).height / 2);
 		
 		return tlcorner;
 	}
 	
 	// the point is returned as a rectangle with the given dimension and the found location, within the provided dummy rectangle.
-	public Rectangle positionRect(Dimension rectSize, Rectangle container, Rectangle dummy) {
-		Point pos = positionRect(rectSize, container);
+	public IRectangle positionRect(IDimension rectSize, IRectangle container, IRectangle dummy) {
+		IPoint pos = positionRect(rectSize, container);
 		dummy.setSize(rectSize, RelPos.TOP_LEFT);
 		dummy.setPosition(pos, RelPos.TOP_LEFT);
 		return dummy;

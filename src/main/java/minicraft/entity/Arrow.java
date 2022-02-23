@@ -1,12 +1,16 @@
 package minicraft.entity;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import minicraft.entity.mob.Mob;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Rectangle;
 import minicraft.gfx.Screen;
+import minicraft.level.Level;
+import minicraft.level.tile.Tile;
+import minicraftmodsapiinterface.IScreen;
 
 public class Arrow extends Entity implements ClientTickable {
 	private Direction dir;
@@ -42,7 +46,7 @@ public class Arrow extends Entity implements ClientTickable {
 	
 	@Override
 	public void tick() {
-		if (x < 0 || x >> 4 > level.w || y < 0 || y >> 4 > level.h) {
+		if (x < 0 || x >> 4 > ((Level)level).w || y < 0 || y >> 4 > ((Level)level).h) {
 			remove(); // Remove when out of bounds
 			return;
 		}
@@ -52,7 +56,7 @@ public class Arrow extends Entity implements ClientTickable {
 
 		// TODO I think I can just use the xr yr vars, and the normal system with touchedBy(entity) to detect collisions instead.
 
-		List<Entity> entitylist = level.getEntitiesInRect(new Rectangle(x, y, 0, 0, Rectangle.CENTER_DIMS));
+		List<Entity> entitylist = level.getEntitiesInRect(new Rectangle(x, y, 0, 0, Rectangle.CENTER_DIMS)).stream().map(e -> {return (Entity)e;}).collect(Collectors.toUnmodifiableList());
 		boolean criticalHit = random.nextInt(11) < 9;
 		for (Entity hit : entitylist) {
 			if (hit instanceof Mob && hit != owner) {
@@ -62,8 +66,8 @@ public class Arrow extends Entity implements ClientTickable {
 			}
 
 			if (!level.getTile(x / 16, y / 16).mayPass(level, x / 16, y / 16, this)
-					&& !level.getTile(x / 16, y / 16).Connections.get("fluid")
-					&& level.getTile(x / 16, y / 16).id != 16) {
+					&& !((Tile)level.getTile(x / 16, y / 16)).Connections.get("fluid")
+					&& ((Tile)level.getTile(x / 16, y / 16)).id != 16) {
 				this.remove();
 			}
 		}
@@ -74,7 +78,7 @@ public class Arrow extends Entity implements ClientTickable {
 	}
 
 	@Override
-	public void render(Screen screen) {
+	public void render(IScreen screen) {
 		int xt = 0;
 		int yt = 2;
 

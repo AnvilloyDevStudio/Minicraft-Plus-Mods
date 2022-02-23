@@ -1,5 +1,7 @@
 package minicraft.gfx;
 
+import minicraftmodsapiinterface.ISpriteSheet;
+
 public class MobSprite extends Sprite {
 	/**
 		This class is meant specifically for mobs, becuase they have a special way of flipping and such. It's not only the pixels, as much as the whole sprite flips.
@@ -33,7 +35,7 @@ public class MobSprite extends Sprite {
 				// The offsets are there to determine the pixel that will be there: the one in order, or on the opposite side.
 				int xOffset = flipX ? spritePixels[r].length-1 - c : c;
 				int yOffset = flipY ? spritePixels.length-1 - r : r;
-				spritePixels[r][c] = new Px(sx+xOffset, sy+yOffset, mirror, sheet);
+				spritePixels[r][c] = new Px(sx+xOffset, sy+yOffset, mirror, (ISpriteSheet)sheet);
 			}
 		}
 	}
@@ -123,16 +125,16 @@ public class MobSprite extends Sprite {
 		return sprites;
 	}
 
-	public static MobSprite[][] compileCustomPlayerSpriteAnimations(int sheetX, int sheetY, SpriteSheet sheet) {
+	public static MobSprite[][] compileCustomPlayerSpriteAnimations(int sheetX, int sheetY, ISpriteSheet iSpriteSheet) {
 		MobSprite[][] sprites = new MobSprite[4][2];
 		// dir numbers: 0=down, 1=up, 2=left, 3=right.
 		/// On the spritesheet, most mobs have 4 sprites there, first facing down, then up, then right 1, then right 2. The first two get flipped to animate them, but the last two get flipped to change direction.
 
 		// Contents: down 1, up 1, right 1, right 2
-		MobSprite[] set1 = MobSprite.compilePlayerSpriteList(sheetX, sheetY, 2, 2, 0, 4, sheet);
+		MobSprite[] set1 = MobSprite.compilePlayerSpriteList(sheetX, sheetY, 2, 2, 0, 4, (SpriteSheet)iSpriteSheet);
 
 		// Contents: down 2, up 2, left 1, left 2
-		MobSprite[] set2 = MobSprite.compilePlayerSpriteList(sheetX, sheetY, 2, 2, 1, 4, sheet);
+		MobSprite[] set2 = MobSprite.compilePlayerSpriteList(sheetX, sheetY, 2, 2, 1, 4, (SpriteSheet)iSpriteSheet);
 
 		// Down
 		sprites[0][0] = set1[0];

@@ -6,6 +6,8 @@ import java.util.HashMap;
 import minicraft.core.Game;
 import minicraft.core.io.Localization;
 import minicraft.gfx.Sprite;
+import minicraftmodsapiinterface.IItem;
+import minicraftmodsapiinterface.ISprite;
 
 // Some items are direct instances of this class; those instances are the true "items", like stone, wood, wheat, or coal; you can't do anything with them besides use them to make something else.
 
@@ -53,14 +55,14 @@ public class StackableItem extends Item {
 		Instances.add(this);
 		StackableItems.put(name, this);
 	}
-	protected StackableItem(String name, Sprite sprite, int count) {
-		this(name, sprite);
+	protected StackableItem(String name, ISprite sprite, int count) {
+		this(name, (Sprite)sprite);
 		this.count = count;
 		Instances.add(this);
 		StackableItems.put(name, this);
 	}
 	
-	public boolean stacksWith(Item other) { return other instanceof StackableItem && other.getName().equals(getName()); }
+	public boolean stacksWith(IItem other) { return other instanceof StackableItem && other.getName().equals(getName()); }
 	
 	// This is used by (most) subclasses, to standardize the count decrement behavior. This is not the normal interactOn method.
 	protected boolean interactOn(boolean subClassSuccess) {

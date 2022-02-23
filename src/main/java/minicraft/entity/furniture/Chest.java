@@ -15,6 +15,7 @@ import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.saveload.Load;
 import minicraft.screen.ContainerDisplay;
+import minicraftmodsapiinterface.*;
 
 public class Chest extends Furniture implements ItemHolder {
 	private Inventory inventory; // Inventory of the chest
@@ -61,7 +62,7 @@ public class Chest extends Furniture implements ItemHolder {
 	}
 
 	@Override
-	public boolean interact(Player player, @Nullable Item item, Direction attackDir) {
+	public boolean interact(IPlayer player, @Nullable IItem item, IDirection attackDir) {
 		if (inventory.invSize() == 0)
 			return super.interact(player, item, attackDir);
 		return false;
@@ -88,8 +89,8 @@ public class Chest extends Furniture implements ItemHolder {
 	}
 	
 	@Override
-	public Inventory getInventory() {
-		return inventory;
+	public IInventory getInventory() {
+		return (IInventory) inventory;
 	}
 	
 	@Override

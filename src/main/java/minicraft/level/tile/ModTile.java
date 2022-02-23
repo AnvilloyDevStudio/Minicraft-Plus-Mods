@@ -5,6 +5,7 @@ import minicraft.gfx.Sprite;
 import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.level.Level;
+import minicraftmodsapiinterface.*;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -52,7 +53,7 @@ public class ModTile extends Tile {
         public Method interact;
     }
     @Override
-    public boolean mayPass(Level level, int x, int y, Entity e) {
+    public boolean mayPass(ILevel level, int x, int y, IEntity e) {
 		try {
             return options.mayPassMethod!=null? (boolean) options.mayPassMethod.invoke(this, level, x, y, e): options.mayPass? true: false;
         } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e1) {
@@ -83,7 +84,7 @@ public class ModTile extends Tile {
 	}
 	
 	@Override
-	public boolean hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
+	public boolean hurt(ILevel level, int x, int y, IMob source, int dmg, IDirection attackDir) {
 		try {
             return options.hurt!=null? (boolean) options.hurt.invoke(this, level, x, y, source, dmg, attackDir, ExtraAssets.class): false;
         } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
@@ -94,7 +95,7 @@ public class ModTile extends Tile {
 	}
 	
 	@Override
-	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
+	public boolean interact(ILevel level, int xt, int yt, IPlayer player, IItem item, IDirection attackDir) {
 		try {
             return options.interact!=null? (boolean) options.interact.invoke(this, level, xt, yt, player, item, attackDir): false;
         } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {

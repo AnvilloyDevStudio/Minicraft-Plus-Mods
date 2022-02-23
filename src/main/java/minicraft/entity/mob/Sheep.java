@@ -11,6 +11,7 @@ import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
+import minicraftmodsapiinterface.IScreen;
 
 public class Sheep extends PassiveMob {
 	private static final MobSprite[][] sprites = MobSprite.compileMobSpriteAnimations(0, 28);
@@ -29,7 +30,7 @@ public class Sheep extends PassiveMob {
 	}
 
 	@Override
-	public void render(Screen screen) {
+	public void render(IScreen screen) {
 		int xo = x - 8;
 		int yo = y - 11;
 
@@ -37,9 +38,9 @@ public class Sheep extends PassiveMob {
 
 		MobSprite curSprite = curAnim[dir.getDir()][(walkDist >> 3) % curAnim[dir.getDir()].length];
 		if (hurtTime > 0) {
-			curSprite.render(screen, xo, yo, true);
+			curSprite.render((Screen)screen, xo, yo, true);
 		} else {
-			curSprite.render(screen, xo, yo);
+			curSprite.render((Screen)screen, xo, yo);
 		}
 	}
 

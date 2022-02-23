@@ -10,6 +10,7 @@ import minicraft.item.Items;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
+import minicraftmodsapiinterface.*;
 
 public class Plant extends FarmTile {
     protected static int maxAge = 100;
@@ -21,26 +22,26 @@ public class Plant extends FarmTile {
     }
 
     @Override
-    public void steppedOn(Level level, int xt, int yt, Entity entity) {
+    public void steppedOn(ILevel level, int xt, int yt, IEntity entity) {
         if (entity instanceof ItemEntity) return;
         super.steppedOn(level, xt, yt, entity);
-        harvest(level, xt, yt, entity);
+        harvest((Level)level, xt, yt, (Mob)entity);
     }
 
     @Override
-    public boolean hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
-        harvest(level, x, y, source);
+    public boolean hurt(ILevel level, int x, int y, IMob source, int dmg, IDirection attackDir) {
+        harvest((Level)level, x, y, (Mob)source);
         return true;
     }
 
     @Override
-    public boolean tick(Level level, int xt, int yt) {
+    public boolean tick(ILevel level, int xt, int yt) {
         if (random.nextInt(2) == 0) return false;
 
         int age = level.getData(xt, yt);
         if (age < maxAge) {
-            if (!IfWater(level, xt, yt)) level.setData(xt, yt, age + 1);
-            else if (IfWater(level, xt, yt)) level.setData(xt, yt, age + 2);
+            if (!IfWater((Level)level, xt, yt)) level.setData(xt, yt, age + 1);
+            else if (IfWater((Level)level, xt, yt)) level.setData(xt, yt, age + 2);
             return true;
         }
 
@@ -48,7 +49,7 @@ public class Plant extends FarmTile {
     }
 
     protected boolean IfWater(Level level, int xs, int ys) {
-        Tile[] areaTiles = level.getAreaTiles(xs, ys, 1);
+        Tile[] areaTiles = (Tile[]) level.getAreaTiles(xs, ys, 1);
         for(Tile t: areaTiles)
             if(t == Tiles.get("Water"))
                 return true;

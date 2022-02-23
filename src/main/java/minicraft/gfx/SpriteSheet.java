@@ -9,6 +9,10 @@ public class SpriteSheet {
 	public int width, height; // Width and height of the sprite sheet
 	public int[] pixels; // Integer array of the image's pixels
 	
+	public int getWidth() {return width;}
+	public int getHeight() {return height;}
+	public int[] getPixels() {return pixels;}
+
 	public SpriteSheet(BufferedImage image) {
 		// Sets width and height to that of the image
 		width = image.getWidth();

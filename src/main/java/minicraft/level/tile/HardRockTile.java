@@ -16,6 +16,7 @@ import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.ToolItem;
 import minicraft.level.Level;
+import minicraftmodsapiinterface.*;
 
 public class HardRockTile extends Tile {
 	// Theoretically the full sprite should never be used, so we can use a placeholder
@@ -69,8 +70,8 @@ public class HardRockTile extends Tile {
 	}
 
 	@Override
-	public void render(Screen screen, Level level, int x, int y) {
-		sprite.sparse.color = DirtTile.dCol(level.depth);
+	public void render(IScreen screen, ILevel level, int x, int y) {
+		sprite.sparse.color = DirtTile.dCol(((Level)level).depth);
 		super.render(screen, level, x, y);
 	}
 

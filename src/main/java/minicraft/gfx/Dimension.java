@@ -1,6 +1,8 @@
 package minicraft.gfx;
 
-public class Dimension {
+import minicraftmodsapiinterface.IDimension;
+
+public class Dimension implements IDimension {
 	
 	public int width, height;
 	

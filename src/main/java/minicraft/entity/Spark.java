@@ -1,12 +1,13 @@
 package minicraft.entity;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import minicraft.core.Game;
 import minicraft.entity.mob.AirWizard;
 import minicraft.entity.mob.Mob;
 import minicraft.gfx.Rectangle;
-import minicraft.gfx.Screen;
+import minicraftmodsapiinterface.IScreen;
 
 public class Spark extends Entity {
 	private int lifeTime; // How much time until the spark disappears
@@ -48,7 +49,7 @@ public class Spark extends Entity {
 		y = (int) yy;
 
 		// If the entity is a mob, but not a Air Wizard, then hurt the mob with 1 damage.
-		List<Entity> toHit = level.getEntitiesInRect(entity -> entity instanceof Mob && !(entity instanceof AirWizard), new Rectangle(x, y, 0, 0, Rectangle.CENTER_DIMS)); // Gets the entities in the current position to hit.
+		List<Entity> toHit = level.getEntitiesInRect(entity -> entity instanceof Mob && !(entity instanceof AirWizard), new Rectangle(x, y, 0, 0, Rectangle.CENTER_DIMS)).stream().map(e -> {return (Entity)e;}).collect(Collectors.toUnmodifiableList()); // Gets the entities in the current position to hit.
 		toHit.forEach(entity -> ((Mob) entity).hurt(owner, 1));
 	}
 	
@@ -58,7 +59,7 @@ public class Spark extends Entity {
 	}
 
 	@Override
-	public void render(Screen screen) {
+	public void render(IScreen screen) {
 		int randmirror = 0;
 
 		// If we are in a menu, or we are on a server.

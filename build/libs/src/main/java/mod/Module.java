@@ -4,6 +4,7 @@ import java.util.Random;
 import java.lang.reflect.*;
 import java.util.HashMap;
 import java.util.Map;
+import minicraftmodsapiinterface.*;
 
 public class Module {
     private Module() {}
@@ -76,56 +77,50 @@ public class Module {
             private static Random random = new Random();
             public static class Options {
                 public static Map<String, Boolean> Connections = Map.of("grass", true);
-                public static void render(Object screen, Object level, int x, int y, Object sprite, Class<?> extra) {
+                public static void render(IScreen screen, ILevel level, int x, int y, ISprite sprite, Class<?> extra) {
                     try {
-                        Object grass = Class.class.cast(extra.getDeclaredField("tiles").get(null)).getDeclaredMethod("get", String.class).invoke(null, "Grass");
-                        grass.getClass().getDeclaredMethod("render", screen.getClass(), level.getClass(), int.class, int.class).invoke(grass, screen, level, x, y);
-                        sprite.getClass().getDeclaredMethod("render", screen.getClass(), int.class, int.class).invoke(sprite, screen, x*16, y*16);
+                        ITile grass =(ITile) Class.class.cast(extra.getDeclaredField("tiles").get(null)).getDeclaredMethod("get", String.class).invoke(null, "Grass");
+                        grass.render(screen, level, x, y);
+                        sprite.render(screen, x*16, y*16);
                     } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | NoSuchFieldException e) {e.printStackTrace();}
                 }
-                public static boolean tick(Object level, int xt, int yt, Class<?> extra) {
-                    try {
-                        int damage = (int)level.getClass().getDeclaredMethod("getData", int.class, int.class).invoke(level, xt, yt);
-                        if (damage > 0) {
-                            level.getClass().getDeclaredMethod("setData", int.class, int.class, int.class).invoke(level, xt, yt, damage - 1);
-                            return true;
-                        }
-                    } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {e.printStackTrace();}
+                public static boolean tick(ILevel level, int xt, int yt, Class<?> extra) {
+                    int damage = level.getData(xt, yt);
+                    if (damage > 0) {
+                        level.setData(xt, yt, damage - 1);
+                        return true;
+                    }
                     return false;
                 }
-                public static boolean hurt(Object level, int x, int y, Object source, int dmg, Object attackDir, Class<?> extra) {
+                public static boolean hurt(ILevel level, int x, int y, IMob source, int dmg, IDirection attackDir, Class<?> extra) {
                     hurt(level, x, y, dmg, extra);
                     return true;
                 }
-            	public static void hurt(Object level, int x, int y, int dmg, Class<?> extra) {
+            	public static void hurt(ILevel level, int x, int y, int dmg, Class<?> extra) {
                     try {
                         Method itemget = Class.class.cast(extra.getDeclaredField("items").get(null)).getDeclaredMethod("get", String.class);
-                        Method dropItem = level.getClass().getDeclaredMethod("dropItem", int.class, int.class, int.class, int.class, itemget.invoke(null, "Apple").getClass().getSuperclass().getSuperclass().arrayType());
                         if (random.nextInt(250) == 0)
-                        level.getClass().getDeclaredMethod("dropItem", int.class, int.class, itemget.invoke(null, "Apple").getClass()).invoke(level, x * 16 + 8, y * 16 + 8, itemget.invoke(null, "Apple"));
+                        level.dropItem(x * 16 + 8, y * 16 + 8, (IItem)itemget.invoke(null, "Apple"));
                         
-                        int damage = (int)level.getClass().getDeclaredMethod("getData", int.class, int.class).invoke(level, x, y) + dmg;
+                        int damage = level.getData(x, y) + dmg;
                         int treeHealth = 30;
                         if ((boolean)Class.class.cast(extra.getDeclaredField("game").get(null)).getDeclaredMethod("isMode", String.class).invoke(null, "Creative")) dmg = damage = treeHealth;
                         
-                        HashMap<String, Class<?>> Particles = ((HashMap)extra.getDeclaredField("particles").get(null));
-                        Method leveladd = level.getClass().getDeclaredMethod("add", Particles.get("SmashParticle").getSuperclass().getSuperclass());
-                        leveladd.invoke(level, Particles.get("SmashParticle").getDeclaredConstructor(int.class, int.class).newInstance(x*16, y*16));
+                        HashMap<String, Class<? extends IEntity>> Particles = ((HashMap)extra.getDeclaredField("particles").get(null));
+                        level.add(Particles.get("SmashParticle").getDeclaredConstructor(int.class, int.class).newInstance(x*16, y*16));
                         Object monsterHurt = Class.class.cast(extra.getDeclaredField("sound").get(null)).getDeclaredField("monsterHurt").get(null);
                         monsterHurt.getClass().getDeclaredMethod("play", (Class[])null).invoke(monsterHurt, new Object[0]);
                 
-                        leveladd.invoke(level, Particles.get("TextParticle").getDeclaredConstructor(String.class, int.class, int.class, int.class).newInstance("" + dmg, x * 16 + 8, y * 16 + 8, (1 << 24) + (255 << 16) + (0 << 8) + (0)));
+                        level.add(Particles.get("TextParticle").getDeclaredConstructor(String.class, int.class, int.class, int.class).newInstance("" + dmg, x * 16 + 8, y * 16 + 8, (1 << 24) + (255 << 16) + (0 << 8) + (0)));
                         if (damage >= treeHealth) {
-                            dropItem.invoke(level, x * 16 + 8, y * 16 + 8, 1, 3, itemget.invoke(null, "Wood"));
-                            dropItem.invoke(level, x * 16 +  8, y * 16 + 8, 0, 2, itemget.invoke(null, "Acorn"));
+                            level.dropItem(x * 16 + 8, y * 16 + 8, 1, 3, (IItem)itemget.invoke(null, "Wood"));
+                            level.dropItem(x * 16 +  8, y * 16 + 8, 0, 2, (IItem)itemget.invoke(null, "Acorn"));
                             Method tileget = (Class.class.cast(extra.getDeclaredField("tiles").get(null)).getDeclaredMethod("get", String.class));
                             // level.getClass().getDeclaredMethod("setTile", int.class, int.class, tileget.invoke(null, "Grass")).invoke(x, y, tileget.invoke(null, "Grass"));
-                            Object grass = tileget.invoke(null, "Grass");
-                            Class<?> clazz = level.getClass();
-                            Method method = clazz.getDeclaredMethod("setTile", int.class, int.class, grass.getClass());
-                            method.invoke(x, y, grass);
+                            ITile grass = (ITile)tileget.invoke(null, "Grass");
+                            level.setTile(x, y, grass);
                         } else {
-                            level.getClass().getDeclaredMethod("setData", int.class, int.class, int.class).invoke(level, x, y, damage);
+                            level.setData(x, y, damage);
                         }
                     } catch (NoSuchFieldException | IllegalAccessException | NoSuchMethodException | InstantiationException | InvocationTargetException e) {e.printStackTrace();}
                 }

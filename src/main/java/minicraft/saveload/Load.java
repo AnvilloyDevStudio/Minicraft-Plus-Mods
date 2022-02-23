@@ -429,13 +429,13 @@ public class Load {
 			
 			if (parent == null) continue;
 			/// confirm that there are stairs in all the places that should have stairs.
-			for (minicraft.gfx.Point p: parent.getMatchingTiles(Tiles.get("Stairs Down")).stream().map(p -> {return (minicraft.gfx.Point)p;}).collect(Collectors.toUnmodifiableList())) {
+			for (minicraft.gfx.Point p: parent.getMatchingTiles(Tiles.get("Stairs Down")).stream().map(p -> {return (minicraft.gfx.Point)p;}).collect(Collectors.toList())) {
 				if (curLevel.getTile(p.x, p.y) != Tiles.get("Stairs Up")) {
 					curLevel.printLevelLoc("INCONSISTENT STAIRS detected; placing stairsUp", p.x, p.y);
 					curLevel.setTile(p.x, p.y, Tiles.get("Stairs Up"));
 				}
 			}
-			for (minicraft.gfx.Point p: curLevel.getMatchingTiles(Tiles.get("Stairs Up")).stream().map(p -> {return (minicraft.gfx.Point)p;}).collect(Collectors.toUnmodifiableList())) {
+			for (minicraft.gfx.Point p: curLevel.getMatchingTiles(Tiles.get("Stairs Up")).stream().map(p -> {return (minicraft.gfx.Point)p;}).collect(Collectors.toList())) {
 				if (parent.getTile(p.x, p.y) != Tiles.get("Stairs Down")) {
 					parent.printLevelLoc("INCONSISTENT STAIRS detected; placing stairsDown", p.x, p.y);
 					parent.setTile(p.x, p.y, Tiles.get("Stairs Down"));

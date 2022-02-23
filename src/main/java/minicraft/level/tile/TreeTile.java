@@ -2,19 +2,13 @@ package minicraft.level.tile;
 
 import minicraft.core.Game;
 import minicraft.core.io.Sound;
-import minicraft.entity.Entity;
 import minicraft.entity.particle.SmashParticle;
 import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
 import minicraft.gfx.ConnectorSprite;
-import minicraft.gfx.Screen;
 import minicraft.item.Items;
 import minicraft.item.ToolItem;
-import minicraftmodsapiinterface.IDirection;
-import minicraftmodsapiinterface.IItem;
-import minicraftmodsapiinterface.ILevel;
-import minicraftmodsapiinterface.IMob;
-import minicraftmodsapiinterface.IPlayer;
+import minicraftmodsapiinterface.*;
 
 public class TreeTile extends Tile {
 	
@@ -23,7 +17,7 @@ public class TreeTile extends Tile {
 		Connections.set("grass", true);
 	}
 	
-	public void render(Screen screen, ILevel level, int x, int y) {
+	public void render(IScreen screen, ILevel level, int x, int y) {
 		Tiles.get("Grass").render(screen, level, x, y);
 		
 		boolean u = level.getTile(x, y - 1) == this;
@@ -66,7 +60,7 @@ public class TreeTile extends Tile {
 		return false;
 	}
 
-	public boolean mayPass(ILevel level, int x, int y, Entity e) {
+	public boolean mayPass(ILevel level, int x, int y, IEntity e) {
 		return false;
 	}
 	

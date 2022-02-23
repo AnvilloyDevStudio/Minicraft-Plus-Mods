@@ -470,7 +470,7 @@ public class Level implements ILevel {
 			 dropItem(x, y, items);
 	}
 	public void dropItem(int x, int y, IItem... items) {
-		for (Item i: (Item[])items)
+		for (Item i: Arrays.copyOf(items, items.length, Item[].class))
 			 dropItem(x, y, i);
 	}
 	public ItemEntity dropItem(int x, int y, IItem i) {
@@ -509,7 +509,7 @@ public class Level implements ILevel {
 		int h = (Screen.h + 15) >> 4;
 		
 		screen.setOffset(xScroll, yScroll);
-		sortAndRender((Screen)screen, getEntitiesInTiles(xo, yo, xo + w, yo + h).stream().map(e -> { return (Entity)e;}).collect(Collectors.toUnmodifiableList()));
+		sortAndRender((Screen)screen, getEntitiesInTiles(xo, yo, xo + w, yo + h).stream().map(e -> { return (Entity)e;}).collect(Collectors.toList()));
 		
 		screen.setOffset(0, 0);
 	}

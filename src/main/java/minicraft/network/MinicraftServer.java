@@ -627,7 +627,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 				
 				if (e instanceof DeathChest) {
 					StringBuilder itemDataB = new StringBuilder();
-					for (Item i: chest.getInventory().getItems().stream().map(i -> {return (Item)i;}).collect(Collectors.toUnmodifiableList()))
+					for (Item i: chest.getInventory().getItems().stream().map(i -> {return (Item)i;}).collect(Collectors.toList()))
 						itemDataB.append(i.getData()).append(";");
 					String itemData = itemDataB.toString();
 					itemData = itemData.length() == 0 ? itemData : itemData.substring(0, itemData.length() - 1);

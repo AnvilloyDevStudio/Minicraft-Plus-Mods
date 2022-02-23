@@ -1,20 +1,16 @@
 package minicraft.level.tile;
 
 import minicraft.core.io.Sound;
-import minicraft.entity.Direction;
-import minicraft.entity.Entity;
-import minicraft.entity.mob.Player;
 import minicraft.gfx.ConnectorSprite;
 import minicraft.gfx.Sprite;
-import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.ToolItem;
-import minicraft.level.Level;
+import minicraftmodsapiinterface.*;
 
 public class CloudTile extends Tile {
 	private static ConnectorSprite sprite = new ConnectorSprite(CloudTile.class, new Sprite(0, 22, 3, 3, 1, 3), new Sprite(3, 24, 2, 2, 1, 3), new Sprite(3, 22, 2, 2, 1))
 	{
-		public boolean connectsTo(Tile tile, boolean isSide) {
+		public boolean connectsTo(ITile tile, boolean isSide) {
 			return tile != Tiles.get("Infinite Fall");
 		}
 	};
@@ -23,11 +19,11 @@ public class CloudTile extends Tile {
 		super(name, sprite);
 	}
 
-	public boolean mayPass(Level level, int x, int y, Entity e) {
+	public boolean mayPass(ILevel level, int x, int y, IEntity e) {
 		return true;
 	}
 
-	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
+	public boolean interact(ILevel level, int xt, int yt, IPlayer player, IItem item, IDirection attackDir) {
 		// We don't want the tile to break when attacked with just anything, even in creative mode
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;

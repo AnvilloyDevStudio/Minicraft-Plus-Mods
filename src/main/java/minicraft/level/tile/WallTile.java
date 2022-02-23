@@ -2,16 +2,12 @@ package minicraft.level.tile;
 
 import minicraft.core.Game;
 import minicraft.core.io.Sound;
-import minicraft.entity.Direction;
-import minicraft.entity.Entity;
 import minicraft.entity.mob.AirWizard;
-import minicraft.entity.mob.Player;
 import minicraft.entity.particle.SmashParticle;
 import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
 import minicraft.gfx.ConnectorSprite;
 import minicraft.gfx.Sprite;
-import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.ToolItem;
 import minicraft.level.Level;
@@ -34,7 +30,7 @@ public class WallTile extends Tile {
 		csprite = sprite;
 	}
 
-	public boolean mayPass(Level level, int x, int y, Entity e) {
+	public boolean mayPass(ILevel level, int x, int y, IEntity e) {
 		return false;
 	}
 
@@ -49,13 +45,13 @@ public class WallTile extends Tile {
 		}
 	}
 
-	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
+	public boolean interact(ILevel level, int xt, int yt, IPlayer player, IItem item, IDirection attackDir) {
 		if (Game.isMode("Creative"))
 			return false; // Go directly to hurt method
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type == type.getRequiredTool()) {
-				if (level.depth != -3 || type != Material.Obsidian || AirWizard.beaten) {
+				if (((Level)level).depth != -3 || type != Material.Obsidian || AirWizard.beaten) {
 					if (player.payStamina(4 - (tool.level.level-1)) && tool.payDurability()) {
 						hurt(level, xt, yt, random.nextInt(10) + (tool.level.level-1) * 5 + 10);
 						return true;
@@ -68,7 +64,7 @@ public class WallTile extends Tile {
 		return false;
 	}
 
-	public void hurt(Level level, int x, int y, int dmg) {
+	public void hurt(ILevel level, int x, int y, int dmg) {
 		int damage = level.getData(x, y) + dmg;
 		int sbwHealth = 100;
 		if (Game.isMode("Creative")) dmg = damage = sbwHealth;
@@ -104,7 +100,7 @@ public class WallTile extends Tile {
 		}
 	}
 
-	public boolean tick(Level level, int xt, int yt) {
+	public boolean tick(ILevel level, int xt, int yt) {
 		int damage = level.getData(xt, yt);
 		if (damage > 0) {
 			level.setData(xt, yt, damage - 1);

@@ -1,10 +1,7 @@
 package minicraft.level.tile;
 
-import minicraft.gfx.Screen;
 import minicraft.gfx.Sprite;
-import minicraft.item.Item;
 import minicraft.item.Items;
-import minicraft.level.Level;
 import minicraftmodsapiinterface.*;
 
 import java.lang.reflect.InvocationTargetException;
@@ -16,10 +13,6 @@ import java.util.Map.Entry;
 
 import minicraft.core.Game;
 import minicraft.core.io.Sound;
-import minicraft.entity.Direction;
-import minicraft.entity.Entity;
-import minicraft.entity.mob.Mob;
-import minicraft.entity.mob.Player;
 import minicraft.entity.particle.*;
 
 public class ModTile extends Tile {
@@ -62,7 +55,7 @@ public class ModTile extends Tile {
         }
 	}
     
-    public void render(Screen screen, Level level, int x, int y) {
+    public void render(IScreen screen, ILevel level, int x, int y) {
         if (options.render!=null)
             try {
                 options.render.invoke(this, screen, level, x, y, this.sprite, ExtraAssets.class);
@@ -73,7 +66,7 @@ public class ModTile extends Tile {
         else sprite.render(screen, x*16, y*16);
 	}
 
-	public boolean tick(Level level, int xt, int yt) {
+	public boolean tick(ILevel level, int xt, int yt) {
 		try {
             return options.tick!=null? (boolean) options.tick.invoke(this, level, xt, yt, ExtraAssets.class): false;
         } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {

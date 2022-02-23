@@ -5,20 +5,16 @@ import java.util.HashMap;
 
 import minicraft.core.Game;
 import minicraft.core.io.Sound;
-import minicraft.entity.Direction;
-import minicraft.entity.Entity;
-import minicraft.entity.mob.Mob;
-import minicraft.entity.mob.Player;
 import minicraft.entity.particle.SmashParticle;
 import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
-import minicraft.gfx.Screen;
 import minicraft.gfx.Sprite;
 import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.TileItem;
 import minicraft.item.ToolItem;
 import minicraft.level.Level;
+import minicraftmodsapiinterface.*;
 
 /// this is all the spikey stuff (except "cloud cactus")
 public class OreTile extends Tile {
@@ -71,21 +67,21 @@ public class OreTile extends Tile {
 		Items.add(new TileItem(this.name+" OreTile", new Sprite(0, 31, 0), this.name, "rock", "dirt", "sand", "grass", "path"));
 	}
 
-	public void render(Screen screen, Level level, int x, int y) {
-		sprite.color = DirtTile.dCol(level.depth);
+	public void render(IScreen screen, ILevel level, int x, int y) {
+		sprite.color = DirtTile.dCol(((Level)level).depth);
 		sprite.render(screen, x * 16, y * 16);
 	}
 
-	public boolean mayPass(Level level, int x, int y, Entity e) {
+	public boolean mayPass(ILevel level, int x, int y, IEntity e) {
 		return false;
 	}
 
-	public boolean hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
+	public boolean hurt(ILevel level, int x, int y, IMob source, int dmg, IDirection attackDir) {
 		hurt(level, x, y, 0);
 		return true;
 	}
 
-	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
+	public boolean interact(ILevel level, int xt, int yt, IPlayer player, IItem item, IDirection attackDir) {
 		if(Game.isMode("Creative"))
 			return false; // Go directly to hurt method
 		if (item instanceof ToolItem) {
@@ -104,7 +100,7 @@ public class OreTile extends Tile {
         return type.getOre();
     }
     
-	public void hurt(Level level, int x, int y, int dmg) {
+	public void hurt(ILevel level, int x, int y, int dmg) {
 		int damage = level.getData(x, y) + 1;
 		int oreH = random.nextInt(10) + 3;
 		if (Game.isMode("Creative")) dmg = damage = oreH;
@@ -125,7 +121,7 @@ public class OreTile extends Tile {
 		}
 	}
 
-	public void bumpedInto(Level level, int x, int y, Entity entity) {
+	public void bumpedInto(ILevel level, int x, int y, IEntity entity) {
 		/// this was used at one point to hurt the player if they touched the ore; that's probably why the sprite is so spikey-looking.
 	}
 }

@@ -3,20 +3,15 @@ package minicraft.level.tile;
 import minicraft.core.Game;
 import minicraft.core.io.Settings;
 import minicraft.core.io.Sound;
-import minicraft.entity.Direction;
-import minicraft.entity.Entity;
-import minicraft.entity.mob.Mob;
-import minicraft.entity.mob.Player;
 import minicraft.entity.particle.SmashParticle;
 import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
 import minicraft.gfx.ConnectorSprite;
-import minicraft.gfx.Screen;
 import minicraft.gfx.Sprite;
-import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.ToolItem;
 import minicraft.level.Level;
+import minicraftmodsapiinterface.*;
 
 // This is the normal stone you see underground and on the surface, that drops coal and stone.
 
@@ -33,21 +28,21 @@ public class RockTile extends Tile {
 		csprite = sprite;
 	}
 	
-	public void render(Screen screen, Level level, int x, int y) {
-		sprite.sparse.color = DirtTile.dCol(level.depth);
+	public void render(IScreen screen, ILevel level, int x, int y) {
+		sprite.sparse.color = DirtTile.dCol(((Level)level).depth);
 		sprite.render(screen, level, x, y);
 	}
 	
-	public boolean mayPass(Level level, int x, int y, Entity e) {
+	public boolean mayPass(ILevel level, int x, int y, IEntity e) {
 		return false;
 	}
 	
-	public boolean hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
+	public boolean hurt(ILevel level, int x, int y, IMob source, int dmg, IDirection attackDir) {
 		hurt(level, x, y, dmg);
 		return true;
 	}
 
-	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
+	public boolean interact(ILevel level, int xt, int yt, IPlayer player, IItem item, IDirection attackDir) {
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type.name.equals("pickaxe") && player.payStamina(4 - (tool.level.level-1)) && tool.payDurability()) {
@@ -60,7 +55,7 @@ public class RockTile extends Tile {
 		return false;
 	}
 
-	public void hurt(Level level, int x, int y, int dmg) {
+	public void hurt(ILevel level, int x, int y, int dmg) {
 		damage = level.getData(x, y) + dmg;
 
 		if (Game.isMode("Creative")) {
@@ -89,7 +84,7 @@ public class RockTile extends Tile {
 		}
 	}
 
-	public boolean tick(Level level, int xt, int yt) {
+	public boolean tick(ILevel level, int xt, int yt) {
 		damage = level.getData(xt, yt);
 		if (damage > 0) {
 			level.setData(xt, yt, damage - 1);

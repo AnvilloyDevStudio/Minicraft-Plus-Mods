@@ -53,7 +53,7 @@ public class Tnt extends Furniture implements ActionListener, ITnt {
 			
 			if (ftik >= FUSE_TIME) {
 				// Blow up
-				List<Entity> entitiesInRange = level.getEntitiesInRect(new Rectangle(x, y, BLAST_RADIUS * 2, BLAST_RADIUS * 2, Rectangle.CENTER_DIMS)).stream().map(e -> {return (Entity)e;}).collect(Collectors.toUnmodifiableList());
+				List<Entity> entitiesInRange = level.getEntitiesInRect(new Rectangle(x, y, BLAST_RADIUS * 2, BLAST_RADIUS * 2, Rectangle.CENTER_DIMS)).stream().map(e -> {return (Entity)e;}).collect(Collectors.toList());
 				
 				for (Entity e: entitiesInRange) {
 					 float dist = (float) Math.hypot(e.x - x, e.y - y);

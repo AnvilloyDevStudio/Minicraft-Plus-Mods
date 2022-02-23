@@ -1,17 +1,13 @@
 package minicraft.level.tile;
 
 import minicraft.core.io.Sound;
-import minicraft.entity.Direction;
-import minicraft.entity.Entity;
 import minicraft.entity.mob.Mob;
-import minicraft.entity.mob.Player;
 import minicraft.gfx.ConnectorSprite;
-import minicraft.gfx.Screen;
 import minicraft.gfx.Sprite;
-import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.ToolItem;
 import minicraft.level.Level;
+import minicraftmodsapiinterface.*;
 
 public class SandTile extends Tile {
 	static Sprite steppedOn, normal = new Sprite(9, 6, 2, 2, 1);
@@ -26,9 +22,9 @@ public class SandTile extends Tile {
 	
 	private ConnectorSprite sprite = new ConnectorSprite(SandTile.class, new Sprite(6, 6, 3, 3, 1, 3), normal)
 	{
-		public boolean connectsTo(Tile tile, boolean isSide) {
+		public boolean connectsTo(ITile tile, boolean isSide) {
 			if(!isSide) return true;
-			return tile.Connections.get("sand");
+			return ((Tile)tile).Connections.get("sand");
 		}
 	};
 	
@@ -39,18 +35,18 @@ public class SandTile extends Tile {
 		maySpawn = true;
 	}
 	
-	public void render(Screen screen, Level level, int x, int y) {
+	public void render(IScreen screen, ILevel level, int x, int y) {
 		boolean steppedOn = level.getData(x, y) > 0;
 		
 		if(steppedOn) csprite.full = SandTile.steppedOn;
 		else csprite.full = SandTile.normal;
 
-		csprite.sparse.color = DirtTile.dCol(level.depth);
+		csprite.sparse.color = DirtTile.dCol(((Level)level).depth);
 		
 		csprite.render(screen, level, x, y);
 	}
 
-	public boolean tick(Level level, int x, int y) {
+	public boolean tick(ILevel level, int x, int y) {
 		int damage = level.getData(x, y);
 		if (damage > 0) {
 			level.setData(x, y, damage - 1);
@@ -59,13 +55,13 @@ public class SandTile extends Tile {
 		return false;
 	}
 
-	public void steppedOn(Level level, int x, int y, Entity entity) {
+	public void steppedOn(ILevel level, int x, int y, IEntity entity) {
 		if (entity instanceof Mob) {
 			level.setData(x, y, 10);
 		}
 	}
 
-	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
+	public boolean interact(ILevel level, int xt, int yt, IPlayer player, IItem item, IDirection attackDir) {
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type.name.equals("shovel")) {

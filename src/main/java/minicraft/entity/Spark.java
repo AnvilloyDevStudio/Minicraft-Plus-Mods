@@ -49,7 +49,7 @@ public class Spark extends Entity {
 		y = (int) yy;
 
 		// If the entity is a mob, but not a Air Wizard, then hurt the mob with 1 damage.
-		List<Entity> toHit = level.getEntitiesInRect(entity -> entity instanceof Mob && !(entity instanceof AirWizard), new Rectangle(x, y, 0, 0, Rectangle.CENTER_DIMS)).stream().map(e -> {return (Entity)e;}).collect(Collectors.toUnmodifiableList()); // Gets the entities in the current position to hit.
+		List<Entity> toHit = level.getEntitiesInRect(entity -> entity instanceof Mob && !(entity instanceof AirWizard), new Rectangle(x, y, 0, 0, Rectangle.CENTER_DIMS)).stream().map(e -> {return (Entity)e;}).collect(Collectors.toList()); // Gets the entities in the current position to hit.
 		toHit.forEach(entity -> ((Mob) entity).hurt(owner, 1));
 	}
 	

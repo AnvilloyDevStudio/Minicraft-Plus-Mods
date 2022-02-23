@@ -3,18 +3,14 @@ package minicraft.level.tile;
 import minicraft.core.Game;
 import minicraft.core.io.Settings;
 import minicraft.core.io.Sound;
-import minicraft.entity.Direction;
-import minicraft.entity.Entity;
 import minicraft.entity.mob.AirWizard;
 import minicraft.entity.mob.Mob;
-import minicraft.entity.mob.Player;
 import minicraft.entity.particle.SmashParticle;
 import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
 import minicraft.gfx.Sprite;
-import minicraft.item.Item;
 import minicraft.item.ToolItem;
-import minicraft.level.Level;
+import minicraftmodsapiinterface.*;
 
 public class CloudCactusTile extends Tile {
 	private static Sprite sprite = new Sprite(6, 2, 2, 2, 1);
@@ -23,16 +19,16 @@ public class CloudCactusTile extends Tile {
 		super(name, sprite);
 	}
 	
-	public boolean mayPass(Level level, int x, int y, Entity e) {
+	public boolean mayPass(ILevel level, int x, int y, IEntity e) {
 		return e instanceof AirWizard;
 	}
 
-	public boolean hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
+	public boolean hurt(ILevel level, int x, int y, IMob source, int dmg, IDirection attackDir) {
 		hurt(level, x, y, 0);
 		return true;
 	}
 
-	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
+	public boolean interact(ILevel level, int xt, int yt, IPlayer player, IItem item, IDirection attackDir) {
 		if(Game.isMode("creative"))
 			return false; // Go directly to hurt method
 		if (item instanceof ToolItem) {
@@ -47,7 +43,7 @@ public class CloudCactusTile extends Tile {
 		return false;
 	}
 	
-	public void hurt(Level level, int x, int y, int dmg) {
+	public void hurt(ILevel level, int x, int y, int dmg) {
 		int damage = level.getData(x, y) + dmg;
 		int health = 10;
 		if (Game.isMode("creative")) dmg = damage = health;
@@ -60,7 +56,7 @@ public class CloudCactusTile extends Tile {
 			level.setData(x, y, damage);
 	}
 
-	public void bumpedInto(Level level, int x, int y, Entity entity) {
+	public void bumpedInto(ILevel level, int x, int y, IEntity entity) {
 		if (entity instanceof AirWizard) return;
 		
 		if(entity instanceof Mob)

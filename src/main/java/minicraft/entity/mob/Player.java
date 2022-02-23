@@ -634,7 +634,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable, IPlayer {
 			if (t.x >= 0 && t.y >= 0 && t.x < ((Level)level).w && t.y < ((Level)level).h) {
 
 				// Get any entities (except dropped items) on the tile.
-				List<Entity> tileEntities = level.getEntitiesInTiles(t.x, t.y, t.x, t.y, false, ItemEntity.class).stream().map(e -> {return (Entity)e;}).collect(Collectors.toUnmodifiableList());
+				List<Entity> tileEntities = level.getEntitiesInTiles(t.x, t.y, t.x, t.y, false, ItemEntity.class).stream().map(e -> {return (Entity)e;}).collect(Collectors.toList());
 
 				// If there are no other entities than us on the tile.
 				if (tileEntities.size() == 0 || tileEntities.size() == 1 && tileEntities.get(0) == this) {
@@ -765,7 +765,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable, IPlayer {
 	
 	/** called by other use method; this serves as a buffer in case there is no entity in front of the player. */
 	private boolean use(Rectangle area) {
-		List<Entity> entities = level.getEntitiesInRect(area).stream().map(e -> {return (Entity)e;}).collect(Collectors.toUnmodifiableList());// Gets the entities within the 4 points
+		List<Entity> entities = level.getEntitiesInRect(area).stream().map(e -> {return (Entity)e;}).collect(Collectors.toList());// Gets the entities within the 4 points
 		for (Entity e : entities) {
 			if (e instanceof Furniture && ((Furniture) e).use(this)) return true; // If the entity is not the player, then call it's use method, and return the result. Only some furniture classes use this.
 		}
@@ -774,7 +774,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable, IPlayer {
 	
 	/** same, but for interaction. */
 	private boolean interact(Rectangle area) {
-		List<Entity> entities = level.getEntitiesInRect(area).stream().map(e -> {return (Entity)e;}).collect(Collectors.toUnmodifiableList());
+		List<Entity> entities = level.getEntitiesInRect(area).stream().map(e -> {return (Entity)e;}).collect(Collectors.toList());
 		for (Entity e : entities) {
 			if (e != this && e.interact(this, activeItem, attackDir)) return true; // This is the ONLY place that the Entity.interact method is actually called.
 		}
@@ -783,7 +783,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable, IPlayer {
 	
 	/** same, but for attacking. */
 	private boolean hurt(Rectangle area) {
-		List<Entity> entities = level.getEntitiesInRect(area).stream().map(e -> {return (Entity)e;}).collect(Collectors.toUnmodifiableList());
+		List<Entity> entities = level.getEntitiesInRect(area).stream().map(e -> {return (Entity)e;}).collect(Collectors.toList());
 		int maxDmg = 0;
 		for (Entity e : entities) {
 			if (e != this && e instanceof Mob) {
@@ -972,13 +972,13 @@ public class Player extends Mob implements ItemHolder, ClientTickable, IPlayer {
 	public void findStartPos(ILevel level, boolean setSpawn) {
 		Point spawnPos;
 
-		List<Point> spawnTilePositions = level.getMatchingTiles(Tiles.get("grass")).stream().map(p -> {return (Point)p;}).collect(Collectors.toUnmodifiableList());
+		List<Point> spawnTilePositions = level.getMatchingTiles(Tiles.get("grass")).stream().map(p -> {return (Point)p;}).collect(Collectors.toList());
 
 		if (spawnTilePositions.size() == 0)
-			spawnTilePositions.addAll(level.getMatchingTiles((t, x, y) -> t.maySpawn()).stream().map(p -> {return (Point)p;}).collect(Collectors.toUnmodifiableList()));
+			spawnTilePositions.addAll(level.getMatchingTiles((t, x, y) -> t.maySpawn()).stream().map(p -> {return (Point)p;}).collect(Collectors.toList()));
 
 		if (spawnTilePositions.size() == 0)
-			spawnTilePositions.addAll(level.getMatchingTiles((t, x, y) -> t.mayPass(level, x, y, Player.this)).stream().map(p -> {return (Point)p;}).collect(Collectors.toUnmodifiableList()));
+			spawnTilePositions.addAll(level.getMatchingTiles((t, x, y) -> t.mayPass(level, x, y, Player.this)).stream().map(p -> {return (Point)p;}).collect(Collectors.toList()));
 
 		// There are no tiles in the entire map which the player is allowed to stand on. Not likely.
 		if (spawnTilePositions.size() == 0) {

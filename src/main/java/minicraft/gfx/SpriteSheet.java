@@ -2,7 +2,9 @@ package minicraft.gfx;
 
 import java.awt.image.BufferedImage;
 
-public class SpriteSheet {
+import minicraftmodsapiinterface.ISpriteSheet;
+
+public class SpriteSheet implements ISpriteSheet {
 	
 	public static final int boxWidth = 8;
 	

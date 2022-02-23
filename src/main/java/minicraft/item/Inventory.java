@@ -7,9 +7,9 @@ import java.util.Random;
 import org.jetbrains.annotations.Nullable;
 
 import minicraft.entity.furniture.Furniture;
-import minicraftmodsapiinterface.IItem;
+import minicraftmodsapiinterface.*;
 
-public class Inventory {
+public class Inventory implements IInventory {
 	private final Random random = new Random();
 	private final List<Item> items = new ArrayList<>(); // The list of items that is in the inventory.
 	
@@ -17,7 +17,7 @@ public class Inventory {
 	 * Returns all the items which are in this inventory.
 	 * @return ArrayList containing all the items in the inventory.
 	 */
-	public List<Item> getItems() { return new ArrayList<>(items); }
+	public List<IItem> getItems() { return new ArrayList<>(items); }
 	public void clearInv() { items.clear(); }
 	public int invSize() { return items.size(); }
 
@@ -35,7 +35,7 @@ public class Inventory {
 	 */
 	public IItem remove(int idx) { return items.remove(idx); }
 	
-	public void addAll(Inventory other) {
+	public void addAll(IInventory other) {
 		for (IItem i: other.getItems())
 			add(i.clone());
 	}
@@ -219,8 +219,8 @@ public class Inventory {
 			tryAdd(chance, item, num, false);
 	}
 	public void tryAdd(int chance, @Nullable IItem item) { tryAdd(chance, item, 1); }
-	public void tryAdd(int chance, ToolType type, int lvl) {
-		tryAdd(chance, new ToolItem(type, ItemLevel.LevelInstances.get(lvl)));
+	public void tryAdd(int chance, IToolType type, int lvl) {
+		tryAdd(chance, new ToolItem((ToolType)type, ItemLevel.LevelInstances.get(lvl)));
 	}
 	
 	/**
@@ -228,7 +228,7 @@ public class Inventory {
 	 * @param chance Chance for the item to be added.
 	 * @param type Type of furniture to add.
 	 */
-	public void tryAdd(int chance, Furniture type) {
-		tryAdd(chance, new FurnitureItem(type));
+	public void tryAdd(int chance, IFurniture type) {
+		tryAdd(chance, new FurnitureItem((Furniture)type));
 	}
 }

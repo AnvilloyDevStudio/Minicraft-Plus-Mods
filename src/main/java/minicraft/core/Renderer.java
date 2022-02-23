@@ -145,7 +145,7 @@ public class Renderer extends Game {
 	
 	
 	private static void renderLevel() {
-		ILevel level = levels[currentLevel];
+		Level level = levels[currentLevel];
 		if (level == null) return;
 		
 		int xScroll = player.x - Screen.w / 2; // Scrolls the screen in the x axis.
@@ -154,8 +154,8 @@ public class Renderer extends Game {
 		// Stop scrolling if the screen is at the ...
 		if (xScroll < 0) xScroll = 0; // ...Left border.
 		if (yScroll < 0) yScroll = 0; // ...Top border.
-		if (xScroll > ((Level)level).w * 16 - Screen.w) xScroll = ((Level)level).w * 16 - Screen.w; // ...Right border.
-		if (yScroll > ((Level)level).h * 16 - Screen.h) yScroll = ((Level)level).h * 16 - Screen.h; // ...Bottom border.
+		if (xScroll > level.w * 16 - Screen.w) xScroll = level.w * 16 - Screen.w; // ...Right border.
+		if (yScroll > level.h * 16 - Screen.h) yScroll = level.h * 16 - Screen.h; // ...Bottom border.
 		if (currentLevel > 3) { // If the current level is higher than 3 (which only the sky level (and dungeon) is)
 			for (int y = 0; y < 28; y++)
 				for (int x = 0; x < 48; x++) {

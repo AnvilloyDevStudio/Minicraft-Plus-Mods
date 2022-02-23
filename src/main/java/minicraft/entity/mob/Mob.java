@@ -14,7 +14,7 @@ import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 import minicraftmodsapiinterface.*;
 
-public abstract class Mob extends Entity {
+public abstract class Mob extends Entity implements IMob {
 	
 	protected MobSprite[][] sprites; // This contains all the mob's sprites, sorted first by direction (index corresponding to the dir variable), and then by walk animation state.
 	public int walkDist = 0; // How far we've walked currently, incremented after each movement. This is used to change the sprite; "(walkDist >> 3) & 1" switches between a value of 0 and 1 every 8 increments of walkDist.
@@ -183,7 +183,7 @@ public abstract class Mob extends Entity {
 	 * @param mob The mob that hurt this mob
 	 * @param damage The amount of damage to hurt the mob with
 	 */
-	public void hurt(Mob mob, int damage) { hurt(mob, damage, (Direction)getAttackDir(mob, this)); }
+	public void hurt(IMob mob, int damage) { hurt(mob, damage, (Direction)getAttackDir((Mob)mob, this)); }
 
 	/**
 	 * Do damage to the mob this method is called on.
@@ -191,12 +191,12 @@ public abstract class Mob extends Entity {
 	 * @param damage The amount of damage to hurt the mob with
 	 * @param attackDir The direction this mob was attacked from
 	 */
-	public void hurt(Mob mob, int damage, Direction attackDir) { // Hurt the mob, when the source is another mob
+	public void hurt(IMob mob, int damage, IDirection attackDir) { // Hurt the mob, when the source is another mob
 		if (mob instanceof Player && Game.isMode("creative") && mob != this) doHurt(health, attackDir); // Kill the mob instantly
 		else doHurt(damage, attackDir); // Call the method that actually performs damage, and use our provided attackDir
 	}
 	
-	public void hurt(Tnt tnt, int dmg) { doHurt(dmg, getAttackDir(tnt, this)); }
+	public void hurt(ITnt tnt, int dmg) { doHurt(dmg, getAttackDir((Tnt)tnt, this)); }
 
 	/**
 	 * Hurt the mob, based on only damage and a direction

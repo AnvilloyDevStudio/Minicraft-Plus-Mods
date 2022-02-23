@@ -2,6 +2,7 @@ package minicraft.entity.furniture;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -96,7 +97,7 @@ public class Chest extends Furniture implements ItemHolder {
 	@Override
 	public void die() {
 		if (level != null) {
-			List<Item> items = inventory.getItems();
+			List<Item> items = inventory.getItems().stream().map(i -> {return (Item)i;}).collect(Collectors.toList());
 			level.dropItem(x, y, items.toArray(new Item[items.size()]));
 		}
 		super.die();

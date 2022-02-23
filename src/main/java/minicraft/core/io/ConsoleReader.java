@@ -438,7 +438,7 @@ public class ConsoleReader extends Thread {
 				
 				try {
 					int radius = Integer.valueOf(args[2]);
-					allEntities.addAll(rp.getLevel().getEntitiesInRect(new Rectangle(rp.x, rp.y, radius*2, radius*2, Rectangle.CENTER_DIMS)).stream().map(e -> {return (Entity)e;}).collect(Collectors.toUnmodifiableList()));
+					allEntities.addAll(rp.getLevel().getEntitiesInRect(new Rectangle(rp.x, rp.y, radius*2, radius*2, Rectangle.CENTER_DIMS)).stream().map(e -> {return (Entity)e;}).collect(Collectors.toList()));
 					allEntities.remove(rp);
 				} catch (NumberFormatException ex) {
 					System.out.println("Invalid entity targeting format: Specified radius is not an integer: " + args[2]);

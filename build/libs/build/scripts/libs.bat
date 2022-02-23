@@ -67,7 +67,7 @@ goto fail
 :execute
 @rem Setup the command line
 
-set CLASSPATH=%APP_HOME%\lib\core-0.1.0.jar
+set CLASSPATH=%APP_HOME%\lib\core-0.1.0.jar;%APP_HOME%\lib\minicraft-mod-api-interface-0.1.0.jar
 
 
 @rem Execute libs

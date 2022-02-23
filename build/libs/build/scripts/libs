@@ -80,7 +80,7 @@ case "`uname`" in
     ;;
 esac
 
-CLASSPATH=$APP_HOME/lib/core-0.1.0.jar
+CLASSPATH=$APP_HOME/lib/core-0.1.0.jar:$APP_HOME/lib/minicraft-mod-api-interface-0.1.0.jar
 
 
 # Determine the Java command to use to start the JVM.

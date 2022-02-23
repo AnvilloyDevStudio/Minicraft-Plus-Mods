@@ -1,11 +1,8 @@
 package minicraft.level.tile;
 
 import minicraft.core.io.Sound;
-import minicraft.entity.Direction;
-import minicraft.entity.mob.Player;
 import minicraft.gfx.ConnectorSprite;
 import minicraft.gfx.Sprite;
-import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.ToolItem;
 import minicraft.level.Level;
@@ -27,7 +24,7 @@ public class GrassTile extends Tile {
 		maySpawn = true;
 	}
 
-	public boolean tick(Level level, int xt, int yt) {
+	public boolean tick(ILevel level, int xt, int yt) {
 		// TODO revise this method.
 		if (random.nextInt(40) != 0) return false;
 		
@@ -49,7 +46,7 @@ public class GrassTile extends Tile {
 		sprite.render(screen, level, x, y);
 	}
 
-	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
+	public boolean interact(ILevel level, int xt, int yt, IPlayer player, IItem item, IDirection attackDir) {
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type.name.equals("shovel")) {

@@ -90,7 +90,7 @@ public class Creeper extends EnemyMob {
 				int lvlDamage = BLAST_DAMAGE * lvl;
 
 				// Hurt all the entities
-				List<Entity> entitiesInRange = level.getEntitiesInTiles(xt, yt, radius).stream().map(e -> {return (Entity)e;}).collect(Collectors.toUnmodifiableList());
+				List<Entity> entitiesInRange = level.getEntitiesInTiles(xt, yt, radius).stream().map(e -> {return (Entity)e;}).collect(Collectors.toList());
 				List<Entity> spawners = new ArrayList<>();
 				Point[] tilePositions = (Point[]) level.getAreaTilePositions(xt, yt, radius);
 

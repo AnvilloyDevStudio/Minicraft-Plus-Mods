@@ -222,13 +222,13 @@ public final class Tiles {
 	
 	public static Tile get(int id) {
 		//System.out.println("Requesting tile by id: " + id);
-		if(id < 0) id += 256;
+		if(id < 0) id += 32768;
 		
 		if(tiles.get((short)id) != null) {
 			return tiles.get((short)id);
 		}
-		else if(id >= 128) {
-			return TorchTile.getTorchTile(get(id-128));
+		else if(id >= 32767) {
+			return TorchTile.getTorchTile(get(id-32767));
 		}
 		else {
 			System.out.println("TILES.GET: Unknown tile id requested: " + id);

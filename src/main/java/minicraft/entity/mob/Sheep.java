@@ -10,7 +10,6 @@ import minicraft.gfx.Screen;
 import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.ToolItem;
-import minicraft.item.ToolType;
 import minicraftmodsapiinterface.IScreen;
 
 public class Sheep extends PassiveMob {

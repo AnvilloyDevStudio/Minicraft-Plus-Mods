@@ -5,8 +5,6 @@ import java.awt.GraphicsEnvironment;
 import java.util.HashMap;
 
 import minicraft.core.Game;
-import minicraft.level.Level;
-import minicraft.screen.SkinDisplay;
 import minicraft.screen.entry.ArrayEntry;
 import minicraft.screen.entry.BooleanEntry;
 import minicraft.screen.entry.RangeEntry;

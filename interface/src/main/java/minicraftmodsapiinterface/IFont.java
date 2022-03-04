@@ -1,13 +1,33 @@
-package minicraft.gfx;
+package minicraftmodsapiinterface;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Consumer;
 
-import minicraft.core.io.Localization;
-import minicraftmodsapiinterface.IFont;
-
-public class Font extends IFont {
+public class IFont {
+	public static void init(Class<?> fs) {
+		try {
+			newFS = fs.getConstructor(int.class);
+		} catch (NoSuchMethodException | SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	private static Constructor<?> newFS;
+	private static IFontStyle newFontStyle(int i) {
+		try {
+			return (IFontStyle)newFS.newInstance(i);
+		} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
+				| InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+	};
 	// These are all the characters that will be translated to the screen. (The spaces are important)
 	private static String chars =
 			"ABCDEFGHIJKLMNOPQRSTUVWXYZ012345"+
@@ -16,11 +36,11 @@ public class Font extends IFont {
 	
 	/* The order of the letters in the chars string is represented in the order that they appear in the sprite-sheet. */
 
-	public static void draw(String msg, Screen screen, int x, int y) { draw(msg, screen, x, y, -1); }
+	public static void draw(String msg, IScreen screen, int x, int y) { draw(msg, screen, x, y, -1); }
 
 	/** Draws the message to the x & y coordinates on the screen. */
-	public static void draw(String msg, Screen screen, int x, int y, int whiteTint) {
-		msg = msg.toUpperCase(Localization.getSelectedLocale()); //makes all letters uppercase.
+	public static void draw(String msg, IScreen screen, int x, int y, int whiteTint) {
+		msg = msg.toUpperCase(ILocalization.getSelectedLocale()); //makes all letters uppercase.
 		for (int i = 0; i < msg.length(); i++) { // Loops through all the characters that you typed
 			int ix = chars.indexOf(msg.charAt(i)); // The current letter in the message loop
 			if (ix >= 0) {
@@ -30,14 +50,14 @@ public class Font extends IFont {
 		}
 	}
 
-	public static void drawColor(String message, Screen screen, int x, int y) {
+	public static void drawColor(String message, IScreen screen, int x, int y) {
 		// Set default color message if it doesn't have initially
-		if (message.charAt(0) != Color.COLOR_CHAR) {
-			message = Color.WHITE_CODE + message;
+		if (message.charAt(0) != IColor.COLOR_CHAR) {
+			message = IColor.WHITE_CODE + message;
 		}
 
 		int leading = 0;
-		for (String data : message.split(String.valueOf(Color.COLOR_CHAR))) {
+		for (String data : message.split(String.valueOf(IColor.COLOR_CHAR))) {
 			if (data.isEmpty()) {
 				continue;
 			}
@@ -51,18 +71,18 @@ public class Font extends IFont {
 			} catch (IndexOutOfBoundsException ignored) {
 				// Bad formatted colored string
 				text = data;
-				color = Color.WHITE_CODE;
+				color = IColor.WHITE_CODE;
 			}
 
-			Font.draw(text, screen, x + leading, y, Color.get(color));
-			leading += Font.textWidth(text);
+			IFont.draw(text, screen, x + leading, y, IColor.get(color));
+			leading += IFont.textWidth(text);
 		}
 	}
 
-	public static void drawBackground(String msg, Screen screen, int x, int y) { drawBackground(msg, screen, x, y, -1); }
+	public static void drawBackground(String msg, IScreen screen, int x, int y) { drawBackground(msg, screen, x, y, -1); }
 
-	public static void drawBackground(String msg, Screen screen, int x, int y, int whiteTint) {
-		String newMsg = msg.toUpperCase(Localization.getSelectedLocale());
+	public static void drawBackground(String msg, IScreen screen, int x, int y, int whiteTint) {
+		String newMsg = msg.toUpperCase(ILocalization.getSelectedLocale());
 		for (int i = 0; i < newMsg.length(); i++) { // Renders the black boxes under the text
 			screen.render(x + i * textWidth(newMsg.substring(i, i+1)), y, 30 + 30 * 32, 0, 3);
 		}
@@ -85,25 +105,25 @@ public class Font extends IFont {
 	}
 	
 	public static int textHeight() {//noinspection SuspiciousNameCombination
-		return SpriteSheet.boxWidth;
+		return ISpriteSheet.boxWidth;
 	}
 	
-	public static void drawCentered(String msg, Screen screen, int y, int color) {
-		new FontStyle(color).setYPos(y).draw(msg, screen);
+	public static void drawCentered(String msg, IScreen screen, int y, int color) {
+		newFontStyle(color).setYPos(y).draw(msg, screen);
 	}
 	
 	
 	/// note: the y centering values in the FontStyle object will be used as a paragraph y centering value instead.
-	public static void drawParagraph(String para, Screen screen, FontStyle style, int lineSpacing) { drawParagraph(para, screen, Screen.w, Screen.h, style, lineSpacing); }
-	public static void drawParagraph(String para, Screen screen, int w, int h, FontStyle style, int lineSpacing) {
+	public static void drawParagraph(String para, IScreen screen, IFontStyle style, int lineSpacing) { drawParagraph(para, screen, IScreen.w, IScreen.h, style, lineSpacing); }
+	public static void drawParagraph(String para, IScreen screen, int w, int h, IFontStyle style, int lineSpacing) {
 		drawParagraph(screen, style, lineSpacing, getLines(para, w, h, lineSpacing));
 	}
 	
 	/// all the other drawParagraph() methods end up calling this one.
-	public static void drawParagraph(List<String> lines, Screen screen, FontStyle style, int lineSpacing) {
+	public static void drawParagraph(List<String> lines, IScreen screen, IFontStyle style, int lineSpacing) {
 		drawParagraph(screen, style, lineSpacing, lines.toArray(new String[lines.size()]));
 	}
-	public static void drawParagraph(Screen screen, FontStyle style, int lineSpacing, String... lines) {
+	public static void drawParagraph(IScreen screen, IFontStyle style, int lineSpacing, String... lines) {
 		for(int i = 0; i < lines.length; i++)
 			style.drawParagraphLine(lines, i, lineSpacing, screen);
 	}

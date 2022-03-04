@@ -35,7 +35,7 @@ public enum RelPos implements IRelPos {
 	
 	/** positions the given rect around the given anchor. The double size is what aligns it to a point rather than a rect. */
 	public IPoint positionRect(IDimension rectSize, IPoint anchor) {
-		IRectangle bounds = new Rectangle(anchor.getX(), anchor.getY(), ((Dimension)rectSize).width*2, ((Dimension)rectSize).height*2, Rectangle.CENTER_DIMS);
+		IRectangle bounds = new Rectangle(anchor.x, anchor.y, ((Dimension)rectSize).width*2, ((Dimension)rectSize).height*2, Rectangle.CENTER_DIMS);
 		return positionRect(rectSize, bounds);
 	}
 	// the point is returned as a rectangle with the given dimension and the found location, within the provided dummy rectangle.

@@ -7,7 +7,7 @@ import minicraft.core.Updater;
 import minicraft.core.io.Settings;
 import minicraftmodsapiinterface.*;
 
-public class Screen implements IScreen {
+public class Screen extends IScreen {
 	
 	public static final int w = Renderer.WIDTH; // Width of the screen
 	public static final int h = Renderer.HEIGHT; // Height of the screen
@@ -29,12 +29,12 @@ public class Screen implements IScreen {
 	// So 0 is the start of the item sheet 1024 the start of the tile sheet, 2048 the start of the entity sheet,
 	// And 3072 the start of the gui sheet
 
-	private ISpriteSheet[] sheets;
-	private ISpriteSheet[] sheetsCustom;
+	private SpriteSheet[] sheets;
+	private SpriteSheet[] sheetsCustom;
 
-	public Screen(ISpriteSheet itemSheet, ISpriteSheet tileSheet, ISpriteSheet entitySheet, ISpriteSheet guiSheet, ISpriteSheet skinsSheet) {
+	public Screen(SpriteSheet itemSheet, SpriteSheet tileSheet, SpriteSheet entitySheet, SpriteSheet guiSheet, SpriteSheet skinsSheet) {
 
-		sheets = new ISpriteSheet[]{itemSheet, tileSheet, entitySheet, guiSheet, skinsSheet};
+		sheets = new SpriteSheet[]{itemSheet, tileSheet, entitySheet, guiSheet, skinsSheet};
 
 		/// IScreen width and height are determined by the actual game window size, meaning the screen is only as big as the window.
 		pixels = new int[Screen.w * Screen.h]; // Makes new integer array for all the pixels on the screen.
@@ -42,9 +42,9 @@ public class Screen implements IScreen {
 
 	public Screen(SpriteSheet itemSheet, SpriteSheet tileSheet, SpriteSheet entitySheet, SpriteSheet guiSheet, SpriteSheet skinsSheet,
 					SpriteSheet itemSheetCustom, SpriteSheet tileSheetCustom, SpriteSheet entitySheetCustom, SpriteSheet guiSheetCustom) {
-		this((ISpriteSheet)itemSheet, (ISpriteSheet)tileSheet, (ISpriteSheet)entitySheet, (ISpriteSheet)guiSheet, (ISpriteSheet)skinsSheet);
+		this(itemSheet, tileSheet, entitySheet, guiSheet, skinsSheet);
 
-		sheetsCustom = new ISpriteSheet[]{(ISpriteSheet)itemSheetCustom, (ISpriteSheet)tileSheetCustom, (ISpriteSheet)entitySheetCustom, (ISpriteSheet)guiSheetCustom};
+		sheetsCustom = new SpriteSheet[]{itemSheetCustom, tileSheetCustom, entitySheetCustom, guiSheetCustom};
 	}
 	
 	public Screen(Screen model) {
@@ -53,34 +53,34 @@ public class Screen implements IScreen {
 	
 	public void setSheet(ISpriteSheet itemSheet, ISpriteSheet tileSheet, ISpriteSheet entitySheet, ISpriteSheet guiSheet, ISpriteSheet skinsSheet) {
 		if (itemSheet != null) {
-		        sheets[0] = itemSheet;
+		        sheets[0] = (SpriteSheet)itemSheet;
 		}
 		if (tileSheet != null) {
-		        sheets[1] = tileSheet;
+		        sheets[1] = (SpriteSheet)tileSheet;
 		}
 		if (entitySheet != null) {
-			sheets[2] = entitySheet;
+			sheets[2] = (SpriteSheet)entitySheet;
 		}
 		if (guiSheet != null) {
-			sheets[3] = guiSheet;
+			sheets[3] = (SpriteSheet)guiSheet;
 		}
 		if (skinsSheet != null) {
-			sheets[4] = skinsSheet;
+			sheets[4] = (SpriteSheet)skinsSheet;
 		}
 	}
 
 	public void setSheet(ISpriteSheet itemSheet, ISpriteSheet tileSheet, ISpriteSheet entitySheet, ISpriteSheet guiSheet) {
 		if (itemSheet != null) {
-		        sheets[0] = itemSheet;
+		        sheets[0] = (SpriteSheet)itemSheet;
 		}
 		if (tileSheet != null) {
-		        sheets[1] = tileSheet;
+		        sheets[1] = (SpriteSheet)tileSheet;
 		}
 		if (entitySheet != null) {
-			sheets[2] = entitySheet;
+			sheets[2] = (SpriteSheet)entitySheet;
 		}
 		if (guiSheet != null) {
-			sheets[3] = guiSheet;
+			sheets[3] = (SpriteSheet)guiSheet;
 		}
 	}
 	
@@ -124,7 +124,7 @@ public class Screen implements IScreen {
 
 		int xTile = tile % 32; // Gets x position of the spritesheet "tile"
 		int yTile = tile / 32; // Gets y position
-		int toffs = xTile * 8 + yTile * 8 * sheet.getWidth(); // Gets the offset of the sprite into the spritesheet pixel array, the 8's represent the size of the box. (8 by 8 pixel sprite boxes)
+		int toffs = xTile * 8 + yTile * 8 * sheet.width; // Gets the offset of the sprite into the spritesheet pixel array, the 8's represent the size of the box. (8 by 8 pixel sprite boxes)
 
 		// THIS LOOPS FOR EVERY PIXEL
 		for (int y = 0; y < 8; y++) { // Loops 8 times (because of the height of the tile)
@@ -137,7 +137,7 @@ public class Screen implements IScreen {
 				int xs = x; // Current x pixel
 				if (mirrorX) xs = 7 - x; // Reverses the pixel for a mirroring effect
 
-				int col = sheet.getPixels()[toffs + xs + ys * sheet.getWidth()]; // Gets the color of the current pixel from the value stored in the sheet.
+				int col = sheet.pixels[toffs + xs + ys * sheet.width]; // Gets the color of the current pixel from the value stored in the sheet.
 
 				boolean isTransparent = (col >> 24 == 0);
 

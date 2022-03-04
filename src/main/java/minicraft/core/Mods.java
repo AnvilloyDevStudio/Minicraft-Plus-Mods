@@ -321,12 +321,13 @@ public class Mods extends Game {
             }
             public static ModTileOption toOptions(Class<?> Obj) {
                 ModTileOption o = new ModTileOption();
+                o.Optionclass = Obj;
                 try{o.mayPass = (boolean)Obj.getDeclaredField("mayPass").get(null);} catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException | SecurityException e) {};
                 try{o.mayPassMethod = Obj.getDeclaredMethod("mayPassMethod", ILevel.class, int.class, int.class, IEntity.class);} catch (NoSuchMethodException e) {};
                 try{o.Connections = Map.class.cast(Obj.getDeclaredField("Connections").get(null));} catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException | SecurityException e) {};
-                try{o.render = Obj.getDeclaredMethod("render", IScreen.class, ILevel.class, int.class, int.class, Object.class, Class.class);} catch (NoSuchMethodException e) {};
-                try{o.tick = Obj.getDeclaredMethod("tick", ILevel.class, int.class, int.class, Class.class);} catch (NoSuchMethodException e) {};
-                try{o.hurt = Obj.getDeclaredMethod("hurt", ILevel.class, int.class, int.class, IMob.class, int.class, IDirection.class, Class.class);} catch (NoSuchMethodException e) {};
+                try{o.render = Obj.getDeclaredMethod("render", IScreen.class, ILevel.class, int.class, int.class, Object.class, IGameAssets.class);} catch (NoSuchMethodException e) {};
+                try{o.tick = Obj.getDeclaredMethod("tick", ILevel.class, int.class, int.class, IGameAssets.class);} catch (NoSuchMethodException e) {};
+                try{o.hurt = Obj.getDeclaredMethod("hurt", ILevel.class, int.class, int.class, IMob.class, int.class, IDirection.class, IGameAssets.class);} catch (NoSuchMethodException e) {};
                 try{o.interact = Obj.getDeclaredMethod("interact", ILevel.class, int.class, int.class, IPlayer.class, IItem.class, IDirection.class);} catch (NoSuchMethodException e) {};
                 return o;
             }

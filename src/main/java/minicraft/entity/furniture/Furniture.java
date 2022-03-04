@@ -8,10 +8,8 @@ import minicraft.entity.Direction;
 import minicraft.entity.Entity;
 import minicraft.entity.mob.Player;
 import minicraft.entity.mob.RemotePlayer;
-import minicraft.gfx.Screen;
 import minicraft.gfx.Sprite;
 import minicraft.item.FurnitureItem;
-import minicraft.item.Item;
 import minicraft.item.PowerGloveItem;
 import minicraftmodsapiinterface.*;
 

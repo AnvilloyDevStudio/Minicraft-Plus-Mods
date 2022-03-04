@@ -32,7 +32,6 @@ import minicraft.gfx.Color;
 import minicraft.gfx.MobSprite;
 import minicraft.gfx.Point;
 import minicraft.gfx.Rectangle;
-import minicraft.gfx.Screen;
 import minicraft.item.ArmorItem;
 import minicraft.item.FishingData;
 import minicraft.item.FishingRodItem;

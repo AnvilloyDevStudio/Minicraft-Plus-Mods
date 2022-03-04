@@ -12,7 +12,6 @@ import minicraft.entity.Entity;
 import minicraft.entity.furniture.Spawner;
 import minicraft.gfx.MobSprite;
 import minicraft.gfx.Point;
-import minicraft.gfx.Screen;
 import minicraft.item.Items;
 import minicraft.level.tile.Tiles;
 import minicraftmodsapiinterface.*;

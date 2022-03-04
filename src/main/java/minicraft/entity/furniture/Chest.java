@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 import org.jetbrains.annotations.Nullable;
 
 import minicraft.core.Game;
-import minicraft.entity.Direction;
 import minicraft.entity.ItemHolder;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Sprite;

@@ -4,7 +4,6 @@ import java.util.HashMap;
 
 import minicraft.entity.ClientTickable;
 import minicraft.entity.Entity;
-import minicraft.gfx.Screen;
 import minicraft.gfx.Sprite;
 import minicraftmodsapiinterface.IScreen;
 

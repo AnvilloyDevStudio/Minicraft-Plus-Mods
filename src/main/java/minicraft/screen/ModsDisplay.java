@@ -5,9 +5,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import minicraft.core.Game;
-import minicraft.core.io.InputHandler;
 import minicraft.core.io.Sound;
 import minicraft.gfx.*;
+import minicraftmodsapiinterface.IInputHandler;
+import minicraftmodsapiinterface.IScreen;
 
 public class ModsDisplay extends Display {
 	private static final List<minicraft.core.Mods.Mod> mods = new ArrayList<>();
@@ -30,7 +31,7 @@ public class ModsDisplay extends Display {
 	}
 
 	@Override
-	public void tick(InputHandler input) {
+	public void tick(IInputHandler input) {
 		if (input.getKey("menu").clicked || input.getKey("attack").clicked || input.getKey("exit").clicked) {
 			Game.exitMenu();
 			return;
@@ -54,7 +55,7 @@ public class ModsDisplay extends Display {
 	}
 
 	@Override
-	public void render(Screen screen) {
+	public void render(IScreen screen) {
 		screen.clear(0);
 
         // Get skin above and below.
@@ -107,7 +108,7 @@ public class ModsDisplay extends Display {
 			p.get(p.size()-1).add(des.get(a));
 		}
 		pages = p;
-        Font.drawParagraph(pages.get(pageIndex), screen, fs, 3);
+        Font.drawParagraph(pages.get(pageIndex), (Screen)screen, fs, 3);
 		if (mods.size() != 0) Font.draw("Pages: "+(pageIndex+1)+"/"+p.size(), screen, Screen.w/2-10, Screen.h-32);
 		// Help text.
 		Font.drawCentered("Use "+ Game.input.getMapping("cursor-down") + " and " + Game.input.getMapping("cursor-up") + " to select mod.", screen, Screen.h - 9, Color.WHITE);

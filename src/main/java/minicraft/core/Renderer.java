@@ -28,7 +28,6 @@ import minicraft.level.Level;
 import minicraft.saveload.Load;
 import minicraft.screen.LoadingDisplay;
 import minicraft.screen.RelPos;
-import minicraftmodsapiinterface.ILevel;
 import minicraft.level.tile.Tile;
 
 public class Renderer extends Game {

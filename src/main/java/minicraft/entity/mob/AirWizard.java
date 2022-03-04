@@ -5,7 +5,6 @@ import minicraft.core.Updater;
 import minicraft.core.io.Settings;
 import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
-import minicraft.entity.Entity;
 import minicraft.entity.Spark;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;

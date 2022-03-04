@@ -2,7 +2,6 @@ package minicraft.level.tile.farming;
 
 import minicraft.entity.Entity;
 import minicraft.entity.mob.Player;
-import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteSheet;
 import minicraft.item.Items;
 import minicraft.level.Level;

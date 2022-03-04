@@ -23,6 +23,7 @@ import minicraft.network.Analytics;
 import minicraft.network.MinicraftClient;
 import minicraft.saveload.Save;
 import minicraft.screen.entry.RangeEntry;
+import minicraftmodsapiinterface.IScreen;
 
 public class MultiplayerDisplay extends Display {
 	
@@ -294,7 +295,7 @@ public class MultiplayerDisplay extends Display {
 	}
 	
 	@Override
-	public void render(Screen screen) {
+	public void render(IScreen screen) {
 		screen.clear(0);
 		
 		switch(curState) {
@@ -307,7 +308,7 @@ public class MultiplayerDisplay extends Display {
 				Font.drawCentered("Enter ip address to connect to:", screen, Screen.h/2-Font.textHeight()*2-2, Color.get(1, 255));
 				Font.drawCentered(typing, screen, Screen.h/2-Font.textHeight(), Color.get(1, 255, 255, 102));
 				
-				connectTimeout.render(screen, (Screen.w-connectTimeout.getWidth()) / 2, Screen.h/2+Font.textHeight()*2, true);
+				connectTimeout.render((Screen)screen, (Screen.w-connectTimeout.getWidth()) / 2, Screen.h/2+Font.textHeight()*2, true);
 				
 				Font.drawCentered("Press Shift-Escape to logout", screen, Screen.h-Font.textHeight()*7, Color.get(1, 204));
 				break;
@@ -345,7 +346,7 @@ public class MultiplayerDisplay extends Display {
 				//if(Updater.tickCount % 10 == 0) System.out.println("error message: " + errorMessage);
 				Font.drawCentered("Could not connect to server:", screen, Screen.h/2-6, Color.RED);
 				FontStyle style = new FontStyle(Color.get(1, 255, 51, 51)).setYPos(Screen.h/2+6);
-				Font.drawParagraph(errorMessage, screen, style, 1);
+				Font.drawParagraph(errorMessage, (Screen)screen, style, 1);
 				//Font.drawCentered(errorMessage, screen, Screen.h/2+6, Color.get(1, 255, 51, 51));
 				break;
 		}

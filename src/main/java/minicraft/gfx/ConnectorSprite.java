@@ -1,6 +1,5 @@
 package minicraft.gfx;
 
-import minicraft.level.Level;
 import minicraft.level.tile.ConnectTile;
 import minicraftmodsapiinterface.*;
 

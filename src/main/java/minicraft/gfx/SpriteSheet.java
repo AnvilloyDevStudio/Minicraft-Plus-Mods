@@ -4,7 +4,7 @@ import java.awt.image.BufferedImage;
 
 import minicraftmodsapiinterface.ISpriteSheet;
 
-public class SpriteSheet implements ISpriteSheet {
+public class SpriteSheet extends ISpriteSheet {
 	
 	public static final int boxWidth = 8;
 	
@@ -16,6 +16,7 @@ public class SpriteSheet implements ISpriteSheet {
 	public int[] getPixels() {return pixels;}
 
 	public SpriteSheet(BufferedImage image) {
+		super(image);
 		// Sets width and height to that of the image
 		width = image.getWidth();
 		height = image.getHeight();

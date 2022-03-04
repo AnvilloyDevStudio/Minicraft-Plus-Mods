@@ -2,7 +2,7 @@ package minicraft.gfx;
 
 import minicraftmodsapiinterface.IPoint;
 
-public class Point implements IPoint {
+public class Point extends IPoint {
 	
 	public int x, y;
 	
@@ -35,12 +35,4 @@ public class Point implements IPoint {
 	
 	@Override
 	public int hashCode() { return x * 71 + y; }
-	@Override
-	public int getX() {
-		return x;
-	}
-	@Override
-	public int getY() {
-		return y;
-	}
 }

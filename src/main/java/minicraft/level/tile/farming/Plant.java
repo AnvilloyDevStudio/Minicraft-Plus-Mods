@@ -1,6 +1,5 @@
 package minicraft.level.tile.farming;
 
-import minicraft.entity.Direction;
 import minicraft.entity.Entity;
 import minicraft.entity.ItemEntity;
 import minicraft.entity.mob.Mob;

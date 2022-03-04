@@ -13,8 +13,6 @@ import minicraft.core.World;
 import minicraft.entity.mob.MobAi;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Rectangle;
-import minicraft.gfx.Screen;
-import minicraft.item.Item;
 import minicraft.level.Level;
 import minicraftmodsapiinterface.*;
 

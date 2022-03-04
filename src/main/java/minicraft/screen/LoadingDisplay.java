@@ -69,7 +69,7 @@ public class LoadingDisplay extends Display {
 	public void render(Screen screen) {
 		super.render(screen);
 		int percent = Math.round(percentage);
-		Font.drawParagraph(screen, new FontStyle(Color.RED), 6,
+		Font.drawParagraph((Screen)screen, new FontStyle(Color.RED), 6,
 			Localization.getLocalized(msg) + (progressType.length() > 0 ? " " + Localization.getLocalized(progressType) : "") + ellipsis.updateAndGet(),
 			percent + "%"
 		);

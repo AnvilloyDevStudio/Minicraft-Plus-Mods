@@ -2,8 +2,9 @@ package minicraft.level;
 
 import java.awt.Image;
 import java.awt.image.BufferedImage;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Random;
 
 import javax.swing.ImageIcon;
@@ -11,9 +12,7 @@ import javax.swing.JOptionPane;
 
 import org.jetbrains.annotations.Nullable;
 
-import minicraft.core.Crash;
 import minicraft.core.Game;
-import minicraft.core.Mods;
 import minicraft.core.io.Settings;
 import minicraft.level.tile.Tiles;
 import minicraft.screen.WorldGenDisplay;
@@ -449,17 +448,7 @@ public class LevelGen {
 		
 		int count = 0;
 		
-		// Mod Top Map tile generation
-		for (Method method : Mods.ModTileTopGens) {
-			try {
-				System.out.println("EXETOPMODTILEGEN");
-				method.invoke(null, map, random, w, h, Tiles.class);
-			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NullPointerException e) {
-				new Crash(new Crash.CrashData("Mod Tile Genration Method Error", Crash.getStackTrace(e)));
-			}
-		}
-
-		//if (Game.debug) System.out.println("Generating stairs for surface level...");
+		replaceTilesWithMod(0, map, data, w, h);
 		
 		stairsLoop:
 		for (int i = 0; i < w * h / 100; i++) { // Loops a certain number of times, more for bigger world sizes.
@@ -535,7 +524,9 @@ public class LevelGen {
 			
 			Structure.lavaPool.draw(map, x, y, w);
 		}
-		
+
+		replaceTilesWithMod(-4, map, data, w, h);
+
 		return new short[][]{map, data};
 	}
 	
@@ -623,14 +614,9 @@ public class LevelGen {
 				}
 			}
 		}
-		for (Method method : Mods.ModTileUnderGens) {
-			try {
-				System.out.println("EXEUNDERMODTILEGEN");
-				method.invoke(null, map, random, depth, w, h, Tiles.class);
-			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NullPointerException e) {
-				new Crash(new Crash.CrashData("Mod Tile Genration Method Error", Crash.getStackTrace(e)));
-			}
-		}
+		
+		replaceTilesWithMod(-depth, map, data, w, h);
+
 		if (depth > 2) {
 			int r = 1;
 			int xx = 60;
@@ -717,6 +703,8 @@ public class LevelGen {
 			map[x + y * w] = Tiles.get("Cloud Cactus").id;
 		}
 		
+		replaceTilesWithMod(1, map, data, w, h);
+
 		int count = 0;
 		stairsLoop:
 		for (int i = 0; i < w * h; i++) {
@@ -739,6 +727,30 @@ public class LevelGen {
 		}
 		
 		return new short[][]{map, data};
+	}
+	
+	public static HashMap<Integer, ArrayList<ModTileGen>> modGens = new HashMap<>();
+	private static void replaceTilesWithMod(int layer, short[] map, short[] data, int w, int h) {
+		if (modGens.containsKey(layer)) {
+			for (ModTileGen genObj : modGens.get(layer)) {
+				genObj.generation.generate(map, data, layer, w, h, random);
+			}
+		}
+	}
+	public static class ModTileGen {
+		@FunctionalInterface
+		public static interface TileGeneration {
+			/**
+			 * @param layer 1 ~ -4
+			 */
+			void generate(short[] map, short[] data, int layer, int w, int h, Random random);
+		}
+		public TileGeneration generation;
+		public ModTileGen(int layer, TileGeneration gen) {
+			generation = gen;
+			if (modGens.containsKey(layer)) modGens.get(layer).add(this);
+			else modGens.put(layer, new ArrayList<>(List.of(this)));
+		}
 	}
 	
 	public static void main(String[] args) {

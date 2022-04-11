@@ -14,8 +14,6 @@ import minicraft.core.io.ClassLoader;
 public class Mods extends Game {
     private Mods() {}
     public static ArrayList<Mods.Mod> Mods = new ArrayList<>();
-    public static ArrayList<Method> ModTileUnderGens = new ArrayList<>();
-    public static ArrayList<Method> ModTileTopGens = new ArrayList<>();
     public static void init() {}
 
     static {

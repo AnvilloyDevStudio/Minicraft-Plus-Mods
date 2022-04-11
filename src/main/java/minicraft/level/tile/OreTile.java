@@ -53,6 +53,7 @@ public class OreTile extends Tile {
 		public OreType(String name, Item drop, Sprite sprite) {
 			this.name = name;
 			this.drop = drop;
+			if (sprite == null) sprite = new Sprite(0, 30, 1);
 			this.sprite = sprite;
 			Instances.add(this);
 			OreTypes.put(name, this);

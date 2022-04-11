@@ -67,11 +67,11 @@ goto fail
 :execute
 @rem Setup the command line
 
-set CLASSPATH=%APP_HOME%\lib\core-0.1.0.jar;%APP_HOME%\lib\minicraft-mod-api-interface-0.1.0.jar
+set CLASSPATH=%APP_HOME%\lib\core-0.1.0.jar;%APP_HOME%\lib\minicraft_plus_mods-2.0.7.jar
 
 
 @rem Execute libs
-"%JAVA_EXE%" %DEFAULT_JVM_OPTS% %JAVA_OPTS% %LIBS_OPTS%  -classpath "%CLASSPATH%" mod.Module %*
+"%JAVA_EXE%" %DEFAULT_JVM_OPTS% %JAVA_OPTS% %LIBS_OPTS%  -classpath "%CLASSPATH%" mod.Main %*
 
 :end
 @rem End local scope for the variables with windows NT shell

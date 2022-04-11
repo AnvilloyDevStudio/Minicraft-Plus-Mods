@@ -17,14 +17,14 @@ public class ClassLoader {
         try {
             JarFile jar = new JarFile(jarf);
 			JSONObject modInfo = new JSONObject(new String(jar.getInputStream(jar.getEntry("mod.json")).readAllBytes()));
-            // jar.getJarEntry("mod/")
+            Manifest manifest = jar.getManifest();
             jar.close();
             child = new URLClassLoader(
                 new URL[] {jarf.toURI().toURL()},
                 getClass().getClassLoader()
             );
             Class<?> classToLoad = Class.forName("mod.Main", true, child);
-            return Pair.of(Pair.of(classToLoad, jar.getManifest()), modInfo);
+            return Pair.of(Pair.of(classToLoad, manifest), modInfo);
             // Method method = classToLoad.getDeclaredMethod("myMethod");
             // Object instance = classToLoad.getDeclaredConstructor().newInstance();
             // Object result = method.invoke(instance);

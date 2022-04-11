@@ -5,9 +5,8 @@ import java.util.Arrays;
 import minicraft.core.Renderer;
 import minicraft.core.Updater;
 import minicraft.core.io.Settings;
-import minicraftmodsapiinterface.*;
 
-public class Screen extends IScreen {
+public class Screen {
 	
 	public static final int w = Renderer.WIDTH; // Width of the screen
 	public static final int h = Renderer.HEIGHT; // Height of the screen
@@ -36,7 +35,7 @@ public class Screen extends IScreen {
 
 		sheets = new SpriteSheet[]{itemSheet, tileSheet, entitySheet, guiSheet, skinsSheet};
 
-		/// IScreen width and height are determined by the actual game window size, meaning the screen is only as big as the window.
+		/// Screen width and height are determined by the actual game window size, meaning the screen is only as big as the window.
 		pixels = new int[Screen.w * Screen.h]; // Makes new integer array for all the pixels on the screen.
 	}
 
@@ -51,7 +50,7 @@ public class Screen extends IScreen {
 		this(model.sheets[0], model.sheets[1], model.sheets[2], model.sheets[3], model.sheets[4]);
 	}
 	
-	public void setSheet(ISpriteSheet itemSheet, ISpriteSheet tileSheet, ISpriteSheet entitySheet, ISpriteSheet guiSheet, ISpriteSheet skinsSheet) {
+	public void setSheet(SpriteSheet itemSheet, SpriteSheet tileSheet, SpriteSheet entitySheet, SpriteSheet guiSheet, SpriteSheet skinsSheet) {
 		if (itemSheet != null) {
 		        sheets[0] = (SpriteSheet)itemSheet;
 		}
@@ -69,7 +68,7 @@ public class Screen extends IScreen {
 		}
 	}
 
-	public void setSheet(ISpriteSheet itemSheet, ISpriteSheet tileSheet, ISpriteSheet entitySheet, ISpriteSheet guiSheet) {
+	public void setSheet(SpriteSheet itemSheet, SpriteSheet tileSheet, SpriteSheet entitySheet, SpriteSheet guiSheet) {
 		if (itemSheet != null) {
 		        sheets[0] = (SpriteSheet)itemSheet;
 		}
@@ -102,7 +101,7 @@ public class Screen extends IScreen {
 
 	/** This method takes care of assigning the correct spritesheet to assign to the sheet variable **/
     public void render(int xp, int yp, int tile, int bits, int sheet, int whiteTint, boolean fullbright) {
-    	ISpriteSheet currentSheet;
+    	SpriteSheet currentSheet;
 		if (Settings.get("textures").equals("Custom")) {
 			currentSheet = sheetsCustom[sheet] != null ? sheetsCustom[sheet] : sheets[sheet];
 		} else {
@@ -112,8 +111,8 @@ public class Screen extends IScreen {
 		render(xp, yp, tile, bits, currentSheet, whiteTint, fullbright);
     }
 
-    /** Renders an object from the sprite sheet based on screen coordinates, tile (ISpriteSheet location), colors, and bits (for mirroring). I believe that xp and yp refer to the desired position of the upper-left-most pixel. */
-    public void render(int xp, int yp, int tile, int bits, ISpriteSheet sheet, int whiteTint, boolean fullbright) {
+    /** Renders an object from the sprite sheet based on screen coordinates, tile (SpriteSheet location), colors, and bits (for mirroring). I believe that xp and yp refer to the desired position of the upper-left-most pixel. */
+    public void render(int xp, int yp, int tile, int bits, SpriteSheet sheet, int whiteTint, boolean fullbright) {
 		// xp and yp are originally in level coordinates, but offset turns them to screen coordinates.
 		xp -= xOffset; //account for screen offset
 		yp -= yOffset;
@@ -184,7 +183,7 @@ public class Screen extends IScreen {
 	};
 	
 	/** Overlays the screen with pixels */
-    public void overlay(IScreen screen2, int currentLevel, int xa, int ya) {
+    public void overlay(Screen screen2, int currentLevel, int xa, int ya) {
 		double tintFactor = 0;
 		if (currentLevel >= 3 && currentLevel < 5) {
 			int transTime = Updater.dayLength / 4;

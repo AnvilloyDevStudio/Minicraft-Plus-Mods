@@ -4,10 +4,10 @@ import java.util.List;
 
 import minicraft.core.Game;
 import minicraft.entity.mob.Player;
+import minicraft.gfx.Screen;
 import minicraft.item.Item;
-import minicraftmodsapiinterface.*;
 
-public class ItemEntity extends Entity implements ClientTickable, IItemEntity {
+public class ItemEntity extends Entity implements ClientTickable {
 	private int lifeTime; // The life time of this entity in the level
 	private double xa, ya, za; // The x, y, and z accelerations.
 	private double xx, yy, zz; // The x, y, and z coordinates; in double precision.
@@ -122,7 +122,7 @@ public class ItemEntity extends Entity implements ClientTickable, IItemEntity {
 	}
 
 	@Override
-	public void render(IScreen screen) {
+	public void render(Screen screen) {
 		/* This first part is for the blinking effect */
 		if (time >= lifeTime - 6 * 20) {
 			if (time / 6 % 2 == 0) return;
@@ -131,7 +131,7 @@ public class ItemEntity extends Entity implements ClientTickable, IItemEntity {
 	}
 
 	@Override
-	protected void touchedBy(IEntity entity) {
+	protected void touchedBy(Entity entity) {
 		if(!(entity instanceof Player)) return; // For the time being, we only care when a player touches an item.
 		
 		if (time > 30) { // Conditional prevents this from being collected immediately.

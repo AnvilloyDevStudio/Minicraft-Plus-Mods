@@ -5,6 +5,7 @@ import minicraft.core.Updater;
 import minicraft.core.io.Settings;
 import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
+import minicraft.entity.Entity;
 import minicraft.entity.Spark;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
@@ -12,7 +13,6 @@ import minicraft.gfx.MobSprite;
 import minicraft.gfx.Screen;
 import minicraft.network.Analytics;
 import minicraft.saveload.Save;
-import minicraftmodsapiinterface.*;
 
 public class AirWizard extends EnemyMob {
 	private static MobSprite[][][] sprites;
@@ -125,7 +125,7 @@ public class AirWizard extends EnemyMob {
 	}
 	
 	@Override
-	public void doHurt(int damage, IDirection attackDir) {
+	public void doHurt(int damage, Direction attackDir) {
 		super.doHurt(damage, attackDir);
 		if (attackDelay == 0 && attackTime == 0) {
 			attackDelay = 60 * 2;
@@ -133,7 +133,7 @@ public class AirWizard extends EnemyMob {
 	}
 	
 	@Override
-	public void render(IScreen screen) {
+	public void render(Screen screen) {
 		super.render(screen);
 
 		int textcol = Color.get(1, 0, 204, 0);
@@ -157,7 +157,7 @@ public class AirWizard extends EnemyMob {
 	}
 	
 	@Override
-	protected void touchedBy(IEntity entity) {
+	protected void touchedBy(Entity entity) {
 		if (entity instanceof Player) {
 			// If the entity is the Player, then deal them 1 or 2 damage points.
 			((Player)entity).hurt(this, (secondform ? 2 : 1));

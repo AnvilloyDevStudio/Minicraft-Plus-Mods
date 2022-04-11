@@ -1,8 +1,9 @@
 package minicraft.level.tile;
 
 
+import minicraft.entity.Entity;
 import minicraft.gfx.Sprite;
-import minicraftmodsapiinterface.*;
+import minicraft.level.Level;
 
 // IMPORTANT: This tile should never be used for anything, it only exists to allow tiles right next to the edge of the world to connect to it
 public class ConnectTile extends Tile {
@@ -13,7 +14,7 @@ public class ConnectTile extends Tile {
     }
 
     @Override
-    public boolean mayPass(ILevel level, int x, int y, IEntity e) {
+    public boolean mayPass(Level level, int x, int y, Entity e) {
         return false;
     }
 

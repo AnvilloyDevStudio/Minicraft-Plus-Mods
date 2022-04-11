@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import org.jetbrains.annotations.Nullable;
 
 import minicraft.core.Game;
+import minicraft.entity.Direction;
 import minicraft.entity.ItemHolder;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Sprite;
@@ -15,7 +16,6 @@ import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.saveload.Load;
 import minicraft.screen.ContainerDisplay;
-import minicraftmodsapiinterface.*;
 
 public class Chest extends Furniture implements ItemHolder {
 	private Inventory inventory; // Inventory of the chest
@@ -62,7 +62,7 @@ public class Chest extends Furniture implements ItemHolder {
 	}
 
 	@Override
-	public boolean interact(IPlayer player, @Nullable IItem item, IDirection attackDir) {
+	public boolean interact(Player player, @Nullable Item item, Direction attackDir) {
 		if (inventory.invSize() == 0)
 			return super.interact(player, item, attackDir);
 		return false;
@@ -89,14 +89,14 @@ public class Chest extends Furniture implements ItemHolder {
 	}
 	
 	@Override
-	public IInventory getInventory() {
-		return (IInventory) inventory;
+	public Inventory getInventory() {
+		return (Inventory) inventory;
 	}
 	
 	@Override
 	public void die() {
 		if (level != null) {
-			List<Item> items = inventory.getItems().stream().map(i -> {return (Item)i;}).collect(Collectors.toList());
+			List<Item> items = inventory.getItems();
 			level.dropItem(x, y, items.toArray(new Item[items.size()]));
 		}
 		super.die();

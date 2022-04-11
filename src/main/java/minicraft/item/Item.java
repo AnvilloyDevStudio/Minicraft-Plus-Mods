@@ -1,12 +1,15 @@
 package minicraft.item;
 
 import minicraft.core.io.Localization;
+import minicraft.entity.Direction;
+import minicraft.entity.mob.Player;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
 import minicraft.gfx.Sprite;
-import minicraftmodsapiinterface.*;
+import minicraft.level.Level;
+import minicraft.level.tile.Tile;
 
-public abstract class Item implements IItem {
+public abstract class Item {
 	
 	/* Note: Most of the stuff in the class is expanded upon in StackableItem/PowerGloveItem/FurnitureItem/etc */
 	
@@ -25,14 +28,14 @@ public abstract class Item implements IItem {
 	}
 
 	/** Renders an item on the HUD */
-	public void renderHUD(IScreen screen, int x, int y, int fontColor) {
+	public void renderHUD(Screen screen, int x, int y, int fontColor) {
 		String dispName = getDisplayName();
 		sprite.render(screen, x, y);
 		Font.drawBackground(dispName, (Screen)screen, x + 8, y, fontColor);
 	}
 	
 	/** Determines what happens when the player interacts with a tile */
-	public boolean interactOn(ITile tile, ILevel level, int xt, int yt, IPlayer player, IDirection attackDir) {
+	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
 		return false;
 	}
 	
@@ -46,10 +49,10 @@ public abstract class Item implements IItem {
 		return false;
 	}
 
-	public ISprite getSprite() {return sprite;}
+	public Sprite getSprite() {return sprite;}
 
 	/** Sees if an item equals another item */
-	public boolean equals(IItem item) {
+	public boolean equals(Item item) {
 		return item != null && item.getClass().equals(getClass()) && ((Item)item).name.equals(name);
 	}
 	
@@ -57,7 +60,7 @@ public abstract class Item implements IItem {
 	public int hashCode() { return name.hashCode(); }
 	
 	/** This returns a copy of this item, in all necessary detail. */
-	public abstract IItem clone();
+	public abstract Item clone();
 	
 	@Override
 	public String toString() {

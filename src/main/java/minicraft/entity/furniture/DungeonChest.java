@@ -7,6 +7,8 @@ import org.jetbrains.annotations.Nullable;
 import minicraft.core.Game;
 import minicraft.core.Updater;
 import minicraft.core.World;
+import minicraft.entity.Direction;
+import minicraft.entity.Entity;
 import minicraft.entity.mob.AirWizard;
 import minicraft.entity.mob.Player;
 import minicraft.entity.particle.SmashParticle;
@@ -14,10 +16,10 @@ import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
 import minicraft.gfx.Sprite;
 import minicraft.item.Inventory;
+import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.StackableItem;
 import minicraft.level.Level;
-import minicraftmodsapiinterface.*;
 
 public class DungeonChest extends Chest {
 	private static final Sprite openSprite = new Sprite(14, 24, 2, 2, 2);
@@ -111,13 +113,13 @@ public class DungeonChest extends Chest {
 	
 	/** what happens if the player tries to push a Dungeon Chest. */
 	@Override
-	protected void touchedBy(IEntity entity) {
+	protected void touchedBy(Entity entity) {
 		if(!isLocked) // can only be pushed if unlocked.
 			super.touchedBy(entity);
 	}
 
 	@Override
-	public boolean interact(IPlayer player, @Nullable IItem item, IDirection attackDir) {
+	public boolean interact(Player player, @Nullable Item item, Direction attackDir) {
 		if(!isLocked)
 			return super.interact(player, item, attackDir);
 		return false;

@@ -5,22 +5,21 @@ import java.util.List;
 import minicraft.core.io.InputHandler;
 import minicraft.gfx.Screen;
 import minicraft.item.Item;
-import minicraftmodsapiinterface.*;
 
 public class ItemEntry extends ListEntry {
 	
-	public static ItemEntry[] useItems(List<IItem> items) {
+	public static ItemEntry[] useItems(List<Item> items) {
 		ItemEntry[] entries = new ItemEntry[items.size()];
 		for (int i = 0; i < items.size(); i++)
 			entries[i] = new ItemEntry(items.get(i));
 		return entries;
 	}
 	
-	private IItem item;
+	private Item item;
 	
-	public ItemEntry(IItem i) { this.item = i; }
+	public ItemEntry(Item i) { this.item = i; }
 	
-	public IItem getItem() { return item; }
+	public Item getItem() { return item; }
 	
 	@Override
 	public void tick(InputHandler input) {}

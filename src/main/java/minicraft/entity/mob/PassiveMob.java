@@ -4,10 +4,10 @@ import minicraft.core.Game;
 import minicraft.core.Updater;
 import minicraft.core.io.Settings;
 import minicraft.gfx.MobSprite;
+import minicraft.gfx.Screen;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
-import minicraftmodsapiinterface.IScreen;
 
 public class PassiveMob extends MobAi {
 	protected int color;
@@ -32,7 +32,7 @@ public class PassiveMob extends MobAi {
 	}
 	
 	@Override
-	public void render(IScreen screen) {
+	public void render(Screen screen) {
 		super.render(screen);
 	}
 	

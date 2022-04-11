@@ -150,14 +150,14 @@ public class FontStyle {
 	/** Sets the position of the text box relative to the anchor. */
 	public FontStyle setRelTextPos(RelPos relPos) { return setRelTextPos(relPos, true); }
 	public FontStyle setRelTextPos(RelPos relPos, boolean setBoth) {
-		this.relTextPos = relPos;
+		this.relTextPos = (RelPos)relPos;
 		if (setBoth) relLinePos = relTextPos.getOpposite();
 		return this;
 	}
 	
 	/** Sets the position of a paragraph of text relative to the anchor. */
 	public FontStyle setRelLinePos(RelPos relPos) {
-		relLinePos = relPos;
+		relLinePos = (RelPos)relPos;
 		return this;
 	}
 	

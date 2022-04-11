@@ -1,8 +1,6 @@
 package minicraft.gfx;
 
-import minicraftmodsapiinterface.IPoint;
-
-public class Point extends IPoint {
+public class Point {
 	
 	public int x, y;
 	

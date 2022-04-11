@@ -9,7 +9,6 @@ import minicraft.gfx.Screen;
 import minicraft.item.Inventory;
 import minicraft.item.Item;
 import minicraft.item.StackableItem;
-import minicraftmodsapiinterface.IInventory;
 
 public class ContainerDisplay extends Display {
 	
@@ -19,7 +18,7 @@ public class ContainerDisplay extends Display {
 	private Chest chest;
 	
 	public ContainerDisplay(Player player, Chest chest) {
-		super(new InventoryMenu(chest, (IInventory)chest.getInventory(), chest.name), new InventoryMenu(player, (IInventory)player.getInventory(), "Inventory"));
+		super(new InventoryMenu(chest, chest.getInventory(), chest.name), new InventoryMenu(player, player.getInventory(), "Inventory"));
 		//pInv = player.getInventory();
 		//cInv = chest.getInventory();
 		this.player = player;

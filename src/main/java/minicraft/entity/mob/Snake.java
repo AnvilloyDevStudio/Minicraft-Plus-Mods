@@ -4,7 +4,6 @@ import minicraft.core.io.Settings;
 import minicraft.entity.Entity;
 import minicraft.gfx.MobSprite;
 import minicraft.item.Items;
-import minicraftmodsapiinterface.IEntity;
 
 public class Snake extends EnemyMob {
 	private static MobSprite[][][] sprites;
@@ -21,7 +20,7 @@ public class Snake extends EnemyMob {
 	}
 	
 	@Override
-	protected void touchedBy(IEntity entity) {
+	protected void touchedBy(Entity entity) {
 		if (((Entity)entity) instanceof Player) {
 			int damage = lvl + Settings.getIdx("diff");
 			((Player)entity).hurt(this, damage);

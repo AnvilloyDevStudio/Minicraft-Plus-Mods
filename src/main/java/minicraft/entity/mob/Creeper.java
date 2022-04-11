@@ -12,9 +12,9 @@ import minicraft.entity.Entity;
 import minicraft.entity.furniture.Spawner;
 import minicraft.gfx.MobSprite;
 import minicraft.gfx.Point;
+import minicraft.gfx.Screen;
 import minicraft.item.Items;
 import minicraft.level.tile.Tiles;
-import minicraftmodsapiinterface.*;
 import minicraft.level.Level;
 
 public class Creeper extends EnemyMob {
@@ -89,7 +89,7 @@ public class Creeper extends EnemyMob {
 				int lvlDamage = BLAST_DAMAGE * lvl;
 
 				// Hurt all the entities
-				List<Entity> entitiesInRange = level.getEntitiesInTiles(xt, yt, radius).stream().map(e -> {return (Entity)e;}).collect(Collectors.toList());
+				List<Entity> entitiesInRange = level.getEntitiesInTiles(xt, yt, radius);
 				List<Entity> spawners = new ArrayList<>();
 				Point[] tilePositions = (Point[]) level.getAreaTilePositions(xt, yt, radius);
 
@@ -139,7 +139,7 @@ public class Creeper extends EnemyMob {
 	}
 
 	@Override
-	public void render(IScreen screen) {
+	public void render(Screen screen) {
 		/*if (fuseLit && fuseTime % 6 == 0) {
 			super.lvlcols[lvl-1] = Color.get(-1, 252);
 		}
@@ -152,7 +152,7 @@ public class Creeper extends EnemyMob {
 	}
 
 	@Override
-	protected void touchedBy(IEntity entity) {
+	protected void touchedBy(Entity entity) {
 		if (Game.isMode("Creative")) return;
 
 		if (entity instanceof Player) {

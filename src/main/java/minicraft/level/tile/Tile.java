@@ -6,13 +6,18 @@ import java.util.HashMap;
 import java.util.Random;
 
 import minicraft.core.World;
+import minicraft.entity.Direction;
+import minicraft.entity.Entity;
+import minicraft.entity.mob.Mob;
+import minicraft.entity.mob.Player;
 import minicraft.gfx.ConnectorSprite;
+import minicraft.gfx.Screen;
 import minicraft.gfx.Sprite;
+import minicraft.item.Item;
 import minicraft.item.ToolType;
 import minicraft.level.Level;
-import minicraftmodsapiinterface.*;
 
-public abstract class Tile implements ITile {
+public abstract class Tile {
 	public static int tickCount = 0; // A global tickCount used in the Lava & water tiles.
 	protected Random random = new Random();
 
@@ -131,7 +136,7 @@ public abstract class Tile implements ITile {
 	}
 	
 	/** Render method, used in sub-classes */
-	public void render(IScreen screen, ILevel level, int x, int y) {
+	public void render(Screen screen, Level level, int x, int y) {
 		if (sprite != null)
 			sprite.render(screen, x << 4, y << 4);
 		if (csprite != null)
@@ -141,12 +146,12 @@ public abstract class Tile implements ITile {
 	public boolean maySpawn() { return maySpawn; }
 	
 	/** Returns if the player can walk on it, overrides in sub-classes  */
-	public boolean mayPass(ILevel level, int x, int y, IEntity e) {
+	public boolean mayPass(Level level, int x, int y, Entity e) {
 		return true;
 	}
 
 	/** Gets the light radius of a tile, Bigger number = bigger circle */
-	public int getLightRadius(ILevel level, int x, int y) {
+	public int getLightRadius(Level level, int x, int y) {
 		return 0;
 	}
 
@@ -160,7 +165,7 @@ public abstract class Tile implements ITile {
 	 * @param attackDir The direction of the player hitting.
 	 * @return If the damage was applied.
 	 */
-	public boolean hurt(ILevel level, int x, int y, IMob source, int dmg, IDirection attackDir) { return false; }
+	public boolean hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) { return false; }
 
 	/**
 	 * Hurt the tile with a specified amount of damage.
@@ -169,16 +174,16 @@ public abstract class Tile implements ITile {
 	 * @param y Y position of the tile.
 	 * @param dmg The damage taken.
 	 */
-	public void hurt(ILevel level, int x, int y, int dmg) {}
+	public void hurt(Level level, int x, int y, int dmg) {}
 	
 	/** What happens when you run into the tile (ex: run into a cactus) */
-	public void bumpedInto(ILevel level, int xt, int yt, IEntity entity) {}
+	public void bumpedInto(Level level, int xt, int yt, Entity entity) {}
 	
 	/** Update method */
-	public boolean tick(ILevel level, int xt, int yt) { return false; }
+	public boolean tick(Level level, int xt, int yt) { return false; }
 	
 	/** What happens when you are inside the tile (ex: lava) */
-	public void steppedOn(ILevel level, int xt, int yt, IEntity entity) {}
+	public void steppedOn(Level level, int xt, int yt, Entity entity) {}
 
 	/**
 	 * Called when you hit an item on a tile (ex: Pickaxe on rock).
@@ -190,7 +195,7 @@ public abstract class Tile implements ITile {
 	 * @param attackDir The direction of the player attacking.
 	 * @return Was the operation successful?
 	 */
-	public boolean interact(ILevel level, int xt, int yt, IPlayer player, IItem item, IDirection attackDir) {
+	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
 		return false;
 	}
 	

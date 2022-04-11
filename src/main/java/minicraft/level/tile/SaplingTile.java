@@ -1,8 +1,11 @@
 package minicraft.level.tile;
 
 import minicraft.core.io.Sound;
+import minicraft.entity.Direction;
+import minicraft.entity.mob.Mob;
+import minicraft.gfx.Screen;
 import minicraft.gfx.Sprite;
-import minicraftmodsapiinterface.*;
+import minicraft.level.Level;
 
 public class SaplingTile extends Tile {
 	private static Sprite sprite = new Sprite(12, 1, 1);
@@ -20,13 +23,13 @@ public class SaplingTile extends Tile {
 		maySpawn = true;
 	}
 
-	public void render(IScreen screen, ILevel level, int x, int y) {
+	public void render(Screen screen, Level level, int x, int y) {
 		onType.render(screen, level, x, y);
 		
 		sprite.render(screen, x * 16, y * 16);
 	}
 
-	public boolean tick(ILevel level, int x, int y) {
+	public boolean tick(Level level, int x, int y) {
 		int age = level.getData(x, y) + 1;
 		if (age > 100) {
 			level.setTile(x, y, growsTo);
@@ -36,7 +39,7 @@ public class SaplingTile extends Tile {
 		return true;
 	}
 
-	public boolean hurt(ILevel level, int x, int y, IMob source, int dmg, IDirection attackDir) {
+	public boolean hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
 		level.setTile(x, y, onType);
 		Sound.monsterHurt.play();
 		return true;

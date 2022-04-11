@@ -2,10 +2,10 @@ package minicraft.level.tile.farming;
 
 import minicraft.entity.Entity;
 import minicraft.entity.mob.Player;
+import minicraft.gfx.Screen;
 import minicraft.item.Items;
 import minicraft.level.Level;
 import minicraft.level.tile.Tiles;
-import minicraftmodsapiinterface.*;
 
 public class PotatoTile extends Plant {
     public PotatoTile(String name) {
@@ -17,7 +17,7 @@ public class PotatoTile extends Plant {
     }
 
     @Override
-    public void render(IScreen screen, ILevel level, int x, int y) {
+    public void render(Screen screen, Level level, int x, int y) {
         int age = level.getData(x, y);
         int icon = age / (maxAge / 5);
 

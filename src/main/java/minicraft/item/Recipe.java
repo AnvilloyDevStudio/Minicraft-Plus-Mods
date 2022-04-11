@@ -4,7 +4,6 @@ import java.util.HashMap;
 
 import minicraft.core.Game;
 import minicraft.entity.mob.Player;
-import minicraftmodsapiinterface.IItem;
 
 public class Recipe {
 	private HashMap<String, Integer> costs = new HashMap<String, Integer>();  // A list of costs for the recipe
@@ -37,7 +36,7 @@ public class Recipe {
 		}
 	}
 	
-	public IItem getProduct() {
+	public Item getProduct() {
 		return Items.get(product);
 	}
 	public HashMap<String, Integer> getCosts() { return costs; }

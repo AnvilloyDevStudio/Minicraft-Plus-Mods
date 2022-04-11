@@ -1,15 +1,14 @@
 package minicraft.entity;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import minicraft.entity.mob.Mob;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Rectangle;
+import minicraft.gfx.Screen;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
-import minicraftmodsapiinterface.IScreen;
 
 public class Arrow extends Entity implements ClientTickable {
 	private Direction dir;
@@ -55,7 +54,7 @@ public class Arrow extends Entity implements ClientTickable {
 
 		// TODO I think I can just use the xr yr vars, and the normal system with touchedBy(entity) to detect collisions instead.
 
-		List<Entity> entitylist = level.getEntitiesInRect(new Rectangle(x, y, 0, 0, Rectangle.CENTER_DIMS)).stream().map(e -> {return (Entity)e;}).collect(Collectors.toList());
+		List<Entity> entitylist = level.getEntitiesInRect(new Rectangle(x, y, 0, 0, Rectangle.CENTER_DIMS));
 		boolean criticalHit = random.nextInt(11) < 9;
 		for (Entity hit : entitylist) {
 			if (hit instanceof Mob && hit != owner) {
@@ -77,7 +76,7 @@ public class Arrow extends Entity implements ClientTickable {
 	}
 
 	@Override
-	public void render(IScreen screen) {
+	public void render(Screen screen) {
 		int xt = 0;
 		int yt = 2;
 

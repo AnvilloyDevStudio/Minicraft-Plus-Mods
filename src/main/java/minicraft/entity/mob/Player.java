@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import minicraft.util.Vector2;
-import minicraftmodsapiinterface.*;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -32,6 +31,7 @@ import minicraft.gfx.Color;
 import minicraft.gfx.MobSprite;
 import minicraft.gfx.Point;
 import minicraft.gfx.Rectangle;
+import minicraft.gfx.Screen;
 import minicraft.item.ArmorItem;
 import minicraft.item.FishingData;
 import minicraft.item.FishingRodItem;
@@ -59,7 +59,7 @@ import minicraft.screen.PlayerInvDisplay;
 import minicraft.screen.SkinDisplay;
 import minicraft.screen.WorldSelectDisplay;
 
-public class Player extends Mob implements ItemHolder, ClientTickable, IPlayer {
+public class Player extends Mob implements ItemHolder, ClientTickable {
 	protected InputHandler input;
 	
 	private static final int playerHurtTime = 30;
@@ -98,7 +98,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable, IPlayer {
 	private Item prevItem; // Holds the item held before using the POW glove.
 	
 	int attackTime;
-	public IDirection attackDir;
+	public Direction attackDir;
 	
 	private int onStairDelay; // The delay before changing levels.
 	private int onFallDelay; // The delay before falling b/c we're on an InfiniteFallTile
@@ -121,7 +121,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable, IPlayer {
 	private int hungerChargeDelay; // The delay between each time the hunger bar increases your health
 	private int hungerStarveDelay; // The delay between each time the hunger bar decreases your health
 	
-	public HashMap<IPotionType, Integer> potioneffects; // The potion effects currently applied to the player
+	public HashMap<PotionType, Integer> potioneffects; // The potion effects currently applied to the player
 	public boolean showpotioneffects; // Whether to display the current potion effects on screen
 	private int cooldowninfo; // Prevents you from toggling the info pane on and off super fast.
 	private int regentick; // Counts time between each time the regen potion effect heals you.
@@ -138,7 +138,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable, IPlayer {
 	
 	public String getDebugHunger() { return hungerStamCnt+"_"+stamHungerTicks; }
 
-	public Player(@Nullable IPlayer previousInstance, InputHandler input) {
+	public Player(@Nullable Player previousInstance, InputHandler input) {
 		super(sprites, Player.maxHealth);
 
 		x = 24;
@@ -147,7 +147,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable, IPlayer {
 		inventory = new Inventory() {
 			
 			@Override
-			public void add(int idx, IItem item) {
+			public void add(int idx, Item item) {
 				if (Game.isMode("creative")) {
 					if (count(item) > 0) return;
 					item = item.clone();
@@ -158,9 +158,9 @@ public class Player extends Mob implements ItemHolder, ClientTickable, IPlayer {
 			}
 			
 			@Override
-			public IItem remove(int idx) {
+			public Item remove(int idx) {
 				if (Game.isMode("creative")) {
-					IItem cur = get(idx);
+					Item cur = get(idx);
 					if (cur instanceof StackableItem)
 						((StackableItem)cur).count = 1;
 					if (count(cur) == 1) {
@@ -244,7 +244,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable, IPlayer {
 	 * @param type Type of potion.
 	 * @param duration How long the effect lasts.
 	 */
-	public void addPotionEffect(IPotionType type, int duration) {
+	public void addPotionEffect(PotionType type, int duration) {
 		potioneffects.put(type, duration);
 	}
 	
@@ -252,7 +252,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable, IPlayer {
 	 * Adds a potion effect to the player.
 	 * @param type Type of effect.
 	 */
-	public void addPotionEffect(IPotionType type) {
+	public void addPotionEffect(PotionType type) {
 		addPotionEffect(type, ((PotionType)type).duration);
 	}
 	
@@ -260,7 +260,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable, IPlayer {
 	 * Returns all the potion effects currently affecting the player.
 	 * @return all potion effects on the player.
 	 */
-	public HashMap<IPotionType, Integer> getPotionEffects() { return potioneffects; }
+	public HashMap<PotionType, Integer> getPotionEffects() { return potioneffects; }
 	
 	@Override
 	public void tick() {
@@ -274,7 +274,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable, IPlayer {
 			tickMultiplier();
 		
 		if (potioneffects.size() > 0 && !Bed.inBed(this)) {
-			for (IPotionType potionType: potioneffects.keySet().toArray(new IPotionType[0])) {
+			for (PotionType potionType: potioneffects.keySet().toArray(new PotionType[0])) {
 				if (potioneffects.get(potionType) <= 1) // If time is zero (going to be set to 0 in a moment)...
 					PotionItem.applyPotion(this, (PotionType)potionType, false); // Automatically removes this potion effect.
 				else potioneffects.put(potionType, potioneffects.get(potionType) - 1); // Otherwise, replace it with one less.
@@ -505,7 +505,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable, IPlayer {
 				}
 				//debug feature:
 				if (Game.debug && input.getKey("shift-p").clicked) { // Remove all potion effects
-					for (IPotionType potionType : potioneffects.keySet()) {
+					for (PotionType potionType : potioneffects.keySet()) {
 						PotionItem.applyPotion(this, (PotionType)potionType, false);
 						if (Game.isConnectedClient() && this == Game.player)
 							Game.client.sendPotionEffect((PotionType)potionType, false);
@@ -633,7 +633,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable, IPlayer {
 			if (t.x >= 0 && t.y >= 0 && t.x < ((Level)level).w && t.y < ((Level)level).h) {
 
 				// Get any entities (except dropped items) on the tile.
-				List<Entity> tileEntities = level.getEntitiesInTiles(t.x, t.y, t.x, t.y, false, ItemEntity.class).stream().map(e -> {return (Entity)e;}).collect(Collectors.toList());
+				List<Entity> tileEntities = level.getEntitiesInTiles(t.x, t.y, t.x, t.y, false, ItemEntity.class);
 
 				// If there are no other entities than us on the tile.
 				if (tileEntities.size() == 0 || tileEntities.size() == 1 && tileEntities.get(0) == this) {
@@ -673,7 +673,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable, IPlayer {
 			// Check if tile is in bounds of the map.
 			if (t.x >= 0 && t.y >= 0 && t.x < ((Level)level).w && t.y < ((Level)level).h) {
 				Tile tile = (Tile) level.getTile(t.x, t.y);
-				used = tile.hurt(level, t.x, t.y, (IMob)this, random.nextInt(3) + 1, attackDir) || used;
+				used = tile.hurt(level, t.x, t.y, (Mob)this, random.nextInt(3) + 1, attackDir) || used;
 			}
 			
 			if (used && activeItem instanceof ToolItem)
@@ -764,7 +764,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable, IPlayer {
 	
 	/** called by other use method; this serves as a buffer in case there is no entity in front of the player. */
 	private boolean use(Rectangle area) {
-		List<Entity> entities = level.getEntitiesInRect(area).stream().map(e -> {return (Entity)e;}).collect(Collectors.toList());// Gets the entities within the 4 points
+		List<Entity> entities = level.getEntitiesInRect(area);// Gets the entities within the 4 points
 		for (Entity e : entities) {
 			if (e instanceof Furniture && ((Furniture) e).use(this)) return true; // If the entity is not the player, then call it's use method, and return the result. Only some furniture classes use this.
 		}
@@ -773,7 +773,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable, IPlayer {
 	
 	/** same, but for interaction. */
 	private boolean interact(Rectangle area) {
-		List<Entity> entities = level.getEntitiesInRect(area).stream().map(e -> {return (Entity)e;}).collect(Collectors.toList());
+		List<Entity> entities = level.getEntitiesInRect(area);
 		for (Entity e : entities) {
 			if (e != this && e.interact(this, activeItem, attackDir)) return true; // This is the ONLY place that the Entity.interact method is actually called.
 		}
@@ -782,7 +782,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable, IPlayer {
 	
 	/** same, but for attacking. */
 	private boolean hurt(Rectangle area) {
-		List<Entity> entities = level.getEntitiesInRect(area).stream().map(e -> {return (Entity)e;}).collect(Collectors.toList());
+		List<Entity> entities = level.getEntitiesInRect(area);
 		int maxDmg = 0;
 		for (Entity e : entities) {
 			if (e != this && e instanceof Mob) {
@@ -810,7 +810,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable, IPlayer {
 	}
 
 	@Override
-	public void render(IScreen screen) {
+	public void render(Screen screen) {
 		MobSprite[][] spriteSet;
 
         if (activeItem instanceof FurnitureItem) {
@@ -933,7 +933,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable, IPlayer {
 	}
 
 	/** What happens when the player interacts with a itemEntity */
-	public void pickupItem(IItemEntity iitemEntity) {
+	public void pickupItem(ItemEntity iitemEntity) {
 		ItemEntity itemEntity = (ItemEntity)iitemEntity;
 		Sound.pickup.play();
 		
@@ -958,7 +958,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable, IPlayer {
 	 * @param level Level which the player wants to start in.
 	 * @param spawnSeed Spawnseed.
 	 */
-	public void findStartPos(ILevel level, long spawnSeed) {
+	public void findStartPos(Level level, long spawnSeed) {
 		random.setSeed(spawnSeed);
 		findStartPos(level);
 	}
@@ -967,17 +967,17 @@ public class Player extends Mob implements ItemHolder, ClientTickable, IPlayer {
 	 * Finds the starting position for the player in a level.
 	 * @param level The level.
 	 */
-	public void findStartPos(ILevel level) { findStartPos(level, true); }
-	public void findStartPos(ILevel level, boolean setSpawn) {
+	public void findStartPos(Level level) { findStartPos(level, true); }
+	public void findStartPos(Level level, boolean setSpawn) {
 		Point spawnPos;
 
-		List<Point> spawnTilePositions = level.getMatchingTiles(Tiles.get("grass")).stream().map(p -> {return (Point)p;}).collect(Collectors.toList());
+		List<Point> spawnTilePositions = level.getMatchingTiles(Tiles.get("grass"));
 
 		if (spawnTilePositions.size() == 0)
-			spawnTilePositions.addAll(level.getMatchingTiles((t, x, y) -> t.maySpawn()).stream().map(p -> {return (Point)p;}).collect(Collectors.toList()));
+			spawnTilePositions.addAll(level.getMatchingTiles((t, x, y) -> t.maySpawn()));
 
 		if (spawnTilePositions.size() == 0)
-			spawnTilePositions.addAll(level.getMatchingTiles((t, x, y) -> t.mayPass(level, x, y, Player.this)).stream().map(p -> {return (Point)p;}).collect(Collectors.toList()));
+			spawnTilePositions.addAll(level.getMatchingTiles((t, x, y) -> t.mayPass(level, x, y, Player.this)));
 
 		// There are no tiles in the entire map which the player is allowed to stand on. Not likely.
 		if (spawnTilePositions.size() == 0) {
@@ -1002,7 +1002,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable, IPlayer {
 	 * @param level The level.
 	 * @return true
 	 */
-	public boolean respawn(ILevel level) {
+	public boolean respawn(Level level) {
 		if (!level.getTile(spawnx, spawny).maySpawn())
 			findStartPos(level); // If there's no bed to spawn from, and the stored coordinates don't point to a grass tile, then find a new point.
 
@@ -1071,7 +1071,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable, IPlayer {
 	}
 
 	@Override
-	public void hurt(ITnt tnt, int dmg) {
+	public void hurt(Tnt tnt, int dmg) {
 		super.hurt((Tnt)tnt, dmg);
 		payStamina(dmg * 2);
 	}
@@ -1080,10 +1080,10 @@ public class Player extends Mob implements ItemHolder, ClientTickable, IPlayer {
 	 * @param damage How much damage to do to player.
 	 * @param attackDir What direction to attack.
 	 */
-	public void hurt(int damage, IDirection attackDir) { doHurt(damage, attackDir); }
+	public void hurt(int damage, Direction attackDir) { doHurt(damage, attackDir); }
 
 	@Override
-	protected void doHurt(int damage, IDirection attackDir) {
+	protected void doHurt(int damage, Direction attackDir) {
 		if (Game.isMode("creative") || hurtTime > 0 || Bed.inBed(this)) return; // Can't get hurt in creative, hurt cooldown, or while someone is in bed
 
 		if (Game.isValidServer() && this instanceof RemotePlayer) {
@@ -1210,8 +1210,8 @@ public class Player extends Mob implements ItemHolder, ClientTickable, IPlayer {
 	}
 
 	@Override
-	public IInventory getInventory() {
-		return (IInventory) inventory;
+	public Inventory getInventory() {
+		return (Inventory) inventory;
 	}
 
 }

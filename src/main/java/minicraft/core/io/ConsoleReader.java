@@ -252,7 +252,7 @@ public class ConsoleReader extends Thread {
 				}
 				
 				int xt, yt;
-				Level level = (Level) clientThread.getClient().getLevel();
+				Level level = clientThread.getClient().getLevel();
 				
 				if (args.length > 2) {
 					try {
@@ -291,7 +291,7 @@ public class ConsoleReader extends Thread {
 					}
 					xt = rp.x >> 4;
 					yt = rp.y >> 4;
-					level = (Level) rp.getLevel();
+					level = rp.getLevel();
 				}
 				
 				if (xt >= 0 && yt >= 0 && level != null && xt < level.w && yt < level.h) {
@@ -438,7 +438,7 @@ public class ConsoleReader extends Thread {
 				
 				try {
 					int radius = Integer.valueOf(args[2]);
-					allEntities.addAll(rp.getLevel().getEntitiesInRect(new Rectangle(rp.x, rp.y, radius*2, radius*2, Rectangle.CENTER_DIMS)).stream().map(e -> {return (Entity)e;}).collect(Collectors.toList()));
+					allEntities.addAll(rp.getLevel().getEntitiesInRect(new Rectangle(rp.x, rp.y, radius*2, radius*2, Rectangle.CENTER_DIMS)));
 					allEntities.remove(rp);
 				} catch (NumberFormatException ex) {
 					System.out.println("Invalid entity targeting format: Specified radius is not an integer: " + args[2]);

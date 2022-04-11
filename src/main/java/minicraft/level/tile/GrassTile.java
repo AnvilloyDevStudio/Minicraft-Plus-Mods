@@ -1,17 +1,20 @@
 package minicraft.level.tile;
 
 import minicraft.core.io.Sound;
+import minicraft.entity.Direction;
+import minicraft.entity.mob.Player;
 import minicraft.gfx.ConnectorSprite;
+import minicraft.gfx.Screen;
 import minicraft.gfx.Sprite;
+import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.ToolItem;
 import minicraft.level.Level;
-import minicraftmodsapiinterface.*;
 
 public class GrassTile extends Tile {
 	private static ConnectorSprite sprite = new ConnectorSprite(GrassTile.class, new Sprite(0, 6, 3, 3, 1, 3), new Sprite(3, 6, 2, 2, 1))
 	{
-		public boolean connectsTo(ITile tile, boolean isSide) {
+		public boolean connectsTo(Tile tile, boolean isSide) {
 			if(!isSide) return true;
 			return ((Tile)tile).Connections.get("grass");
 		}
@@ -24,7 +27,7 @@ public class GrassTile extends Tile {
 		maySpawn = true;
 	}
 
-	public boolean tick(ILevel level, int xt, int yt) {
+	public boolean tick(Level level, int xt, int yt) {
 		// TODO revise this method.
 		if (random.nextInt(40) != 0) return false;
 		
@@ -41,12 +44,12 @@ public class GrassTile extends Tile {
 	}
 
 	@Override
-	public void render(IScreen screen, ILevel level, int x, int y) {
+	public void render(Screen screen, Level level, int x, int y) {
 		sprite.sparse.color = DirtTile.dCol(((Level)level).depth);
 		sprite.render(screen, level, x, y);
 	}
 
-	public boolean interact(ILevel level, int xt, int yt, IPlayer player, IItem item, IDirection attackDir) {
+	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type.name.equals("shovel")) {

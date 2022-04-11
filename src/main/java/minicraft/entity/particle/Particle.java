@@ -4,8 +4,8 @@ import java.util.HashMap;
 
 import minicraft.entity.ClientTickable;
 import minicraft.entity.Entity;
+import minicraft.gfx.Screen;
 import minicraft.gfx.Sprite;
-import minicraftmodsapiinterface.IScreen;
 
 public class Particle extends Entity implements ClientTickable {
 	private int time; // lifetime elapsed.
@@ -51,7 +51,7 @@ public class Particle extends Entity implements ClientTickable {
 	}
 	
 	@Override
-	public void render(IScreen screen) { sprite.render(screen, x, y); }
+	public void render(Screen screen) { sprite.render(screen, x, y); }
 	
 	@Override
 	public boolean isSolid() { return false; }

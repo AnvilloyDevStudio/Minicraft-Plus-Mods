@@ -1,5 +1,6 @@
 package minicraft.level.tile.farming;
 
+import minicraft.entity.Direction;
 import minicraft.entity.Entity;
 import minicraft.entity.ItemEntity;
 import minicraft.entity.mob.Mob;
@@ -9,7 +10,6 @@ import minicraft.item.Items;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
-import minicraftmodsapiinterface.*;
 
 public class Plant extends FarmTile {
     protected static int maxAge = 100;
@@ -21,20 +21,20 @@ public class Plant extends FarmTile {
     }
 
     @Override
-    public void steppedOn(ILevel level, int xt, int yt, IEntity entity) {
+    public void steppedOn(Level level, int xt, int yt, Entity entity) {
         if (entity instanceof ItemEntity) return;
         super.steppedOn(level, xt, yt, entity);
         harvest((Level)level, xt, yt, (Mob)entity);
     }
 
     @Override
-    public boolean hurt(ILevel level, int x, int y, IMob source, int dmg, IDirection attackDir) {
+    public boolean hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
         harvest((Level)level, x, y, (Mob)source);
         return true;
     }
 
     @Override
-    public boolean tick(ILevel level, int xt, int yt) {
+    public boolean tick(Level level, int xt, int yt) {
         if (random.nextInt(2) == 0) return false;
 
         int age = level.getData(xt, yt);

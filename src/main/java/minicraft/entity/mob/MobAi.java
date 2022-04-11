@@ -2,6 +2,7 @@ package minicraft.entity.mob;
 
 import minicraft.core.Game;
 import minicraft.core.io.Sound;
+import minicraft.entity.Direction;
 import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
 import minicraft.gfx.MobSprite;
@@ -10,7 +11,6 @@ import minicraft.gfx.Screen;
 import minicraft.item.Item;
 import minicraft.item.PotionType;
 import minicraft.level.Level;
-import minicraftmodsapiinterface.*;
 
 public abstract class MobAi extends Mob {
 	
@@ -87,7 +87,7 @@ public abstract class MobAi extends Mob {
 	}
 	
 	@Override
-	public void render(IScreen screen) {
+	public void render(Screen screen) {
 		int xo = x - 8;
 		int yo = y - 11;
 		
@@ -108,7 +108,7 @@ public abstract class MobAi extends Mob {
 	}
 	
 	@Override
-	public void doHurt(int damage, IDirection attackDir) {
+	public void doHurt(int damage, Direction attackDir) {
 		if (isRemoved() || hurtTime > 0) return; // If the mob has been hurt recently and hasn't cooled down, don't continue
 		
 		Player player = (Player) getClosestPlayer();

@@ -14,13 +14,12 @@ import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 
 import minicraft.entity.Entity;
+import minicraft.level.Level;
 import minicraft.network.Analytics;
 import minicraft.network.MinicraftServer;
 import minicraft.saveload.Load;
 import minicraft.screen.LoadingDisplay;
 import minicraft.screen.WorldSelectDisplay;
-import minicraftmodsapiinterface.IEntity;
-import minicraftmodsapiinterface.ILevel;
 
 public class Network extends Game {
 	private Network() {}
@@ -58,9 +57,9 @@ public class Network extends Game {
 	
 	@Nullable
 	public static Entity getEntity(int eid) {
-		for (ILevel level: levels) {
+		for (Level level: levels) {
 			if (level == null) continue;
-			for (IEntity e: level.getEntityArray())
+			for (Entity e: level.getEntityArray())
 				if (((Entity)e).eid == eid)
 					return (Entity)e;
 		}
@@ -86,9 +85,9 @@ public class Network extends Game {
 		if (eid == 0) return false; // This is reserved for the main player... kind of...
 		if (eid < 0) return false; // ID's must be positive numbers.
 		
-		for (ILevel level: levels) {
+		for (Level level: levels) {
 			if (level == null) continue;
-			for (IEntity e: level.getEntityArray()) {
+			for (Entity e: level.getEntityArray()) {
 				if (((Entity)e).eid == eid)
 					return false;
 			}

@@ -5,6 +5,7 @@ import java.util.Random;
 
 import minicraft.core.Game;
 import minicraft.core.io.Sound;
+import minicraft.entity.Direction;
 import minicraft.entity.mob.EnemyMob;
 import minicraft.entity.mob.MobAi;
 import minicraft.entity.mob.Player;
@@ -14,11 +15,11 @@ import minicraft.gfx.Color;
 import minicraft.gfx.Point;
 import minicraft.gfx.Sprite;
 import minicraft.item.FurnitureItem;
+import minicraft.item.Item;
 import minicraft.item.PotionType;
 import minicraft.item.PowerGloveItem;
 import minicraft.item.ToolItem;
 import minicraft.level.Level;
-import minicraftmodsapiinterface.*;
 
 public class Spawner extends Furniture {
 	
@@ -146,7 +147,7 @@ public class Spawner extends Furniture {
 	}
 	
 	@Override
-	public boolean interact(IPlayer iplayer, IItem item, IDirection attackDir) {
+	public boolean interact(Player iplayer, Item item, Direction attackDir) {
 		Player player = (Player)iplayer;
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem)item;
@@ -192,7 +193,7 @@ public class Spawner extends Furniture {
 	
 	@Override
 	@SuppressWarnings("JavaReflectionMemberAccess")
-	public boolean use(IPlayer player) {
+	public boolean use(Player player) {
 		if (Game.isMode("creative") && mob instanceof EnemyMob) {
 			lvl++;
 			if (lvl > maxMobLevel) lvl = 1;

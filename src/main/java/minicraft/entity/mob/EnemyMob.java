@@ -3,12 +3,13 @@ package minicraft.entity.mob;
 import minicraft.core.Game;
 import minicraft.core.Updater;
 import minicraft.core.io.Settings;
+import minicraft.entity.Entity;
 import minicraft.entity.furniture.Bed;
 import minicraft.gfx.MobSprite;
+import minicraft.gfx.Screen;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
-import minicraftmodsapiinterface.*;
 
 public class EnemyMob extends MobAi {
 	
@@ -92,13 +93,13 @@ public class EnemyMob extends MobAi {
 	}
 	
 	@Override
-	public void render(IScreen screen) {
+	public void render(Screen screen) {
 		sprites = lvlSprites[lvl - 1];
 		super.render(screen);
 	}
 	
 	@Override
-	protected void touchedBy(IEntity entity) { // If an entity (like the player) touches the enemy mob
+	protected void touchedBy(Entity entity) { // If an entity (like the player) touches the enemy mob
 		super.touchedBy(entity);
 		// Hurts the player, damage is based on lvl.
 		if(entity instanceof Player) {

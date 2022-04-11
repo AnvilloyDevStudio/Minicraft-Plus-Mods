@@ -6,7 +6,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import minicraft.core.Network;
-import minicraftmodsapiinterface.IItem;
 
 public class Items {
 	
@@ -16,7 +15,7 @@ public class Items {
 	/**
 		Ok, so here's the actual big idea:
 		
-		This class is meant to define all the different kinds of items in minicraft. IItem(Type).java might be what maps the different item sprites in the spritesheet to a name, but it doesn't really define anything final. This class has all the items you could possibly have, and every form of them, more or less.
+		This class is meant to define all the different kinds of items in minicraft. Item(Type).java might be what maps the different item sprites in the spritesheet to a name, but it doesn't really define anything final. This class has all the items you could possibly have, and every form of them, more or less.
 		
 		If you want to access one of those items, you do it through this class, by calling get("item name"); casing does not matter.
 	*/
@@ -112,11 +111,11 @@ public class Items {
 		}
 	}
 	
-	public static IItem arrowItem = get("arrow");
+	public static Item arrowItem = get("arrow");
 	
 	public static void fillCreativeInv(Inventory inv) { fillCreativeInv(inv, true); }
 	public static void fillCreativeInv(Inventory inv, boolean addAll) {
-		for (IItem item: items) {
+		for (Item item: items) {
 			if (item instanceof PowerGloveItem) continue;
 			if (addAll || inv.count(item) == 0)
 				inv.add(item.clone());

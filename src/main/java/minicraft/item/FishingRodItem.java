@@ -4,10 +4,12 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import minicraft.core.Game;
+import minicraft.entity.Direction;
 import minicraft.entity.mob.Player;
 import minicraft.gfx.Sprite;
+import minicraft.level.Level;
+import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
-import minicraftmodsapiinterface.*;
 
 public class FishingRodItem extends Item {
 
@@ -52,7 +54,7 @@ public class FishingRodItem extends Item {
     }
 
     @Override
-    public boolean interactOn(ITile tile, ILevel level, int xt, int yt, IPlayer player, IDirection attackDir) {
+    public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
         Player playerO = (Player) player;
         if (tile == Tiles.get("water") && !playerO.isSwimming()) { // Make sure not to use it if swimming
             uses++;

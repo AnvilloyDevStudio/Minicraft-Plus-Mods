@@ -2,10 +2,12 @@ package minicraft.level.tile;
 
 import minicraft.core.Game;
 import minicraft.entity.Arrow;
+import minicraft.entity.Entity;
 import minicraft.entity.mob.AirWizard;
 import minicraft.entity.mob.Player;
+import minicraft.gfx.Screen;
 import minicraft.gfx.Sprite;
-import minicraftmodsapiinterface.*;
+import minicraft.level.Level;
 
 public class InfiniteFallTile extends Tile {
 	
@@ -13,11 +15,11 @@ public class InfiniteFallTile extends Tile {
 		super(name, (Sprite)null);
 	}
 
-	public void render(IScreen screen, ILevel level, int x, int y) {}
+	public void render(Screen screen, Level level, int x, int y) {}
 
-	public boolean tick(ILevel level, int xt, int yt) { return false; }
+	public boolean tick(Level level, int xt, int yt) { return false; }
 
-	public boolean mayPass(ILevel level, int x, int y, IEntity e) {
+	public boolean mayPass(Level level, int x, int y, Entity e) {
 		return e instanceof AirWizard || e instanceof Arrow || e instanceof Player && ( ((Player) e).suitOn || Game.isMode("creative") );
 	}
 }

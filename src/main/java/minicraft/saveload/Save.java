@@ -35,12 +35,12 @@ import minicraft.entity.particle.Particle;
 import minicraft.entity.particle.TextParticle;
 import minicraft.item.Inventory;
 import minicraft.item.Item;
+import minicraft.item.PotionType;
 import minicraft.network.MinicraftServer;
 import minicraft.screen.LoadingDisplay;
 import minicraft.screen.MultiplayerDisplay;
 import minicraft.screen.SkinDisplay;
 import minicraft.screen.WorldSelectDisplay;
-import minicraftmodsapiinterface.IPotionType;
 import minicraft.level.tile.Tile;
 import minicraft.level.Level;
 
@@ -272,7 +272,7 @@ public class Save {
 		
 		StringBuilder subdata = new StringBuilder("PotionEffects[");
 		
-		for (java.util.Map.Entry<IPotionType, Integer> potion: player.potioneffects.entrySet())
+		for (java.util.Map.Entry<PotionType, Integer> potion: player.potioneffects.entrySet())
 			subdata.append(potion.getKey()).append(";").append(potion.getValue()).append(":");
 		
 		if (player.potioneffects.size() > 0)

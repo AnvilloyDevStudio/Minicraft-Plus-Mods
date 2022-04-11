@@ -43,7 +43,6 @@ import minicraft.saveload.Save;
 import minicraft.saveload.Version;
 import minicraft.screen.ContainerDisplay;
 import minicraft.screen.MultiplayerDisplay;
-import minicraftmodsapiinterface.ILevel;
 
 // This class is only used by the client runtime; the server runtime doesn't touch it.
 public class MinicraftClient extends MinicraftConnection {
@@ -572,7 +571,7 @@ public class MinicraftClient extends MinicraftConnection {
 		sendData(InputType.INTERACT, itemString+ ";" +player.stamina+ ";" +player.getInventory().count(Items.arrowItem));
 	}
 	
-	public void requestTile(ILevel iLevel, int xt, int yt) {
+	public void requestTile(Level iLevel, int xt, int yt) {
 		if (iLevel == null) return;
 		sendData(InputType.TILE, ((Level)iLevel).depth+ ";" +xt+ ";" +yt);
 	}

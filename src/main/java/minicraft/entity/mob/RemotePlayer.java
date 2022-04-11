@@ -181,7 +181,7 @@ public class RemotePlayer extends Player implements ClientTickable {
 		int ymin = Math.max(yt1 - yr, 0);
 		int ymax = Math.min(yt1 + yr, ((Level)level).h - 1);
 		
-		List<Entity> loadableEntites = level.getEntitiesInTiles(xmin, ymin, xmax, ymax).stream().map(e -> {return (Entity)e;}).collect(Collectors.toList());
+		List<Entity> loadableEntites = level.getEntitiesInTiles(xmin, ymin, xmax, ymax);
 		
 		for(int y = ymin; y <= ymax; y++) {
 			for(int x = xmin; x <= xmax; x++) {

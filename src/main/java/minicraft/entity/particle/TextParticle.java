@@ -3,7 +3,6 @@ package minicraft.entity.particle;
 import minicraft.gfx.Color;
 import minicraft.gfx.FontStyle;
 import minicraft.gfx.Screen;
-import minicraftmodsapiinterface.IScreen;
 
 public class TextParticle extends Particle {
 	private String msg; // Message of the text particle
@@ -58,7 +57,7 @@ public class TextParticle extends Particle {
 	}
 	
 	@Override
-	public void render(IScreen screen) {
+	public void render(Screen screen) {
 		style.setXPos(x - msg.length() * 4).setYPos(y - (int)zz).draw(msg, (Screen)screen);
 	}
 	

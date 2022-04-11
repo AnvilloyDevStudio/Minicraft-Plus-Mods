@@ -10,7 +10,6 @@ import java.util.Random;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.function.ToIntFunction;
-import java.util.stream.Collectors;
 
 import minicraft.core.Game;
 import minicraft.core.Network;
@@ -47,9 +46,8 @@ import minicraft.item.Item;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 import minicraft.level.tile.TorchTile;
-import minicraftmodsapiinterface.*;
 
-public class Level implements ILevel {
+public class Level {
 	private Random random = new Random();
 	
 	private static final String[] levelNames = {"Sky", "Surface", "Iron", "Gold", "Lava", "Dungeon"};
@@ -86,7 +84,7 @@ public class Level implements ILevel {
 		public int applyAsInt(Entity e) { return e.y; }
 	});
 	
-	public IEntity[] getEntitiesToSave() {
+	public Entity[] getEntitiesToSave() {
 		Entity[] allEntities = new Entity[entities.size() + sparks.size() + entitiesToAdd.size()];
 		Entity[] toAdd = entitiesToAdd.toArray(new Entity[entitiesToAdd.size()]);
 		Entity[] current = getEntityArray();
@@ -105,13 +103,13 @@ public class Level implements ILevel {
 		System.out.println(prefix + " on " + levelName + " level (" + x + "," + y + ")" + suffix);
 	}
 	
-	public void printTileLocs(ITile t) {
+	public void printTileLocs(Tile t) {
 		for (int x = 0; x < w; x++)
 			for (int y = 0; y < h; y++)
 				if (((Tile)getTile(x, y)).id == ((Tile)t).id)
 					printLevelLoc(((Tile)t).name, x, y);
 	}
-	public void printEntityLocs(Class<? extends IEntity> c) {
+	public void printEntityLocs(Class<? extends Entity> c) {
 		int numfound = 0;
 		for (Entity entity: getEntityArray()) {
 			if (c.isAssignableFrom(entity.getClass())) {
@@ -445,7 +443,7 @@ public class Level implements ILevel {
 			trySpawn();
 	}
 	
-	public void printEntityStatus(String entityMessage, IEntity entity, String... searching) {
+	public void printEntityStatus(String entityMessage, Entity entity, String... searching) {
 		// "searching" can contain any number of class names I want to print when found.
 		String clazz = entity.getClass().getCanonicalName();
 		clazz = clazz.substring(clazz.lastIndexOf(".")+1);
@@ -462,18 +460,18 @@ public class Level implements ILevel {
 		}
 	}
 	
-	public void dropItem(int x, int y, int mincount, int maxcount, IItem... items) {
+	public void dropItem(int x, int y, int mincount, int maxcount, Item... items) {
 		dropItem(x, y, mincount+random.nextInt(maxcount - mincount + 1), items);
 	}
-	public void dropItem(int x, int y, int count, IItem... items) {
+	public void dropItem(int x, int y, int count, Item... items) {
 		for (int i = 0; i < count; i++)
 			 dropItem(x, y, items);
 	}
-	public void dropItem(int x, int y, IItem... items) {
+	public void dropItem(int x, int y, Item... items) {
 		for (Item i: Arrays.copyOf(items, items.length, Item[].class))
 			 dropItem(x, y, i);
 	}
-	public ItemEntity dropItem(int x, int y, IItem i) {
+	public ItemEntity dropItem(int x, int y, Item i) {
 		if (Game.isValidClient())
 			System.out.println("Dropping item on client: " + i);
 		
@@ -488,7 +486,7 @@ public class Level implements ILevel {
 		return ie;
 	}
 
-	public void renderBackground(IScreen screen, int xScroll, int yScroll) {
+	public void renderBackground(Screen screen, int xScroll, int yScroll) {
 		int xo = xScroll >> 4; // Latches to the nearest tile coordinate
 		int yo = yScroll >> 4;
 		int w = (Screen.w) >> 4; // There used to be a "+15" as in below method
@@ -502,19 +500,19 @@ public class Level implements ILevel {
 		screen.setOffset(0, 0);
 	}
 	
-	public void renderSprites(IScreen screen, int xScroll, int yScroll) {
+	public void renderSprites(Screen screen, int xScroll, int yScroll) {
 		int xo = xScroll >> 4; // Latches to the nearest tile coordinate
 		int yo = yScroll >> 4;
 		int w = (Screen.w + 15) >> 4;
 		int h = (Screen.h + 15) >> 4;
 		
 		screen.setOffset(xScroll, yScroll);
-		sortAndRender((Screen)screen, getEntitiesInTiles(xo, yo, xo + w, yo + h).stream().map(e -> { return (Entity)e;}).collect(Collectors.toList()));
+		sortAndRender((Screen)screen, getEntitiesInTiles(xo, yo, xo + w, yo + h));
 		
 		screen.setOffset(0, 0);
 	}
 
-	public void renderLight(IScreen screen, int xScroll, int yScroll, int brightness) {
+	public void renderLight(Screen screen, int xScroll, int yScroll, int brightness) {
 		int xo = xScroll >> 4;
 		int yo = yScroll >> 4;
 		int w = (Screen.w + 15) >> 4;
@@ -523,8 +521,8 @@ public class Level implements ILevel {
 		screen.setOffset(xScroll, yScroll);
 		int r = 4;
 		
-		List<IEntity> entities = getEntitiesInTiles(xo - r, yo - r, w + xo + r, h + yo + r);
-		for (IEntity e: entities) {
+		List<Entity> entities = getEntitiesInTiles(xo - r, yo - r, w + xo + r, h + yo + r);
+		for (Entity e: entities) {
 			int lr = e.getLightRadius();
 			if (lr > 0) screen.renderLight(((Entity)e).x - 1, ((Entity)e).y - 4, lr * brightness);
 		}
@@ -550,7 +548,7 @@ public class Level implements ILevel {
 		}
 	}
 	
-	public ITile getTile(int x, int y) {
+	public Tile getTile(int x, int y) {
 		if (x < 0 || y < 0 || x >= w || y >= h /* || (x + y * w) >= tiles.length*/ ) return Tiles.get("connector tile");
 		int id = tiles[x + y * w];
 		if(id < 0) id += 256;
@@ -567,11 +565,11 @@ public class Level implements ILevel {
 		setTile(x, y, Tiles.get(name), data);
 	}
 	
-	public void setTile(int x, int y, ITile t) {
+	public void setTile(int x, int y, Tile t) {
 		setTile(x, y, t, t.getDefaultData());
 	}
 	
-	public void setTile(int x, int y, ITile t, int dataVal) {
+	public void setTile(int x, int y, Tile t, int dataVal) {
 		if (x < 0 || y < 0 || x >= w || y >= h) return;
 		
 		if (Game.isValidClient() && !Game.isValidServer()) {
@@ -595,9 +593,9 @@ public class Level implements ILevel {
 		data[x + y * w] = (byte) val;
 	}
 	
-	public void add(IEntity e) { if(e==null) return; add(e, ((Entity)e).x, ((Entity)e).y); }
-	public void add(IEntity entity, int x, int y) { add(entity, x, y, false); }
-	public void add(IEntity entity, int x, int y, boolean tileCoords) {
+	public void add(Entity e) { if(e==null) return; add(e, ((Entity)e).x, ((Entity)e).y); }
+	public void add(Entity entity, int x, int y) { add(entity, x, y, false); }
+	public void add(Entity entity, int x, int y, boolean tileCoords) {
 		if(entity == null) return;
 		if(tileCoords) {
 			x = x * 16 + 8;
@@ -610,7 +608,7 @@ public class Level implements ILevel {
 			entitiesToAdd.add((Entity)entity);
 	}
 	
-	public void remove(IEntity e) {
+	public void remove(Entity e) {
 		entitiesToAdd.remove(e);
 		if (!entitiesToRemove.contains(e))
 			entitiesToRemove.add((Entity)e);
@@ -703,10 +701,10 @@ public class Level implements ILevel {
 		return entityArray;
 	}
 	
-	public List<IEntity> getEntitiesInTiles(int xt, int yt, int radius) { return getEntitiesInTiles(xt, yt, radius, false); }
+	public List<Entity> getEntitiesInTiles(int xt, int yt, int radius) { return getEntitiesInTiles(xt, yt, radius, false); }
 	
 	@SafeVarargs
-	public final List<IEntity> getEntitiesInTiles(int xt, int yt, int radius, boolean includeGiven, Class<? extends IEntity>... entityClasses) { return getEntitiesInTiles(xt-radius, yt-radius, xt+radius, yt+radius, includeGiven, entityClasses); }
+	public final List<Entity> getEntitiesInTiles(int xt, int yt, int radius, boolean includeGiven, Class<? extends Entity>... entityClasses) { return getEntitiesInTiles(xt-radius, yt-radius, xt+radius, yt+radius, includeGiven, entityClasses); }
 
 	/**
 	 * Get entities in a certain area on the level.
@@ -715,7 +713,7 @@ public class Level implements ILevel {
 	 * @param xt1 Right
 	 * @param yt1 Bottom
 	 */
-	public List<IEntity> getEntitiesInTiles(int xt0, int yt0, int xt1, int yt1) { return getEntitiesInTiles(xt0, yt0, xt1, yt1, false); }
+	public List<Entity> getEntitiesInTiles(int xt0, int yt0, int xt1, int yt1) { return getEntitiesInTiles(xt0, yt0, xt1, yt1, false); }
 
 	/**
 	 * Get entities in a certain area on the level, and filter them by class.
@@ -728,8 +726,8 @@ public class Level implements ILevel {
 	 * @return A list of entities in the area.
 	 */
 	@SafeVarargs
-	public final List<IEntity> getEntitiesInTiles(int xt0, int yt0, int xt1, int yt1, boolean includeGiven, Class<? extends IEntity>... entityClasses) {
-		List<IEntity> contained = new ArrayList<>();
+	public final List<Entity> getEntitiesInTiles(int xt0, int yt0, int xt1, int yt1, boolean includeGiven, Class<? extends Entity>... entityClasses) {
+		List<Entity> contained = new ArrayList<>();
 		for (Entity e: getEntityArray()) {
 			int xt = e.x >> 4;
 			int yt = e.y >> 4;
@@ -753,8 +751,8 @@ public class Level implements ILevel {
 		return contained;
 	}
 	
-	public List<IEntity> getEntitiesInRect(IRectangle area) {
-		List<IEntity> result = new ArrayList<>();
+	public List<Entity> getEntitiesInRect(Rectangle area) {
+		List<Entity> result = new ArrayList<>();
 		for (Entity e: getEntityArray()) {
 			if (e.isTouching(area))
 				result.add(e);
@@ -762,8 +760,8 @@ public class Level implements ILevel {
 		return result;
 	}
 
-	public List<IEntity> getEntitiesInRect(Predicate<IEntity> filter, IRectangle area) {
-		List<IEntity> result = new LinkedList<>();
+	public List<Entity> getEntitiesInRect(Predicate<Entity> filter, Rectangle area) {
+		List<Entity> result = new LinkedList<>();
 		for (Entity entity : entities) {
 			if (filter.test(entity) && entity.isTouching(area)) {
 				result.add(entity);
@@ -773,7 +771,7 @@ public class Level implements ILevel {
 	}
 	
 	/// Finds all entities that are an instance of the given entity.
-	public IEntity[] getEntitiesOfClass(Class<? extends IEntity> targetClass) {
+	public Entity[] getEntitiesOfClass(Class<? extends Entity> targetClass) {
 		ArrayList<Entity> matches = new ArrayList<>();
 		for (Entity e: getEntityArray()) {
 			if (targetClass.isAssignableFrom(e.getClass()))
@@ -783,11 +781,11 @@ public class Level implements ILevel {
 		return matches.toArray(new Entity[0]);
 	}
 	
-	public IPlayer[] getPlayers() {
+	public Player[] getPlayers() {
 		return players.toArray(new Player[players.size()]);
 	}
 	
-	public IPlayer getClosestPlayer(int x, int y) {
+	public Player getClosestPlayer(int x, int y) {
 		Player[] players = (Player[])getPlayers();
 		if (players.length == 0)
 			return null;
@@ -808,8 +806,8 @@ public class Level implements ILevel {
 		return closest;
 	}
 	
-	public IPoint[] getAreaTilePositions(int x, int y, int r) { return getAreaTilePositions(x, y, r, r); }
-	public IPoint[] getAreaTilePositions(int x, int y, int rx, int ry) {
+	public Point[] getAreaTilePositions(int x, int y, int r) { return getAreaTilePositions(x, y, r, r); }
+	public Point[] getAreaTilePositions(int x, int y, int rx, int ry) {
 		ArrayList<Point> local = new ArrayList<>();
 		for (int yp = y-ry; yp <= y+ry; yp++)
 			for (int xp = x-rx; xp <= x+rx; xp++)
@@ -818,8 +816,8 @@ public class Level implements ILevel {
 		return local.toArray(new Point[local.size()]);
 	}
 	
-	public ITile[] getAreaTiles(int x, int y, int r) { return getAreaTiles(x, y, r, r); }
-	public ITile[] getAreaTiles(int x, int y, int rx, int ry) {
+	public Tile[] getAreaTiles(int x, int y, int r) { return getAreaTiles(x, y, r, r); }
+	public Tile[] getAreaTiles(int x, int y, int rx, int ry) {
 		ArrayList<Tile> local = new ArrayList<>();
 		
 		for (Point p: (Point[])getAreaTilePositions(x, y, rx, ry))
@@ -828,8 +826,8 @@ public class Level implements ILevel {
 		return local.toArray(new Tile[local.size()]);
 	}
 	
-	public void setAreaTiles(int xt, int yt, int r, ITile tile, int data) { setAreaTiles(xt, yt, r, tile, data, false); }
-	public void setAreaTiles(int xt, int yt, int r, ITile tile, int data, boolean overwriteStairs) {
+	public void setAreaTiles(int xt, int yt, int r, Tile tile, int data) { setAreaTiles(xt, yt, r, tile, data, false); }
+	public void setAreaTiles(int xt, int yt, int r, Tile tile, int data, boolean overwriteStairs) {
 		for(int y = yt - r; y <= yt + r; y++) {
 			for (int x = xt - r; x <= xt + r; x++) {
 				if(overwriteStairs || (!((Tile)getTile(x, y)).name.toLowerCase().contains("stairs")))
@@ -838,7 +836,7 @@ public class Level implements ILevel {
 		}
 	}
 
-	public void setAreaTiles(int xt, int yt, int r, ITile tile, int data, String[] blacklist) {
+	public void setAreaTiles(int xt, int yt, int r, Tile tile, int data, String[] blacklist) {
 		for (int y = yt - r; y <= yt + r; y++) {
 			for (int x = xt - r; x <= xt + r; x++) {
 				if (!Arrays.asList(blacklist).contains(((Tile)getTile(x, y)).name.toLowerCase()))
@@ -847,22 +845,22 @@ public class Level implements ILevel {
 		}
 	}
 	
-	// @FunctionalInterface
-	// public interface TileCheck {
-	// 	boolean check(ITile t, int x, int y);
-	// }
+	@FunctionalInterface
+	public interface TileCheck {
+		boolean check(Tile t, int x, int y);
+	}
 	
-	public List<IPoint> getMatchingTiles(ITile search) { return getMatchingTiles((t, x, y) -> t.equals(search)); }
-	public List<IPoint> getMatchingTiles(ITile... search) {
+	public List<Point> getMatchingTiles(Tile search) { return getMatchingTiles((t, x, y) -> t.equals(search)); }
+	public List<Point> getMatchingTiles(Tile... search) {
 		return getMatchingTiles((t, x, y) -> {
-			for (ITile poss: search)
+			for (Tile poss: search)
 				if (t.equals(poss))
 					return true;
 			return false;
 		});
 	}
-	public List<IPoint> getMatchingTiles(TileCheck condition) {
-		List<IPoint> matches = new ArrayList<>();
+	public List<Point> getMatchingTiles(TileCheck condition) {
+		List<Point> matches = new ArrayList<>();
 		for (int y = 0; y < h; y++)
 			for (int x = 0; x < w; x++)
 				if (condition.check(getTile(x, y), x, y))

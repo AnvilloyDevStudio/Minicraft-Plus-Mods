@@ -451,7 +451,7 @@ public class Menu {
 		public Builder setDisplayLength(int numEntries) { menu.displayLength = numEntries; return this; }
 		
 		
-		public Builder setTitlePos(RelPos rp) { titlePos = (rp == null ? RelPos.TOP : rp); return this; }
+		public Builder setTitlePos(RelPos rp) { titlePos = (rp == null ? RelPos.TOP : (RelPos)rp); return this; }
 		
 		public Builder setTitle(String title) { menu.title = title; return this; }
 

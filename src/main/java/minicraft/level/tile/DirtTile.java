@@ -1,12 +1,15 @@
 package minicraft.level.tile;
 
 import minicraft.core.io.Sound;
+import minicraft.entity.Direction;
+import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;
+import minicraft.gfx.Screen;
 import minicraft.gfx.Sprite;
+import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.ToolItem;
 import minicraft.level.Level;
-import minicraftmodsapiinterface.*;
 
 public class DirtTile extends Tile {
 	private static Sprite[] levelSprite = new Sprite[4];
@@ -37,11 +40,11 @@ public class DirtTile extends Tile {
 		}
 	}
 	
-	public void render(IScreen screen, ILevel level, int x, int y) {
+	public void render(Screen screen, Level level, int x, int y) {
 		levelSprite[dIdx(((Level)level).depth)].render(screen, x * 16, y * 16, 0);
 	}
 	
-	public boolean interact(ILevel level, int xt, int yt, IPlayer player, IItem item, IDirection attackDir) {
+	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type.name.equals("shovel")) {

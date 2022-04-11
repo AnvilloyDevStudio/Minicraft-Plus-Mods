@@ -37,7 +37,6 @@ dependencies {
     // implementation files("dependencies/forgespi-4.0.11.jar")
     // implementation files("dependencies/accesstransformers-8.0.7.jar")
     // implementation files("dependencies/securejarhandler-1.0.3.jar")
-    implementation files("dependencies/minicraft-mod-api-interface-0.1.0.jar")
     testImplementation 'org.hamcrest:hamcrest:2.2'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.2'
 }

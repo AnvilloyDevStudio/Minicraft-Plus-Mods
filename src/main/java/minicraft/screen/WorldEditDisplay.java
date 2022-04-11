@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import minicraft.core.FileHandler;
 import minicraft.core.Game;
@@ -52,7 +53,7 @@ public class WorldEditDisplay extends Display {
 			Game.input.getMapping("exit")+" to cancel"
 		)));
 		
-		builder.setEntries(entries);
+		builder.setEntries(entries.stream().map(i -> {return (ListEntry)i;}).collect(Collectors.toList()));
 		
 		menus = new Menu[] {builder.createMenu()};
 	}

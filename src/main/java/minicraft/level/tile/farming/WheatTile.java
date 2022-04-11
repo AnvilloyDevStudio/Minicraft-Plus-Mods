@@ -1,7 +1,8 @@
 package minicraft.level.tile.farming;
 
+import minicraft.gfx.Screen;
+import minicraft.level.Level;
 import minicraft.level.tile.Tiles;
-import minicraftmodsapiinterface.*;
 
 public class WheatTile extends Plant {
 
@@ -10,7 +11,7 @@ public class WheatTile extends Plant {
 	}
 
 	@Override
-	public void render(IScreen screen, ILevel level, int x, int y) {
+	public void render(Screen screen, Level level, int x, int y) {
 		int age = level.getData(x, y);
 		int icon = age / (maxAge / 5);
 

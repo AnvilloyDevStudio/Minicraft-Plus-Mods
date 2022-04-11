@@ -5,10 +5,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import minicraft.core.Game;
+import minicraft.core.io.InputHandler;
 import minicraft.core.io.Sound;
 import minicraft.gfx.*;
-import minicraftmodsapiinterface.IInputHandler;
-import minicraftmodsapiinterface.IScreen;
 
 public class ModsDisplay extends Display {
 	private static final List<minicraft.core.Mods.Mod> mods = new ArrayList<>();
@@ -31,7 +30,7 @@ public class ModsDisplay extends Display {
 	}
 
 	@Override
-	public void tick(IInputHandler input) {
+	public void tick(InputHandler input) {
 		if (input.getKey("menu").clicked || input.getKey("attack").clicked || input.getKey("exit").clicked) {
 			Game.exitMenu();
 			return;
@@ -55,7 +54,7 @@ public class ModsDisplay extends Display {
 	}
 
 	@Override
-	public void render(IScreen screen) {
+	public void render(Screen screen) {
 		screen.clear(0);
 
         // Get skin above and below.

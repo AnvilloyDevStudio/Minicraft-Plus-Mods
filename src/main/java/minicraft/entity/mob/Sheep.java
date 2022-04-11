@@ -10,7 +10,6 @@ import minicraft.gfx.Screen;
 import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.ToolItem;
-import minicraftmodsapiinterface.IScreen;
 
 public class Sheep extends PassiveMob {
 	private static final MobSprite[][] sprites = MobSprite.compileMobSpriteAnimations(0, 28);
@@ -29,7 +28,7 @@ public class Sheep extends PassiveMob {
 	}
 
 	@Override
-	public void render(IScreen screen) {
+	public void render(Screen screen) {
 		int xo = x - 8;
 		int yo = y - 11;
 

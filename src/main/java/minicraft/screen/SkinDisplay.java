@@ -14,7 +14,6 @@ import minicraft.core.io.InputHandler;
 import minicraft.core.io.Sound;
 import minicraft.gfx.*;
 import minicraft.saveload.Save;
-import minicraftmodsapiinterface.ISpriteSheet;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -26,7 +25,7 @@ import javax.imageio.ImageIO;
 public class SkinDisplay extends Display {
 	private static final List<String> skinNames = new ArrayList<>();
 	private static final int defaultSkins;
-	private static final List<ISpriteSheet> customSkins = new ArrayList<>();
+	private static final List<SpriteSheet> customSkins = new ArrayList<>();
 	private static int selectedSkinIndex = 0;
 
 	private int step;
@@ -66,7 +65,7 @@ public class SkinDisplay extends Display {
 					// Check if sheet is a multiple of 8.
 					if (spriteSheet.width % 8 == 0 && spriteSheet.height % 8 == 0) {
 						// Add the spritesheet to the custom skins list.
-						customSkins.add((ISpriteSheet)spriteSheet);
+						customSkins.add((SpriteSheet)spriteSheet);
 
 						// Remove the filetype (.png) and to the .
 						skinNames.add(fileName.substring(0, fileName.length()-4));
@@ -146,7 +145,7 @@ public class SkinDisplay extends Display {
 				if (selectedSkinIndex < defaultSkins) {
 					screen.render(xoffset + x * 8, yoffset + y * 8, spriteIndex * 2 + x + (y + selectedSkinIndex * 4) * 32, 0, 4);
 				} else {
-					ISpriteSheet spriteSheet = customSkins.get(selectedSkinIndex - defaultSkins);
+					SpriteSheet spriteSheet = customSkins.get(selectedSkinIndex - defaultSkins);
 					screen.render(xoffset + x * 8, yoffset + y * 8, spriteIndex * 2 + x + y * 32, 0, spriteSheet, - 1, false);
 				}
 	}

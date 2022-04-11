@@ -23,7 +23,6 @@ import minicraft.network.Analytics;
 import minicraft.network.MinicraftClient;
 import minicraft.saveload.Save;
 import minicraft.screen.entry.RangeEntry;
-import minicraftmodsapiinterface.IScreen;
 
 public class MultiplayerDisplay extends Display {
 	
@@ -295,7 +294,7 @@ public class MultiplayerDisplay extends Display {
 	}
 	
 	@Override
-	public void render(IScreen screen) {
+	public void render(Screen screen) {
 		screen.clear(0);
 		
 		switch(curState) {

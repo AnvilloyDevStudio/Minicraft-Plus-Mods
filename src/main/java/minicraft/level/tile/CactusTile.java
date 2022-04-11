@@ -3,13 +3,16 @@ package minicraft.level.tile;
 import minicraft.core.Game;
 import minicraft.core.io.Settings;
 import minicraft.core.io.Sound;
+import minicraft.entity.Direction;
+import minicraft.entity.Entity;
 import minicraft.entity.mob.Mob;
 import minicraft.entity.particle.SmashParticle;
 import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
+import minicraft.gfx.Screen;
 import minicraft.gfx.Sprite;
 import minicraft.item.Items;
-import minicraftmodsapiinterface.*;
+import minicraft.level.Level;
 
 public class CactusTile extends Tile {
 	private static Sprite sprite = new Sprite(6, 0, 2, 2, 1);
@@ -19,11 +22,11 @@ public class CactusTile extends Tile {
 		Connections.set("sand", true);
 	}
 
-	public boolean mayPass(ILevel level, int x, int y, IEntity e) {
+	public boolean mayPass(Level level, int x, int y, Entity e) {
 		return false;
 	}
 
-	public boolean hurt(ILevel level, int x, int y, IMob source, int dmg, IDirection attackDir) {
+	public boolean hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
 		int damage = level.getData(x, y) + dmg;
 		int cHealth = 10;
 		if (Game.isMode("creative")) dmg = damage = cHealth;
@@ -42,13 +45,13 @@ public class CactusTile extends Tile {
 	}
 
 	@Override
-	public void render(IScreen screen, ILevel level, int x, int y) {
+	public void render(Screen screen, Level level, int x, int y) {
 		Tiles.get("Sand").render(screen, level, x, y);
 
 		sprite.render(screen, x << 4, y << 4);
 	}
 
-	public void bumpedInto(ILevel level, int x, int y, IEntity entity) {
+	public void bumpedInto(Level level, int x, int y, Entity entity) {
 		if(!(entity instanceof Mob)) return;
 		Mob m = (Mob) entity;
 		if (Settings.get("diff").equals("Easy")) {
@@ -62,7 +65,7 @@ public class CactusTile extends Tile {
 		}
 	}
 
-	public boolean tick(ILevel level, int xt, int yt) {
+	public boolean tick(Level level, int xt, int yt) {
 		int damage = level.getData(xt, yt);
 		if (damage > 0) {
 			level.setData(xt, yt, damage - 1);

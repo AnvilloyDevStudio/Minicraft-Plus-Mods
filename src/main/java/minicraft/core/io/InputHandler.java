@@ -11,9 +11,8 @@ import java.util.LinkedHashMap;
 import org.jetbrains.annotations.Nullable;
 
 import minicraft.core.Game;
-import minicraftmodsapiinterface.IInputHandler;
 
-public class InputHandler implements KeyListener, IInputHandler {
+public class InputHandler implements KeyListener {
 	/**
 		This class handles key presses; this also implements MouseListener... but I have no idea why.
 		It's not used in any way. Ever. As far as I know. Anyway, here are a few tips about this class:
@@ -150,7 +149,7 @@ public class InputHandler implements KeyListener, IInputHandler {
 	}
 	
 	// The Key class.
-	public class Key extends IKey {
+	public class Key {
 		// presses = how many times the Key has been pressed.
 		// absorbs = how many key presses have been processed.
 		private int presses, absorbs;
@@ -227,7 +226,7 @@ public class InputHandler implements KeyListener, IInputHandler {
 	}
 	
 	/// THIS is pretty much the only way you want to be interfacing with this class; it has all the auto-create and protection functions and such built-in.
-	public IKey getKey(String keytext) { return getKey(keytext, true); }
+	public Key getKey(String keytext) { return getKey(keytext, true); }
 	private Key getKey(String keytext, boolean getFromMap) {
 		// If the passed-in key is blank, or null, then return null.
 		if (keytext == null || keytext.length() == 0) return new Key();

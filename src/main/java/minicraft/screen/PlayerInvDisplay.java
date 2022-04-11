@@ -2,18 +2,15 @@ package minicraft.screen;
 
 import minicraft.core.Game;
 import minicraft.core.io.InputHandler;
-import minicraftmodsapiinterface.IEntity;
-import minicraftmodsapiinterface.IInventory;
-import minicraftmodsapiinterface.IPlayer;
 import minicraft.entity.mob.Player;
 import minicraft.item.Item;
 
 public class PlayerInvDisplay extends Display {
 	
-	private IPlayer player;
+	private Player player;
 	
-	public PlayerInvDisplay(IPlayer player) {
-		super(new InventoryMenu((IEntity)player, (IInventory)player.getInventory(), "Inventory"));
+	public PlayerInvDisplay(Player player) {
+		super(new InventoryMenu(player, player.getInventory(), "Inventory"));
 		this.player = player;
 	}
 	

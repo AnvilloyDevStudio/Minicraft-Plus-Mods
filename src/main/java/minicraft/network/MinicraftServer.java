@@ -42,7 +42,6 @@ import minicraft.saveload.Load;
 import minicraft.saveload.Save;
 import minicraft.saveload.Version;
 import minicraft.screen.WorldSelectDisplay;
-import minicraftmodsapiinterface.ILevel;
 
 public class MinicraftServer extends Thread implements MinicraftProtocol {
 	
@@ -143,7 +142,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 		int xt = e.x >> 4, yt = e.y >> 4;
 		return getPlayersInRange(e.getLevel(), xt, yt, useTrackRange); // NOTE if "e" is a RemotePlayer, the list returned *will* contain "e".
 	}
-	public List<RemotePlayer> getPlayersInRange(ILevel level, int xt, int yt, boolean useTrackRange) {
+	public List<RemotePlayer> getPlayersInRange(Level level, int xt, int yt, boolean useTrackRange) {
 		List<RemotePlayer> players = new ArrayList<>();
 		for (MinicraftServerThread thread: getThreads()) {
 			RemotePlayer rp = thread.getClient();
@@ -627,7 +626,7 @@ public class MinicraftServer extends Thread implements MinicraftProtocol {
 				
 				if (e instanceof DeathChest) {
 					StringBuilder itemDataB = new StringBuilder();
-					for (Item i: chest.getInventory().getItems().stream().map(i -> {return (Item)i;}).collect(Collectors.toList()))
+					for (Item i: chest.getInventory().getItems())
 						itemDataB.append(i.getData()).append(";");
 					String itemData = itemDataB.toString();
 					itemData = itemData.length() == 0 ? itemData : itemData.substring(0, itemData.length() - 1);

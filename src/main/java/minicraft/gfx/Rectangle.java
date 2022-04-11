@@ -1,9 +1,8 @@
 package minicraft.gfx;
 
 import minicraft.screen.RelPos;
-import minicraftmodsapiinterface.*;
 
-public class Rectangle implements IRectangle {
+public class Rectangle {
 	
 	public static final int CORNER_DIMS = 0;
 	public static final int CORNERS = 1;
@@ -52,17 +51,17 @@ public class Rectangle implements IRectangle {
 	public int getWidth() { return w; }
 	public int getHeight() { return h; }
 	
-	public IPoint getCenter() { return new Point(x + w/2, y + h/2); }
-	public IDimension getSize() { return new Dimension(w, h); }
+	public Point getCenter() { return new Point(x + w/2, y + h/2); }
+	public Dimension getSize() { return new Dimension(w, h); }
 	
-	public IPoint getPosition(IRelPos relPos) {
+	public Point getPosition(RelPos relPos) {
 		Point p = new Point(x, y);
-		p.x += ((RelPos)relPos).xIndex * w/2;
-		p.y += ((RelPos)relPos).yIndex * h/2;
+		p.x += relPos.xIndex * w/2;
+		p.y += relPos.yIndex * h/2;
 		return p;
 	}
 	
-	public boolean intersects(IRectangle other) {
+	public boolean intersects(Rectangle other) {
 		return !( getLeft() > other.getRight() // Left side is past the other right side
 		  || other.getLeft() > getRight() // Other left side is past the right side
 		  || getBottom() < other.getTop() // Other top is below the bottom
@@ -70,10 +69,10 @@ public class Rectangle implements IRectangle {
 		);
 	}
 	
-	public void setPosition(IPoint p, IRelPos relPos) { setPosition(((Point)p).x, ((Point)p).y, relPos); }
-	public void setPosition(int x, int y, IRelPos relPos) {
-		this.x = x - ((RelPos)relPos).xIndex*w/2;
-		this.y = y - ((RelPos)relPos).yIndex*h/2;
+	public void setPosition(Point p, RelPos relPos) { setPosition(p.x, p.y, relPos); }
+	public void setPosition(int x, int y, RelPos relPos) {
+		this.x = x - relPos.xIndex*w/2;
+		this.y = y - relPos.yIndex*h/2;
 	}
 	
 	public void translate(int xoff, int yoff) {
@@ -81,9 +80,9 @@ public class Rectangle implements IRectangle {
 		y += yoff;
 	}
 	
-	public void setSize(IDimension d, IRelPos anchor) { setSize(((Dimension)d).width, ((Dimension)d).height, anchor); }
-	public void setSize(int width, int height, IRelPos anchor) {
-		IPoint p = getPosition(anchor);
+	public void setSize(Dimension d, RelPos anchor) { setSize(d.width, d.height, anchor); }
+	public void setSize(int width, int height, RelPos anchor) {
+		Point p = getPosition(anchor);
 		this.w = width;
 		this.h = height;
 		setPosition(p, anchor);

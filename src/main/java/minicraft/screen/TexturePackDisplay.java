@@ -18,7 +18,6 @@ import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Screen;
 import minicraft.gfx.SpriteSheet;
-import minicraftmodsapiinterface.ISpriteSheet;
 
 public class TexturePackDisplay extends Display {
 
@@ -72,7 +71,7 @@ public class TexturePackDisplay extends Display {
 			}
 		}
 
-		screen.setSheet((ISpriteSheet)sheets[0], (ISpriteSheet)sheets[1], (ISpriteSheet)sheets[2], (ISpriteSheet)sheets[3]);
+		screen.setSheet((SpriteSheet)sheets[0], (SpriteSheet)sheets[1], (SpriteSheet)sheets[2], (SpriteSheet)sheets[3]);
 	}
 
 	@Override

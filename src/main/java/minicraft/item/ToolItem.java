@@ -8,7 +8,6 @@ import minicraft.core.io.Localization;
 import minicraft.entity.Entity;
 import minicraft.entity.mob.Mob;
 import minicraft.gfx.Sprite;
-import minicraftmodsapiinterface.IItem;
 
 public class ToolItem extends Item {
 	
@@ -109,7 +108,7 @@ public class ToolItem extends Item {
 	
 	/** Sees if this item equals another. */
 	@Override
-	public boolean equals(IItem item) {
+	public boolean equals(Item item) {
 		if (item instanceof ToolItem) {
 			ToolItem other = (ToolItem) item;
 			return other.type == type && other.level == level;

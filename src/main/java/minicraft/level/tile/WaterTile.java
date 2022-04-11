@@ -1,14 +1,15 @@
 package minicraft.level.tile;
 
+import minicraft.entity.Entity;
 import minicraft.gfx.ConnectorSprite;
+import minicraft.gfx.Screen;
 import minicraft.gfx.Sprite;
 import minicraft.level.Level;
-import minicraftmodsapiinterface.*;
 
 public class WaterTile extends Tile {
 	private ConnectorSprite sprite = new ConnectorSprite(WaterTile.class, new Sprite(12, 6, 3, 3, 1, 3), Sprite.dots(/*Color.get(005, 105, 115, 115)*/ 0))
 	{
-		public boolean connectsTo(ITile tile, boolean isSide) {
+		public boolean connectsTo(Tile tile, boolean isSide) {
 			return ((Tile)tile).Connections.get("fluid");
 		}
 	};
@@ -19,18 +20,18 @@ public class WaterTile extends Tile {
 		Connections.set("fluid", true);
 	}
 	
-	public void render(IScreen screen, ILevel level, int x, int y) {
+	public void render(Screen screen, Level level, int x, int y) {
 		long seed = (tickCount + (x / 2 - y) * 4311) / 10 * 54687121l + x * 3271612l + y * 3412987161l;
 		sprite.full = Sprite.randomDots(seed, 0);
 		sprite.sparse.color = DirtTile.dCol(((Level)level).depth);
 		sprite.render(screen, level, x, y);
 	}
 
-	public boolean mayPass(ILevel level, int x, int y, IEntity e) {
+	public boolean mayPass(Level level, int x, int y, Entity e) {
 		return e.canSwim();
 	}
 
-	public boolean tick(ILevel level, int xt, int yt) {
+	public boolean tick(Level level, int xt, int yt) {
 		int xn = xt;
 		int yn = yt;
 

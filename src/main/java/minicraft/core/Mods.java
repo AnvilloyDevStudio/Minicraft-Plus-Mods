@@ -25,12 +25,10 @@ import minicraft.gfx.Sprite;
 import minicraft.gfx.SpriteSheet;
 import minicraft.item.*;
 import minicraft.level.tile.*;
-import minicraft.level.tile.ModTile.ModTileOption;
 import minicraft.level.tile.Tile.TileConnections;
 import minicraft.level.tile.farming.ModPlant;
 import minicraft.level.tile.farming.Plant;
 import minicraft.mod.ModLoadAssets;
-import minicraftmodsapiinterface.*;
 
 public class Mods extends Game {
     private Mods() {}
@@ -323,12 +321,12 @@ public class Mods extends Game {
                 ModTileOption o = new ModTileOption();
                 o.Optionclass = Obj;
                 try{o.mayPass = (boolean)Obj.getDeclaredField("mayPass").get(null);} catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException | SecurityException e) {};
-                try{o.mayPassMethod = Obj.getDeclaredMethod("mayPassMethod", ILevel.class, int.class, int.class, IEntity.class);} catch (NoSuchMethodException e) {};
+                try{o.mayPassMethod = Obj.getDeclaredMethod("mayPassMethod", Level.class, int.class, int.class, Entity.class);} catch (NoSuchMethodException e) {};
                 try{o.Connections = Map.class.cast(Obj.getDeclaredField("Connections").get(null));} catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException | SecurityException e) {};
-                try{o.render = Obj.getDeclaredMethod("render", IScreen.class, ILevel.class, int.class, int.class, Object.class, IGameAssets.class);} catch (NoSuchMethodException e) {};
-                try{o.tick = Obj.getDeclaredMethod("tick", ILevel.class, int.class, int.class, IGameAssets.class);} catch (NoSuchMethodException e) {};
-                try{o.hurt = Obj.getDeclaredMethod("hurt", ILevel.class, int.class, int.class, IMob.class, int.class, IDirection.class, IGameAssets.class);} catch (NoSuchMethodException e) {};
-                try{o.interact = Obj.getDeclaredMethod("interact", ILevel.class, int.class, int.class, IPlayer.class, IItem.class, IDirection.class);} catch (NoSuchMethodException e) {};
+                try{o.render = Obj.getDeclaredMethod("render", Screen.class, Level.class, int.class, int.class, Object.class, IGameAssets.class);} catch (NoSuchMethodException e) {};
+                try{o.tick = Obj.getDeclaredMethod("tick", Level.class, int.class, int.class, IGameAssets.class);} catch (NoSuchMethodException e) {};
+                try{o.hurt = Obj.getDeclaredMethod("hurt", Level.class, int.class, int.class, Mob.class, int.class, Direction.class, IGameAssets.class);} catch (NoSuchMethodException e) {};
+                try{o.interact = Obj.getDeclaredMethod("interact", Level.class, int.class, int.class, Player.class, Item.class, Direction.class);} catch (NoSuchMethodException e) {};
                 return o;
             }
             Tile(Mod mod, Class<?> Obj, Resources res) {
@@ -400,12 +398,12 @@ public class Mods extends Game {
                 new SpriteSheet(ImageIO.read(Game.class.getResourceAsStream("/resources/textures/skins.png")))
             };
             public Sprite getSprite(SpriteSheet sheet, int x, int y) {
-                return new Sprite(new Sprite.Px[][]{new Sprite.Px[]{new Sprite.Px(x, y, 0, (ISpriteSheet)sheet)}});
+                return new Sprite(new Sprite.Px[][]{new Sprite.Px[]{new Sprite.Px(x, y, 0, (SpriteSheet)sheet)}});
             }
             public Sprite getSprite2(SpriteSheet sheet, int x, int y) {
                 return new Sprite(new Sprite.Px[][]{
-                    {new Sprite.Px(x, y, 0, (ISpriteSheet)sheet), new Sprite.Px(x+1, y, 0, (ISpriteSheet)sheet)},
-                    {new Sprite.Px(x, y+1, 0, (ISpriteSheet)sheet), new Sprite.Px(x+1, y+1, 0, (ISpriteSheet)sheet)}
+                    {new Sprite.Px(x, y, 0, (SpriteSheet)sheet), new Sprite.Px(x+1, y, 0, (SpriteSheet)sheet)},
+                    {new Sprite.Px(x, y+1, 0, (SpriteSheet)sheet), new Sprite.Px(x+1, y+1, 0, (SpriteSheet)sheet)}
                 });
             }
             public Resources(JarFile jar, Manifest man) throws IOException {

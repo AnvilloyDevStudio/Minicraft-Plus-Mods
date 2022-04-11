@@ -1,7 +1,8 @@
 package minicraft.gfx;
 
+import minicraft.level.Level;
 import minicraft.level.tile.ConnectTile;
-import minicraftmodsapiinterface.*;
+import minicraft.level.tile.Tile;
 
 public class ConnectorSprite {
 	/**
@@ -15,32 +16,32 @@ public class ConnectorSprite {
 	*/
 	
 	public Sprite sparse, sides, full;
-	private Class<? extends ITile> owner;
+	private Class<? extends Tile> owner;
 	private boolean checkCorners;
 	
-	public ConnectorSprite(Class<? extends ITile> owner, Sprite sparse, Sprite sides, Sprite full) {
+	public ConnectorSprite(Class<? extends Tile> owner, Sprite sparse, Sprite sides, Sprite full) {
 		this(owner, sparse, sides, full, true);
 	}
-	public ConnectorSprite(Class<? extends ITile> owner, Sprite sparse, Sprite sides, Sprite full, boolean cornersMatter) {
+	public ConnectorSprite(Class<? extends Tile> owner, Sprite sparse, Sprite sides, Sprite full, boolean cornersMatter) {
 		this.owner = owner;
 		this.sparse = sparse;
 		this.sides = sides;
 		this.full = full;
 		this.checkCorners = cornersMatter;
 	}
-	public ConnectorSprite(Class<? extends ITile> owner, Sprite sparse, Sprite full) {
+	public ConnectorSprite(Class<? extends Tile> owner, Sprite sparse, Sprite full) {
 		this(owner, sparse, sparse, full, false);
 	}
 
-	public void render(IScreen screen, ILevel level, int x, int y) { render(screen, level, x, y, -1); }
+	public void render(Screen screen, Level level, int x, int y) { render(screen, level, x, y, -1); }
 
-	public void render(IScreen screen, ILevel level, int x, int y, int whiteTint) {
+	public void render(Screen screen, Level level, int x, int y, int whiteTint) {
 		//System.out.println("rendering sprite for tile " + owner);
 		
-		ITile ut = level.getTile(x, y - 1);
-		ITile dt = level.getTile(x, y + 1);
-		ITile lt = level.getTile(x - 1, y);
-		ITile rt = level.getTile(x + 1, y);
+		Tile ut = level.getTile(x, y - 1);
+		Tile dt = level.getTile(x, y + 1);
+		Tile lt = level.getTile(x - 1, y);
+		Tile rt = level.getTile(x + 1, y);
 		
 		boolean u = connectsToDoEdgeCheck(ut, true);
 		boolean d = connectsToDoEdgeCheck(dt, true);
@@ -86,12 +87,12 @@ public class ConnectorSprite {
 	}
 	
 	// It is expected that some tile classes will override this on class instantiation.
-	public boolean connectsTo(ITile tile, boolean isSide) {
+	public boolean connectsTo(Tile tile, boolean isSide) {
 		//System.out.println("original connection check");
 		return tile.getClass() == owner;
 	}
 
-	public boolean connectsToDoEdgeCheck(ITile tile, boolean isSide) {
+	public boolean connectsToDoEdgeCheck(Tile tile, boolean isSide) {
 		if (tile.getClass() == ConnectTile.class) {
 			return true;
 		}

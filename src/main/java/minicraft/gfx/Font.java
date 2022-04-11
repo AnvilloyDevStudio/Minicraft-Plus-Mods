@@ -5,9 +5,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import minicraft.core.io.Localization;
-import minicraftmodsapiinterface.IFont;
 
-public class Font extends IFont {
+public class Font {
 	// These are all the characters that will be translated to the screen. (The spaces are important)
 	private static String chars =
 			"ABCDEFGHIJKLMNOPQRSTUVWXYZ012345"+

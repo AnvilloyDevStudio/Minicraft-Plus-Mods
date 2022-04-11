@@ -8,14 +8,15 @@ import minicraft.entity.Direction;
 import minicraft.entity.Entity;
 import minicraft.entity.mob.Player;
 import minicraft.entity.mob.RemotePlayer;
+import minicraft.gfx.Screen;
 import minicraft.gfx.Sprite;
 import minicraft.item.FurnitureItem;
+import minicraft.item.Item;
 import minicraft.item.PowerGloveItem;
-import minicraftmodsapiinterface.*;
 
 /** Many furniture classes are very similar; they might not even need to be there at all... */
 
-public class Furniture extends Entity implements IFurniture {
+public class Furniture extends Entity {
 	
 	protected int pushTime = 0, multiPushTime = 0; // Time for each push; multi is for multiplayer, to make it so not so many updates are sent.
 	private Direction pushDir = Direction.NONE; // The direction to push the furniture
@@ -69,18 +70,18 @@ public class Furniture extends Entity implements IFurniture {
 	}
 	
 	/** Draws the furniture on the screen. */
-	public void render(IScreen screen) { sprite.render(screen, x-8, y-8); }
+	public void render(Screen screen) { sprite.render(screen, x-8, y-8); }
 	
 	/** Called when the player presses the MENU key in front of this. */
-	public boolean use(IPlayer player) { return false; }
+	public boolean use(Player player) { return false; }
 	
 	@Override
-	public boolean blocks(IEntity e) {
+	public boolean blocks(Entity e) {
 		return true; // Furniture blocks all entities, even non-solid ones like arrows.
 	}
 	
 	@Override
-	protected void touchedBy(IEntity entity) {
+	protected void touchedBy(Entity entity) {
 		if (entity instanceof Player)
 			tryPush((Player) entity);
 	}
@@ -90,7 +91,7 @@ public class Furniture extends Entity implements IFurniture {
 	 * @param player The player picking up the furniture.
 	 */
 	@Override
-	public boolean interact(IPlayer iplayer, @Nullable IItem item, IDirection attackDir) {
+	public boolean interact(Player iplayer, @Nullable Item item, Direction attackDir) {
 		Player player = (Player)iplayer;
 		if (item instanceof PowerGloveItem) {
 			Sound.monsterHurt.play();
@@ -114,7 +115,7 @@ public class Furniture extends Entity implements IFurniture {
 	 * Tries to let the player push this furniture.
 	 * @param player The player doing the pushing.
 	 */
-	public void tryPush(IPlayer player) {
+	public void tryPush(Player player) {
 		if (pushTime == 0) {
 			pushDir = (Direction) ((Player)player).dir; // Set pushDir to the player's dir.
 			pushTime = multiPushTime = 10; // Set pushTime to 10.

@@ -3,18 +3,18 @@ package minicraft.screen;
 import minicraft.core.Game;
 import minicraft.core.io.InputHandler;
 import minicraft.entity.mob.Player;
+import minicraft.item.Inventory;
 import minicraft.item.Item;
 import minicraft.item.StackableItem;
 import minicraft.screen.entry.ItemEntry;
-import minicraftmodsapiinterface.*;
 import minicraft.entity.Entity;
 
 class InventoryMenu extends ItemListMenu {
 	
-	private IInventory inv;
-	private IEntity holder;
+	private Inventory inv;
+	private Entity holder;
 	
-	InventoryMenu(IEntity holder, IInventory inv, String title) {
+	InventoryMenu(Entity holder, Inventory inv, String title) {
 		super(ItemListMenu.getBuilder(), ItemEntry.useItems(inv.getItems()), title);
 		this.inv = inv;
 		this.holder = holder;

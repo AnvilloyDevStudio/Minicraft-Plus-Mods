@@ -9,24 +9,20 @@ import java.util.jar.JarFile;
 import org.apache.commons.lang3.tuple.Pair;
 import org.json.JSONObject;
 
-import minicraft.core.Mods;
-
 public class ClassLoader {
     public ClassLoader() {}
-    public Pair<Pair<Class<?>, Mods.Mod.Resources>, JSONObject> loadJar(File jarf) {
+    public Pair<Class<?>, JSONObject> loadJar(File jarf) {
         URLClassLoader child;
         try {
             JarFile jar = new JarFile(jarf);
 			JSONObject modInfo = new JSONObject(new String(jar.getInputStream(jar.getEntry("mod.json")).readAllBytes()));
-            Mods.Mod.Resources res = new Mods.Mod.Resources(jar, jar.getManifest());
-            // jar.getJarEntry("mod/")
             jar.close();
             child = new URLClassLoader(
                 new URL[] {jarf.toURI().toURL()},
                 getClass().getClassLoader()
             );
-            Class<?> classToLoad = Class.forName("mod.Module", true, child);
-            return Pair.of(Pair.of(classToLoad, res), modInfo);
+            Class<?> classToLoad = Class.forName("mod.Main", true, child);
+            return Pair.of(classToLoad, modInfo);
             // Method method = classToLoad.getDeclaredMethod("myMethod");
             // Object instance = classToLoad.getDeclaredConstructor().newInstance();
             // Object result = method.invoke(instance);

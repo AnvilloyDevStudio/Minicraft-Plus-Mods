@@ -88,7 +88,7 @@ public class ModsDisplay extends Display {
 		FontStyle fs = new FontStyle();
 		if (mods.size() != 0) {
 			Font.drawCentered("Name: "+mods.get(selectedIndex).Info.getString("name"), screen, Screen.h-170, Color.WHITE);
-			Font.drawCentered("Version: "+mods.get(selectedIndex).Resources.manifest.getMainAttributes().getValue("Implementation-Version"), screen, Screen.h-158, Color.WHITE);
+			Font.drawCentered("Version: "+mods.get(selectedIndex).manifest.getMainAttributes().getValue("Implementation-Version"), screen, Screen.h-158, Color.WHITE);
 		}
 		fs.setXPos(Screen.w/2-10);
 		fs.setYPos(Screen.h-140);

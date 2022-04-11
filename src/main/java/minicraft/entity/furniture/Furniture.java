@@ -45,7 +45,7 @@ public class Furniture extends Entity {
 		// All of these are 2x2 on the spritesheet; radius is for collisions only.
 		super(xr, yr);
 		this.name = name;
-		if (sprite == null) sprite = new Sprite(30, 30, 2)
+		if (sprite == null) sprite = new Sprite(30, 30, 2);
 		this.sprite = sprite;
 		col = sprite.color;
 	}

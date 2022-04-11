@@ -24,6 +24,9 @@ public abstract class Item {
 	}
 	protected Item(String name, Sprite sprite) {
 		this.name = name;
+		if (sprite == null) {
+			sprite = new Sprite(0, 31, 0);
+		}
 		this.sprite = sprite;
 	}
 

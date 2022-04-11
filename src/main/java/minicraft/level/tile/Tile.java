@@ -120,6 +120,7 @@ public abstract class Tile {
 	
 	protected Tile(String name, Sprite sprite) {
 		this.name = name.toUpperCase();
+		if (sprite == null) sprite = new Sprite (0, 30, 1);
 		this.sprite = sprite;
 	}
 	protected Tile(String name, ConnectorSprite sprite) {

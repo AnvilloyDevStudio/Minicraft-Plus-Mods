@@ -35,6 +35,7 @@ public abstract class Mob extends Entity {
 	 */
 	public Mob(MobSprite[][] sprites, int health) {
 		super(4, 3);
+		if (sprites == null) sprites = MobSprite.compileMobSpriteAnimations(30, 30);
 		this.sprites = sprites;
 		this.health = this.maxHealth = health;
 		walkTime = 1;

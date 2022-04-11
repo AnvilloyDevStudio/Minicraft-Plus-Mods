@@ -4,7 +4,7 @@ apply plugin: 'application'
 project.version = '0.1.0'
 
 sourceCompatibility = 8
-mainClassName = 'mod.Module'
+mainClassName = 'mod.Main'
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
 repositories {
@@ -16,7 +16,7 @@ repositories {
 }
 
 dependencies {
-    implementation files("dependencies/minicraft-mod-api-interface-0.1.0.jar")
+    implementation files("dependencies/minicraft_plus_mods-2.0.7.jar")
     // implementation 'org.jetbrains:annotations:21.0.1'
     // implementation 'org.xbill:dns:2.0.8'
     // implementation 'commons-codec:commons-codec:1.15'

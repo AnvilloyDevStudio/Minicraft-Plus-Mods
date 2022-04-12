@@ -1,7 +1,7 @@
 apply plugin: 'java'
 apply plugin: 'application'
 
-project.version = '2.0.7'
+project.version = '0.2.0'
 
 sourceCompatibility = 8
 mainClassName = 'minicraft.core.Game'
@@ -52,7 +52,7 @@ buildscript {
 apply plugin: 'com.github.johnrengelman.shadow'
 
 shadowJar {
-    archivesBaseName = 'minicraft_plus_mods'
+    archivesBaseName = 'minicraft_plus_mods-2.0.7'
     archiveClassifier.set('')
 
     manifest {

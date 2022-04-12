@@ -23,24 +23,23 @@ public class FileHandler extends Game {
 	static final String OS;
 	private static final String localGameDir;
 	static final String systemGameDir;
-	static final String gameModsDir = "./mods";
+	static final String gameModsDir;
 	
 	static {
 		OS = System.getProperty("os.name").toLowerCase();
 		//System.out.println("os name: \"" +os + "\"");
-		String local = "MinicraftPlusData";
+		String local = "playminicraft/mods/Minicraft_Plus";
 		
-		// if(OS.contains("windows")) // windows
-			systemGameDir = ".";
-		// else {
-		// 	// uncertain
-		// 	systemGameDir = System.getProperty("user.home");
-		// 	if(!OS.contains("mac"))
-		// 		local = "."+local; // linux
-		// }
+		if(OS.contains("windows")) // windows
+			systemGameDir = System.getenv("APPDATA");
+		else {
+			systemGameDir = System.getProperty("user.home");
+			if(!OS.contains("mac"))
+				local = "."+local; // linux
+		}
 		
 		localGameDir = "/"+local;
-		
+		gameModsDir = systemGameDir+localGameDir+"/mods";
 		//System.out.println("system game dir: " + systemGameDir);
 	}
 	

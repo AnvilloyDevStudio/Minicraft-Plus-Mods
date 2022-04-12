@@ -67,7 +67,7 @@ goto fail
 :execute
 @rem Setup the command line
 
-set CLASSPATH=%APP_HOME%\lib\core-0.1.0.jar;%APP_HOME%\lib\minicraft_plus_mods-2.0.7.jar
+set CLASSPATH=%APP_HOME%\lib\core-0.1.0.jar;%APP_HOME%\lib\minicraft_plus_mods-2.0.7-0.2.0.jar
 
 
 @rem Execute mod-core

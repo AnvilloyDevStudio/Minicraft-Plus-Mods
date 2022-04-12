@@ -1,24 +1,35 @@
 package mod;
 
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
+
 import minicraft.core.Game;
 import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
+import minicraft.entity.Entity;
 import minicraft.entity.mob.Mob;
+import minicraft.entity.mob.Player;
 import minicraft.entity.particle.SmashParticle;
 import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
 import minicraft.gfx.Screen;
 import minicraft.gfx.Sprite;
+import minicraft.gfx.SpriteSheet;
+import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.Recipe;
 import minicraft.item.Recipes;
 import minicraft.item.StackableItem;
+import minicraft.item.TileItem;
 import minicraft.level.Level;
 import minicraft.level.LevelGen;
 import minicraft.level.tile.OreTile;
+import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 import minicraft.level.tile.TreeTile;
 import minicraft.level.tile.OreTile.OreType;
+import minicraft.mod.compatibility.GraphicComp;
 
 public class Main {
     public static void entry() {
@@ -69,7 +80,7 @@ public class Main {
         
                 level.add(new TextParticle("" + dmg, x * 16 + 8, y * 16 + 8, Color.RED));
                 if (damage >= treeHealth) {
-                    level.dropItem(x * 16 + 8, y * 16 + 8, 1, 3, Items.get("Wood"));
+                    level.dropItem(x * 16 + 8, y * 16 + 8, 2, 5, Items.get("Wood"));
                     level.dropItem(x * 16 +  8, y * 16 + 8, 0, 2, Items.get("Acorn"));
                     level.setTile(x, y, Tiles.get("Grass"));
                 } else {
@@ -92,8 +103,49 @@ public class Main {
                 }
             }
         });
-        Items.add(new StackableItem("redstone", null));
-        Tiles.add(45, new OreTile(new OreType("Redstone", Items.get("redstone"), null)));
+        Tiles.add(46, new Tile("redstone", (Sprite)null) {
+            @Override
+            public boolean mayPass(Level level, int x, int y, Entity e) {
+                return true;
+            }
+            @Override
+            public void render(Screen screen, Level level, int x, int y) {
+                Tiles.get(1).render(screen, level, x, y);
+                try {
+                    GraphicComp.spriteFromSpriteSheet(0, 0, 2, 2, new SpriteSheet(ImageIO.read(Main.class.getResourceAsStream("/resources/tile/Redstone.png")))).render(screen, x*16, y*16);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            @Override
+            public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
+                level.dropItem(xt*16+8, yt*16+8, Items.get("redstone"));
+                level.setTile(xt, yt, Tiles.get("Dirt"));
+                return true;
+            }
+            @Override
+            public boolean hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
+                level.dropItem(x*16+8, y*16+8, Items.get("redstone"));
+                level.setTile(x, y, Tiles.get("Dirt"));
+                return true;
+            }
+        });
+        // try {
+            Items.add(new TileItem("redstone", null, "redstone", "grass", "dirt"));
+        // } catch (IOException e1) {
+        //     e1.printStackTrace();
+        // }
+        Tiles.add(45, new OreTile(new OreType("Redstone", Items.get("redstone"), null)) {
+            @Override
+            public void render(Screen screen, Level level, int x, int y) {
+                try {
+                    Tiles.get(1).render(screen, level, x, y);
+                    GraphicComp.spriteFromSpriteSheet(0, 0, 2, 2, new SpriteSheet(ImageIO.read(Main.class.getResourceAsStream("/resources/tile/RedstoneOre.png")))).render(screen, x * 16, y * 16);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
         new LevelGen.ModTileGen(-2, (map, data, layer, w, h, random) -> {
             int r = 2;
             for (int i = 0; i < w * h / 1000; i++) {

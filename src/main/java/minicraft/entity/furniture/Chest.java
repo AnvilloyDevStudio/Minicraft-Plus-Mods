@@ -2,7 +2,6 @@ package minicraft.entity.furniture;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.jetbrains.annotations.Nullable;
 

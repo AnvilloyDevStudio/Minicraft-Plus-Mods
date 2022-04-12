@@ -2,7 +2,6 @@ package minicraft.entity.mob;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import minicraft.core.Game;
 import minicraft.core.io.Settings;

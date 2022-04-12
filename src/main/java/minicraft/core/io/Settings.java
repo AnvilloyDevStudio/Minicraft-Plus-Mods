@@ -11,7 +11,7 @@ import minicraft.screen.entry.RangeEntry;
 
 public class Settings {
 	
-	private static HashMap<String, ArrayEntry> options = new HashMap<>();
+	private static HashMap<String, ArrayEntry<?>> options = new HashMap<>();
 	
 	static {
 		options.put("fps", new RangeEntry("Max FPS", 10, 300, getRefreshRate())); // Has to check if the game is running in a headless mode. If it doesn't set the fps to 60
@@ -64,7 +64,7 @@ public class Settings {
 	public static int getIdx(String option) { return options.get(option.toLowerCase()).getSelection(); }
 	
 	// Return the ArrayEntry object associated with the given option name.
-	public static ArrayEntry getEntry(String option) { return options.get(option.toLowerCase()); }
+	public static ArrayEntry<?> getEntry(String option) { return options.get(option.toLowerCase()); }
 	
 	// Sets the value of the given option name, to the given value, provided it is a valid value for that option.
 	public static void set(String option, Object value) {

@@ -25,7 +25,7 @@ public class Main {
         Items.add(new StackableItem("copper", null));
         Items.add(new StackableItem("copper ore", null));
         Recipes.furnaceRecipes.add(new Recipe("Copper_1", "Coal_1", "Copper Ore_4"));
-        Tiles.add(43, new OreTile(new OreType("Copper", Items.get("copper ore"), new Sprite(0, 30, 2, 2, 1))));
+        Tiles.add(43, new OreTile(new OreType("Copper", Items.get("copper ore"), null)));
         LevelGen.ModTileGen.TileGeneration copperGen = (map, data, layer, w, h, random) -> {
             int r = 2;
             for (int i = 0; i < w * h / 650; i++) {
@@ -87,6 +87,24 @@ public class Main {
                     if (xx >= 0 && yy >= 0 && xx < w && yy < h) {
                         if (map[xx + yy * w] == 8) { // id of "Tree" == 8
                             map[xx + yy * w] = (short) 44;
+                        }
+                    }
+                }
+            }
+        });
+        Items.add(new StackableItem("redstone", null));
+        Tiles.add(45, new OreTile(new OreType("Redstone", Items.get("redstone"), null)));
+        new LevelGen.ModTileGen(-2, (map, data, layer, w, h, random) -> {
+            int r = 2;
+            for (int i = 0; i < w * h / 1000; i++) {
+                int x = random.nextInt(w);
+                int y = random.nextInt(h);
+                for (int j = 0; j < 15; j++) {
+                    int xx = x + random.nextInt(4) - random.nextInt(4);
+                    int yy = y + random.nextInt(4) - random.nextInt(4);
+                    if (xx >= r && yy >= r && xx < w - r && yy < h - r) {
+                        if (map[xx + yy * w] == 7) { // id of "Rock" == 7
+                            map[xx + yy * w] = (short) 45;
                         }
                     }
                 }

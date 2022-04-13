@@ -130,11 +130,7 @@ public class Main {
                 return true;
             }
         });
-        // try {
-            Items.add(new TileItem("redstone", null, "redstone", "grass", "dirt"));
-        // } catch (IOException e1) {
-        //     e1.printStackTrace();
-        // }
+        Items.add(new TileItem("redstone", null, "redstone", "grass", "dirt"));
         Tiles.add(45, new OreTile(new OreType("Redstone", Items.get("redstone"), null)) {
             @Override
             public void render(Screen screen, Level level, int x, int y) {
@@ -146,6 +142,56 @@ public class Main {
                 }
             }
         });
+        Tiles.add(47, new Tile("Redstone signal transmitter", (Sprite)null) {
+            @Override
+            public boolean mayPass(Level level, int x, int y, Entity e) {
+                return true;
+            }
+            @Override
+            public void render(Screen screen, Level level, int x, int y) {
+                Tiles.get(1).render(screen, level, x, y);
+                try {
+                    GraphicComp.spriteFromSpriteSheet(0, 0, 2, 2, new SpriteSheet(ImageIO.read(Main.class.getResourceAsStream("/resources/tile/RedstoneTransmitter.png")))).render(screen, x*16, y*16, level.getData(x, y));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            @Override
+            public boolean tick(Level level, int xt, int yt) {
+                Direction dir = Direction.getDirection(level.getData(xt, yt)%4);
+                int bx = xt-dir.getX();
+                int by = yt-dir.getY();
+                int fx = xt+dir.getX();
+                int fy = yt+dir.getY();
+                if (level.getTile(bx, by).name.equals("REDSTONE") && level.getTile(xt+dir.getX(), yt+dir.getY()).name.equals("REDSTONE")) {
+                    if (level.getData(bx, by) == 1) level.setData(fx, fy, level.getData(fx, fy)%4+4);
+                    else level.setData(fx, fy, level.getData(fx, fy)%4);
+                }
+                return true;
+            }
+            @Override
+            public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
+                level.dropItem(xt*16+8, yt*16+8, Items.get("Redstone signal transmitter"));
+                level.setTile(xt, yt, Tiles.get("Dirt"));
+                return true;
+            }
+            @Override
+            public boolean hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
+                System.out.println(attackDir.name());
+                level.dropItem(x*16+8, y*16+8, Items.get("Redstone signal transmitter"));
+                level.setTile(x, y, Tiles.get("Dirt"));
+                return true;
+            }
+        });
+        Items.add(new TileItem("Redstone signal transmitter", null, "Redstone signal transmitter", "grass", "dirt") {
+            @Override
+            public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
+                boolean r = super.interactOn(tile, level, xt, yt, player, attackDir);
+                if (r && level.getTile(xt, yt).name.equals("REDSTONE SIGNAL TRANSMITTER")) level.setData(xt, yt, attackDir.getDir());
+                return r;
+            }
+        });
+        Recipes.workbenchRecipes.add(new Recipe("Redstone signal transmitter_1", "redstone_2", "stone_5"));
         new LevelGen.ModTileGen(-2, (map, data, layer, w, h, random) -> {
             int r = 2;
             for (int i = 0; i < w * h / 1000; i++) {

@@ -22,6 +22,7 @@ import minicraft.item.Recipe;
 import minicraft.item.Recipes;
 import minicraft.item.StackableItem;
 import minicraft.item.TileItem;
+import minicraft.item.ToolItem;
 import minicraft.level.Level;
 import minicraft.level.LevelGen;
 import minicraft.level.tile.OreTile;
@@ -112,7 +113,7 @@ public class Main {
             public void render(Screen screen, Level level, int x, int y) {
                 Tiles.get(1).render(screen, level, x, y);
                 try {
-                    GraphicComp.spriteFromSpriteSheet(0, 0, 2, 2, new SpriteSheet(ImageIO.read(Main.class.getResourceAsStream("/resources/tile/Redstone.png")))).render(screen, x*16, y*16);
+                    GraphicComp.spriteFromSpriteSheet(0, 0, 2, 2, new SpriteSheet(ImageIO.read(Main.class.getResourceAsStream(level.getData(x, y) == 0? "/resources/tile/Redstone.png": "/resources/tile/RedstoneOn.png")))).render(screen, x*16, y*16);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -158,14 +159,14 @@ public class Main {
             }
             @Override
             public boolean tick(Level level, int xt, int yt) {
-                Direction dir = Direction.getDirection(level.getData(xt, yt)%4);
+                Direction dir = Direction.getDirection(level.getData(xt, yt));
                 int bx = xt-dir.getX();
                 int by = yt-dir.getY();
                 int fx = xt+dir.getX();
                 int fy = yt+dir.getY();
                 if (level.getTile(bx, by).name.equals("REDSTONE") && level.getTile(xt+dir.getX(), yt+dir.getY()).name.equals("REDSTONE")) {
-                    if (level.getData(bx, by) == 1) level.setData(fx, fy, level.getData(fx, fy)%4+4);
-                    else level.setData(fx, fy, level.getData(fx, fy)%4);
+                    if (level.getData(bx, by) == 1) level.setData(fx, fy, 1);
+                    else level.setData(fx, fy, 0);
                 }
                 return true;
             }
@@ -177,7 +178,6 @@ public class Main {
             }
             @Override
             public boolean hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
-                System.out.println(attackDir.name());
                 level.dropItem(x*16+8, y*16+8, Items.get("Redstone signal transmitter"));
                 level.setTile(x, y, Tiles.get("Dirt"));
                 return true;
@@ -186,11 +186,14 @@ public class Main {
         Items.add(new TileItem("Redstone signal transmitter", null, "Redstone signal transmitter", "grass", "dirt") {
             @Override
             public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
-                boolean r = super.interactOn(tile, level, xt, yt, player, attackDir);
-                if (r && level.getTile(xt, yt).name.equals("REDSTONE SIGNAL TRANSMITTER")) level.setData(xt, yt, attackDir.getDir());
-                return r;
+                System.out.println("Placed.");
+                return false;
+                // boolean r = super.interactOn(tile, level, xt, yt, player, attackDir);
+                // if (r && level.getTile(xt, yt).name.equals("REDSTONE SIGNAL TRANSMITTER")) level.setData(xt, yt, attackDir.getDir());
+                // return r;
             }
         });
+        Items.get("Redstone signal transmitter").interactOn(null, null, 0, 0, null, null);
         Recipes.workbenchRecipes.add(new Recipe("Redstone signal transmitter_1", "redstone_2", "stone_5"));
         new LevelGen.ModTileGen(-2, (map, data, layer, w, h, random) -> {
             int r = 2;
@@ -208,5 +211,46 @@ public class Main {
                 }
             }
         });
+        Tiles.add(48, new Tile("Redstone switch", (Sprite)null) {
+            @Override
+            public boolean mayPass(Level level, int x, int y, Entity e) {
+                return true;
+            }
+            @Override
+            public void render(Screen screen, Level level, int x, int y) {
+                Tiles.get(1).render(screen, level, x, y);
+                try {
+                    GraphicComp.spriteFromSpriteSheet(0, 0, 2, 2, new SpriteSheet(ImageIO.read(Main.class.getResourceAsStream(level.getData(x, y) == 0? "/resources/tile/RedstoneSwitch.png": "/resources/tile/RedstoneSwitchOn.png")))).render(screen, x*16, y*16);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            @Override
+            public boolean tick(Level level, int xt, int yt) {
+                int switchOn = level.getData(xt, yt);
+                if (level.getTile(xt+1, yt).name.equals("REDSTONE")) level.setData(xt+1, yt, switchOn);
+                if (level.getTile(xt-1, yt).name.equals("REDSTONE")) level.setData(xt-1, yt, switchOn);
+                if (level.getTile(xt, yt+1).name.equals("REDSTONE")) level.setData(xt, yt+1, switchOn);
+                if (level.getTile(xt, yt-1).name.equals("REDSTONE")) level.setData(xt, yt-1, switchOn);
+                return true;
+            }
+            @Override
+            public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
+                if (item instanceof ToolItem) {
+                    level.dropItem(xt*16+8, yt*16+8, Items.get("Redstone switch"));
+                    level.setTile(xt, yt, Tiles.get("Dirt"));
+                }
+                else level.setData(xt, yt, level.getData(xt, yt)^1);
+                return true;
+            }
+            @Override
+            public boolean hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
+                level.dropItem(x*16+8, y*16+8, Items.get("Redstone switch"));
+                level.setTile(x, y, Tiles.get("Dirt"));
+                return true;
+            }
+        });
+        Items.add(new TileItem("Redstone switch", null, "Redstone switch", "grass", "dirt"));
+        Recipes.craftRecipes.add(new Recipe("Redstone switch_1", "redstone_1", "stone_2", "wood_1"));
     }
 }

@@ -67,7 +67,7 @@ goto fail
 :execute
 @rem Setup the command line
 
-set CLASSPATH=%APP_HOME%\lib\core-0.1.0.jar;%APP_HOME%\lib\minicraft_plus_mods-2.0.7-0.2.0.jar;%APP_HOME%\lib\annotations-21.0.1.jar;%APP_HOME%\lib\dns-2.0.8.jar;%APP_HOME%\lib\unirest-java-1.4.9.jar;%APP_HOME%\lib\httpasyncclient-4.1.4.jar;%APP_HOME%\lib\httpmime-4.5.13.jar;%APP_HOME%\lib\httpclient-4.5.13.jar;%APP_HOME%\lib\commons-codec-1.15.jar;%APP_HOME%\lib\xmlgraphics-commons-2.6.jar;%APP_HOME%\lib\commons-io-2.4.jar;%APP_HOME%\lib\commons-logging-1.2.jar;%APP_HOME%\lib\dnsjava-3.4.1.jar;%APP_HOME%\lib\httpcore-nio-4.4.14.jar;%APP_HOME%\lib\httpcore-4.4.14.jar;%APP_HOME%\lib\json-20210307.jar;%APP_HOME%\lib\slf4j-api-1.7.32.jar;%APP_HOME%\lib\maven-artifact-3.3.9.jar;%APP_HOME%\lib\plexus-utils-3.0.22.jar;%APP_HOME%\lib\commons-lang3-3.4.jar
+set CLASSPATH=%APP_HOME%\lib\core-0.1.0.jar;%APP_HOME%\lib\minicraft_plus_mods-2.0.7-0.2.1.jar;%APP_HOME%\lib\annotations-21.0.1.jar;%APP_HOME%\lib\dns-2.0.8.jar;%APP_HOME%\lib\unirest-java-1.4.9.jar;%APP_HOME%\lib\httpasyncclient-4.1.4.jar;%APP_HOME%\lib\httpmime-4.5.13.jar;%APP_HOME%\lib\httpclient-4.5.13.jar;%APP_HOME%\lib\commons-codec-1.15.jar;%APP_HOME%\lib\xmlgraphics-commons-2.6.jar;%APP_HOME%\lib\commons-io-2.4.jar;%APP_HOME%\lib\commons-logging-1.2.jar;%APP_HOME%\lib\dnsjava-3.4.1.jar;%APP_HOME%\lib\httpcore-nio-4.4.14.jar;%APP_HOME%\lib\httpcore-4.4.14.jar;%APP_HOME%\lib\json-20210307.jar;%APP_HOME%\lib\slf4j-api-1.7.32.jar;%APP_HOME%\lib\maven-artifact-3.3.9.jar;%APP_HOME%\lib\plexus-utils-3.0.22.jar;%APP_HOME%\lib\commons-lang3-3.4.jar
 
 
 @rem Execute mod-core

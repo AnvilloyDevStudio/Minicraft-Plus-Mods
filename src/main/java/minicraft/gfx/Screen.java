@@ -15,8 +15,8 @@ public class Screen {
 	private static final int MAXDARK = 128;
 	
 	/// x and y offset of screen:
-	private int xOffset;
-	private int yOffset;
+	int xOffset;
+	int yOffset;
 	
 	// Used for mirroring an image:
 	private static final int BIT_MIRROR_X = 0x01; // Written in hexadecimal; binary: 01

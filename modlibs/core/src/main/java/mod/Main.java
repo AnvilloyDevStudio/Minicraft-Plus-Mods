@@ -1,6 +1,7 @@
 package mod;
 
 import java.io.IOException;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 
@@ -13,6 +14,7 @@ import minicraft.entity.mob.Player;
 import minicraft.entity.particle.SmashParticle;
 import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
+import minicraft.gfx.GraphicComp;
 import minicraft.gfx.Screen;
 import minicraft.gfx.Sprite;
 import minicraft.gfx.SpriteSheet;
@@ -30,7 +32,6 @@ import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 import minicraft.level.tile.TreeTile;
 import minicraft.level.tile.OreTile.OreType;
-import minicraft.mod.compatibility.GraphicComp;
 
 public class Main {
     public static void entry() {
@@ -152,7 +153,7 @@ public class Main {
             public void render(Screen screen, Level level, int x, int y) {
                 Tiles.get(1).render(screen, level, x, y);
                 try {
-                    GraphicComp.spriteFromSpriteSheet(0, 0, 2, 2, new SpriteSheet(ImageIO.read(Main.class.getResourceAsStream("/resources/tile/RedstoneTransmitter.png")))).render(screen, x*16, y*16, level.getData(x, y));
+                    GraphicComp.spriteFromSpriteSheet(0, 0, 2, 2, new SpriteSheet(ImageIO.read(Main.class.getResourceAsStream("/resources/tile/RedstoneTransmitter.png")))).renderRotated(screen, x*16, y*16, level.getData(x, y));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -183,17 +184,24 @@ public class Main {
                 return true;
             }
         });
-        Items.add(new TileItem("Redstone signal transmitter", null, "Redstone signal transmitter", "grass", "dirt") {
+        class RedstoneSignalTransmitter extends TileItem {
+            RedstoneSignalTransmitter(String name, Sprite sprite, String model, String... validTiles) {
+                super(name, sprite, model, validTiles);
+            }
+            RedstoneSignalTransmitter(String name, Sprite sprite, int count, String model, List<String> validTiles) {
+                super(name, sprite, count, model, validTiles);
+            }
             @Override
             public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
-                System.out.println("Placed.");
-                return false;
-                // boolean r = super.interactOn(tile, level, xt, yt, player, attackDir);
-                // if (r && level.getTile(xt, yt).name.equals("REDSTONE SIGNAL TRANSMITTER")) level.setData(xt, yt, attackDir.getDir());
-                // return r;
+                boolean r = super.interactOn(tile, level, xt, yt, player, attackDir);
+                if (r && level.getTile(xt, yt).name.equals("REDSTONE SIGNAL TRANSMITTER")) level.setData(xt, yt, attackDir.getDir());
+                return r;
             }
-        });
-        Items.get("Redstone signal transmitter").interactOn(null, null, 0, 0, null, null);
+            public TileItem clone() {
+                return new RedstoneSignalTransmitter(getName(), sprite, count, model, validTiles);
+            }
+        }
+        Items.add(new RedstoneSignalTransmitter("Redstone signal transmitter", null, "Redstone signal transmitter", "grass", "dirt"));
         Recipes.workbenchRecipes.add(new Recipe("Redstone signal transmitter_1", "redstone_2", "stone_5"));
         new LevelGen.ModTileGen(-2, (map, data, layer, w, h, random) -> {
             int r = 2;

@@ -10,10 +10,12 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import minicraft.core.io.ClassLoader;
+import minicraft.saveload.Version;
 
 public class Mods extends Game {
     private Mods() {}
     public static ArrayList<Mods.Mod> Mods = new ArrayList<>();
+    public static final Version VERSION = new Version("0.2.1");
     public static void init() {}
 
     static {

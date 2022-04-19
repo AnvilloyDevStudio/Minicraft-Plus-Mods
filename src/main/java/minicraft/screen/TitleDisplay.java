@@ -7,6 +7,7 @@ import java.util.Random;
 import org.jetbrains.annotations.NotNull;
 
 import minicraft.core.Game;
+import minicraft.core.Mods;
 import minicraft.core.Network;
 import minicraft.core.Renderer;
 import minicraft.core.VersionInfo;
@@ -162,6 +163,7 @@ public class TitleDisplay extends Display {
 		Font.drawCentered(splashes[rand], screen, 52, splashColor);
 		
 		Font.draw("Version " + Game.VERSION, screen, 1, 1, Color.get(1, 51));
+		Font.draw("MiniMods Version " + Mods.VERSION, screen, 1, 11, Color.get(1, 51));
 		
 		
 		String upString = "(" + Game.input.getMapping("cursor-up") + ", "+ Game.input.getMapping("cursor-down")+Localization.getLocalized(" to select") +")";

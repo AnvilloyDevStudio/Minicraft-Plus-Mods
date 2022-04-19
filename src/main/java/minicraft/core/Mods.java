@@ -10,12 +10,15 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import minicraft.core.io.ClassLoader;
+import minicraft.core.io.InputHandler;
 import minicraft.saveload.Version;
+import minicraft.screen.Display;
 
 public class Mods extends Game {
     private Mods() {}
     public static ArrayList<Mods.Mod> Mods = new ArrayList<>();
-    public static final Version VERSION = new Version("0.2.1");
+    public static final Version VERSION = new Version("0.2.2");
+    public static ArrayList<Display> guiDisplays = new ArrayList<>();
     public static void init() {}
 
     static {
@@ -60,6 +63,13 @@ public class Mods extends Game {
             if (success) Mods.forEach(m -> m.startLoading());
         }
     }
+    static void renderGui() {
+        guiDisplays.forEach(m -> m.render(Renderer.screen));
+    }
+    static void tick(InputHandler input) {
+        guiDisplays.forEach(m -> m.tick(input));
+    }
+
     public static class Mod {
         public JSONObject Info;
         public Manifest manifest;

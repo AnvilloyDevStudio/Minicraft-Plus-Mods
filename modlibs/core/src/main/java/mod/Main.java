@@ -6,6 +6,7 @@ import java.util.List;
 import javax.imageio.ImageIO;
 
 import minicraft.core.Game;
+import minicraft.core.Mods;
 import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
@@ -32,6 +33,7 @@ import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 import minicraft.level.tile.TreeTile;
 import minicraft.level.tile.OreTile.OreType;
+import minicraft.screen.Display;
 
 public class Main {
     public static void entry() {
@@ -260,5 +262,54 @@ public class Main {
         });
         Items.add(new TileItem("Redstone switch", null, "Redstone switch", "grass", "dirt"));
         Recipes.craftRecipes.add(new Recipe("Redstone switch_1", "redstone_1", "stone_2", "wood_1"));
+        Mods.guiDisplays.add(new Display() {
+            @Override
+            public void render(Screen screen) {
+                int[] pixels = screen.pixels;
+                int w = Screen.w;
+                int leftX = w-45;
+                int topY = 5;
+                int playerX = Game.player.x/16;
+                int playerY = Game.player.y/16;
+                Level level = Game.levels[Game.currentLevel];
+                int levelW = level.w;
+                for (int i = 0; i<42; i++) {
+                    pixels[leftX+i+topY*w] = 0;
+                    pixels[leftX+topY+i*w] = 0;
+                    pixels[leftX+41+(topY+i)*w] = 0;
+                    pixels[leftX+i+(topY+41)*w] = 0;
+                }
+                for (int mapX = 0; mapX<41; mapX++) {
+                    for (int mapY = 0; mapY<41; mapY++) {
+                        int color;
+                        int tileX = playerX+mapX-20;
+                        int tileY = playerY+mapY-20;
+                        if (tileX<0||tileX>=level.w||tileY<0||tileY>=level.h) color = 0x000000;
+                        else {
+                            short tile = level.tiles[playerX+mapX-15+(playerY+mapY-15)*levelW];
+                            if (tile == Tiles.get("water").id) color = 0x000080;
+                            else if (tile == Tiles.get("iron Ore").id) color = 0x000080;
+                            else if (tile == Tiles.get("gold Ore").id) color = 0x000080;
+                            else if (tile == Tiles.get("gem Ore").id) color = 0x000080;
+                            else if (tile == Tiles.get("grass").id) color = 0x208020;
+                            else if (tile == Tiles.get("rock").id) color = 0xa0a0a0;
+                            else if (tile == Tiles.get("dirt").id) color = 0x604040;
+                            else if (tile == Tiles.get("sand").id) color = 0xa0a040;
+                            else if (tile == Tiles.get("Stone Bricks").id) color = 0xa0a040;
+                            else if (tile == Tiles.get("tree").id) color = 0x003000;
+                            else if (tile == Tiles.get("Obsidian Wall").id) color = 0x0aa0a0;
+                            else if (tile == Tiles.get("Obsidian").id) color = 0x000000;
+                            else if (tile == Tiles.get("lava").id) color = 0xff2020;
+                            else if (tile == Tiles.get("cloud").id) color = 0xa0a0a0;
+                            else if (tile == Tiles.get("Stairs Down").id) color = 0xffffff;
+                            else if (tile == Tiles.get("Stairs Up").id) color = 0xffffff;
+                            else if (tile == Tiles.get("Cloud Cactus").id) color = 0xff00ff;
+                            else color = 0x000000;
+                        }
+                        pixels[leftX+mapX+(topY+mapY)*w] = color;
+                    }
+                }
+            }
+        });
     }
 }

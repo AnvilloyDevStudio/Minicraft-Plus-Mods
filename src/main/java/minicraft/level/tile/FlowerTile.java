@@ -10,6 +10,7 @@ import minicraft.gfx.Sprite;
 import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.ToolItem;
+import minicraft.item.ToolType;
 import minicraft.level.Level;
 
 public class FlowerTile extends Tile {
@@ -17,7 +18,7 @@ public class FlowerTile extends Tile {
 	
 	protected FlowerTile(String name) {
 		super(name, (ConnectorSprite)null);
-		Connections.set("grass", true);
+		connectsToGrass = true;
 		maySpawn = true;
 	}
 
@@ -53,8 +54,8 @@ public class FlowerTile extends Tile {
 	public boolean interact(Level level, int x, int y, Player player, Item item, Direction attackDir) {
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
-			if (tool.type.name.equals("shovel")) {
-				if (player.payStamina(2 - (tool.level.level-1)) && tool.payDurability()) {
+			if (tool.type == ToolType.Shovel) {
+				if (player.payStamina(2 - tool.level) && tool.payDurability()) {
 					level.setTile(x, y, Tiles.get("Grass"));
 					Sound.monsterHurt.play();
 					level.dropItem(x * 16 + 8, y * 16 + 8, Items.get("Flower"));

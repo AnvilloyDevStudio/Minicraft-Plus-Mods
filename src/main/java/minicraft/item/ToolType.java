@@ -1,48 +1,19 @@
 package minicraft.item;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+public enum ToolType {
+	Shovel (0, 34), // If there's a second number, it specifies durability.
+	Hoe (1, 30),
+	Sword (2, 52),
+	Pickaxe (3, 38),
+	Axe (4, 34),
+	Bow (5, 30),
+	Claymore (6, 44),
+	Shears (0, 42, true);
 
-import minicraft.gfx.Sprite;
-
-public class ToolType {
-	public static ArrayList<ToolType> TypeInstances = new ArrayList<>();
-	public static HashMap<String, ToolType> Types = new HashMap<String, ToolType>();
-	public static HashMap<String, ArrayList<ItemLevel>> TypeLevels = new HashMap<>();
-	static {
-		ArrayList<ItemLevel> defaultLevels = new ArrayList<>(List.of(
-			ItemLevel.Levels.get("wood"),
-			ItemLevel.Levels.get("rock"),
-			ItemLevel.Levels.get("iron"),
-			ItemLevel.Levels.get("gold"),
-			ItemLevel.Levels.get("gem")
-		));
-		Types.put("shovel", new ToolType("shovel", 0, 24));
-		TypeLevels.put("shovel", defaultLevels);
-		Types.put("hoe", new ToolType("hoe", 1, 20));
-		TypeLevels.put("hoe", defaultLevels);
-		Types.put("sword", new ToolType("sword", 2, 42));
-		TypeLevels.put("sword", defaultLevels);
-		Types.put("pickaxe", new ToolType("pickaxe", 3, 28));
-		TypeLevels.put("pickaxe", defaultLevels);
-		Types.put("axe", new ToolType("axe", 4, 24));
-		TypeLevels.put("axe", defaultLevels);
-		Types.put("bow", new ToolType("bow", 5, 20));
-		TypeLevels.put("bow", defaultLevels);
-		Types.put("claymore", new ToolType("claymore", 6, 34));
-		TypeLevels.put("claymore", defaultLevels);
-		Types.put("shear", new ToolType("shear", 0, 42, false, true));
-		TypeLevels.put("shear", new ArrayList<ItemLevel>());
-	}
-
-	public final String name;
-	public int xPos; // X Position of origin
-	public int yPos; // Y position of origin
-	public Sprite sprite;
+	public final int xPos; // X Position of origin
+	public final int yPos; // Y position of origin
 	public final int durability;
 	public final boolean noLevel;
-	public final boolean attack;
 
 	/**
 	 * Create a tool with four levels: wood, stone, iron, gold, and gem.
@@ -51,10 +22,13 @@ public class ToolType {
 	 * @param xPos X position of the starting sprite in the spritesheet.
 	 * @param dur Durabiltity of the tool.
 	 */
-	ToolType(String name, int xPos, int dur) {this(name, xPos, 13, dur, true);}
-	ToolType(String name, int xPos, int dur, boolean attack) {this(name, xPos, 13, dur, attack);}
-	ToolType(String name, int xPos, int yPos, int dur, boolean attack) {this(name, xPos, yPos, dur, attack, false);}
-	ToolType(String name, int xPos, int dur, boolean attack, boolean noLevel) {this(name, xPos, 12, dur, attack, noLevel);}
+	ToolType(int xPos, int dur) {
+		this.xPos = xPos;
+		yPos = 13;
+		durability = dur;
+		noLevel = false;
+	}
+
 	/**
 	 * Create a tool without a specified level.
 	 * Uses line 13 in the items spritesheet.
@@ -62,31 +36,10 @@ public class ToolType {
 	 * @param dur Durabiltity of the tool.
 	 * @param noLevel If the tool has only one level.
 	 */
-	ToolType(String name, int xPos, int yPos, int dur, boolean attack, boolean noLevel) {
-		name = name.toLowerCase();
-		this.name = name;
-		this.yPos = yPos;
+	ToolType(int xPos, int dur, boolean noLevel) {
+		yPos = 12;
 		this.xPos = xPos;
 		durability = dur;
 		this.noLevel = noLevel;
-		this.attack = attack;
-		TypeInstances.add(this);
-	}
-	public ToolType(String name, Sprite sprite, int dur, boolean attack, boolean noLevel) {
-		name = name.toLowerCase();
-		this.name = name;
-		this.sprite = sprite;
-		durability = dur;
-		this.noLevel = noLevel;
-		this.attack = attack;
-		ToolType.TypeInstances.add(this);
-		ToolType.Types.put(name, this);
-		ToolType.TypeLevels.put(name, new ArrayList<ItemLevel>());        
-	}
-	public static ToolType get(String name) {
-		return Types.get(name.toLowerCase());
-	}
-	boolean equal(ToolType type) {
-		return this.name.equals(type.name);
 	}
 }

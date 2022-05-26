@@ -71,7 +71,7 @@ public class EnemyMob extends MobAi {
 	public void tick() {
 		super.tick();
 		
-		Player player = (Player) getClosestPlayer();
+		Player player = getClosestPlayer();
 		if (player != null && !Bed.sleeping() && randomWalkTime <= 0 && !Game.isMode("Creative")) { // Checks if player is on zombie's level, if there is no time left on randonimity timer, and if the player is not in creative.
 			int xd = player.x - x;
 			int yd = player.y - y;
@@ -127,7 +127,7 @@ public class EnemyMob extends MobAi {
 		x = x >> 4;
 		y = y >> 4;
 		
-		Tile t = (Tile) level.getTile(x, y);
+		Tile t = level.getTile(x, y);
 		
 		if(level.depth == -4) {
 			if (t != Tiles.get("Obsidian")) return false;

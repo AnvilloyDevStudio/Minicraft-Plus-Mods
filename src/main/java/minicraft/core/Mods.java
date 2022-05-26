@@ -3,13 +3,14 @@ package minicraft.core;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Map.Entry;
 import java.util.jar.Manifest;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import minicraft.core.io.ClassLoader;
+import minicraft.core.io.FileHandler;
 import minicraft.core.io.InputHandler;
 import minicraft.saveload.Version;
 import minicraft.screen.Display;
@@ -17,7 +18,7 @@ import minicraft.screen.Display;
 public class Mods extends Game {
     private Mods() {}
     public static ArrayList<Mods.Mod> Mods = new ArrayList<>();
-    public static final Version VERSION = new Version("0.2.2");
+    public static final Version VERSION = new Version("0.3.0");
     public static ArrayList<Display> guiDisplays = new ArrayList<>();
     public static void init() {}
 
@@ -28,9 +29,9 @@ public class Mods extends Game {
         } else {
             ClassLoader loader = new ClassLoader();
             for (int a = 0; a<mods.length; a++) {
-                Pair<Pair<Class<?>, Manifest>, JSONObject> modP = loader.loadJar(mods[a]);
-                Mod modObj = new Mod(modP.getLeft().getLeft(), modP.getLeft().getRight());
-                modObj.Info = modP.getRight();
+                Entry<Entry<Class<?>, Manifest>, JSONObject> modP = loader.loadJar(mods[a]);
+                Mod modObj = new Mod(modP.getKey().getKey(), modP.getKey().getValue());
+                modObj.Info = modP.getValue();
                 if (modObj.Info.getString("name") == null) System.out.println("mod.json name not found.");
                 if (modObj.Info.getString("description") == null) System.out.println("mod.json description not found.");
                 Mods.add(modObj);

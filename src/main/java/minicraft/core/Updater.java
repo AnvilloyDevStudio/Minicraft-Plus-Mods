@@ -7,7 +7,6 @@ import minicraft.core.io.Localization;
 import minicraft.core.io.Settings;
 import minicraft.entity.furniture.Bed;
 import minicraft.entity.mob.Player;
-import minicraft.item.Inventory;
 import minicraft.item.Items;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
@@ -15,15 +14,15 @@ import minicraft.level.tile.Tiles;
 import minicraft.saveload.Save;
 import minicraft.screen.EndGameDisplay;
 import minicraft.screen.LevelTransitionDisplay;
-import minicraft.screen.PauseDisplay;
 import minicraft.screen.PlayerDeathDisplay;
 import minicraft.screen.WorldSelectDisplay;
+import org.tinylog.Logger;
 
 public class Updater extends Game {
 	private Updater() {}
-	
+
 	// TIME AND TICKS
-	
+
 	public static final int normSpeed = 60; // Measured in ticks / second.
 	public static float gamespeed = 1; // Measured in MULTIPLES OF NORMSPEED.
 	public static boolean paused = true; // If the game is paused.
@@ -88,240 +87,188 @@ public class Updater extends Game {
 	// VERY IMPORTANT METHOD!! Makes everything keep happening.
 	// In the end, calls menu.tick() if there's a menu, or level.tick() if no menu.
 	public static void tick() {
-		if (Updater.HAS_GUI && input.getKey("FULLSCREEN").clicked) {
+
+		// Quick Level change: move the player for -1, or 1 levels
+        	if (isMode("creative") && input.getKey("SHIFT-S").clicked ) {
+        		Game.setDisplay(new LevelTransitionDisplay(-1));
+
+        	} else if (isMode("creative") && input.getKey("SHIFT-W").clicked ){
+        		Game.setDisplay(new LevelTransitionDisplay(1));
+
+        	}
+
+		if (input.getKey("FULLSCREEN").clicked) {
 			Updater.FULLSCREEN = !Updater.FULLSCREEN;
 			Updater.updateFullscreen();
 		}
 
-		if (newMenu != menu) {
-			if (menu != null && (newMenu == null || newMenu.getParent() != menu))
-				menu.onExit();
-			
-			//if (debug) System.out.println("Setting menu from " + newMenu + " to " + display);
-			
-			if (newMenu != null && (menu == null || newMenu != menu.getParent()))
-				newMenu.init(menu);
-			
-			menu = newMenu;
+		if (newDisplay != display) {
+			if (display != null && (newDisplay == null || newDisplay.getParent() != display))
+				display.onExit();
+
+			if (newDisplay != null && (display == null || newDisplay != display.getParent()))
+				newDisplay.init(display);
+
+			display = newDisplay;
 		}
-		
-		if (isValidClient())
-			Game.client.checkConnection();
-		
+
 		Level level = levels[currentLevel];
-		if (Bed.sleeping() && !isValidClient()) {
+		if (Bed.sleeping()) {
 			// IN BED
 			if (gamespeed != 20) {
 				gamespeed = 20;
-				if (isValidServer()) {
-					if (debug) System.out.println("SERVER: Setting time for bed");
-					server.updateGameVars();
-				}
 			}
 			if (tickCount > sleepEndTime) {
-				if (Game.debug) System.out.println(Network.onlinePrefix() + "passing midnight in bed");
+				Logger.trace("Passing midnight in bed.");
 				pastDay1 = true;
 				tickCount = 0;
-				if (isValidServer())
-					server.updateGameVars();
 			}
 			if (tickCount <= sleepStartTime && tickCount >= sleepEndTime) { // It has reached morning.
-				if (Game.debug) System.out.println(Network.onlinePrefix()+"reached morning, getting out of bed");
+				Logger.trace("Reached morning, getting out of bed.");
 				gamespeed = 1;
-				if (isValidServer())
-					server.updateGameVars();
 				Bed.restorePlayers();
 			}
 		}
-		
+
 		// Auto-save tick; marks when to do autosave.
-		if(!paused || isValidServer())
+		if(!paused)
 			asTick++;
 		if (asTick > astime) {
-			if ((boolean) Settings.get("autosave") && !gameOver && (isValidServer() || player.health > 0) ) {
-				if (!ISONLINE)
-					new Save(WorldSelectDisplay.getWorldName());
-				else if (isValidServer())
-					server.saveWorld();
+			if ((boolean) Settings.get("autosave") && !gameOver && player.health > 0) {
+
+				new Save(WorldSelectDisplay.getWorldName());
 			}
-			
+
 			asTick = 0;
 		}
-		
+
 		// Increment tickCount if the game is not paused
-		if (!paused || isValidServer()) setTime(tickCount+1);
-		
+		if (!paused) setTime(tickCount+1);
+
 		// SCORE MODE ONLY
-		
-		if (isMode("score") && (!paused || isValidServer() && !gameOver)) {
+
+		if (isMode("score") && (!paused && !gameOver)) {
 			if (scoreTime <= 0) { // GAME OVER
 				gameOver = true;
-				setMenu(new EndGameDisplay(player));
+				setDisplay(new EndGameDisplay(player));
 			}
-			
+
 			scoreTime--;
 		}
-		
-		boolean hadMenu = menu != null;
-		if(isValidServer()) {
-			// This is to keep the game going while online, even with an unfocused window.
-			input.tick();
-			for (Level floor : levels) {
-				if (floor == null) continue;
-				floor.tick(true);
-			}
-			
-			Tile.tickCount++;
-		}
-		
+
 		// This is the general action statement thing! Regulates menus, mostly.
-		if (!Renderer.canvas.hasFocus() && HAS_GUI) {
+		if (!Renderer.canvas.hasFocus()) {
 			input.releaseAll();
 		}
-		if (Renderer.canvas.hasFocus() || ISONLINE || !HAS_GUI) {
-			if ((isValidServer() || !player.isRemoved()) && !gameOver) {
-				gameTime++;
-			}
-			
-			if (!isValidServer() || menu != null && !hadMenu) // The "menu != null && !hadMenu" check is a possible fix for a bug. If menu has changed and we're a server, tick.
-				input.tick(); // INPUT TICK; no other class should call this, I think...especially the *Menu classes.
-			
-			if (isValidClient() && Renderer.readyToRenderGameplay) {
-				for (int i = 0; i < levels.length; i++)
-					if (levels[i] != null)
-						levels[i].tick(i == currentLevel);
-			}
-			
-			if (menu != null) {
+		if (Renderer.canvas.hasFocus()) {
+			gameTime++;
+
+			input.tick(); // INPUT TICK; no other class should call this, I think...especially the *Menu classes.
+
+			if (display != null) {
 				// A menu is active.
 				if (player != null)
 					player.tick(); // It is CRUCIAL that the player is ticked HERE, before the menu is ticked. I'm not quite sure why... the menus break otherwise, though.
-				menu.tick(input);
+				display.tick(input);
 				paused = true;
 			} else {
 				// No menu, currently.
 				paused = false;
 				Mods.tick(input);
 
-				if (!isValidServer()) {
-					// If player is alive, but no level change, nothing happens here.
-					if (player.isRemoved() && Renderer.readyToRenderGameplay && !Bed.inBed(player)) {
-						// Makes delay between death and death menu.
-						World.playerDeadTime++;
-						if (World.playerDeadTime > 60) {
-							setMenu(new PlayerDeathDisplay());
-						}
-					} else if (World.pendingLevelChange != 0) {
-						setMenu(new LevelTransitionDisplay(World.pendingLevelChange));
-						World.pendingLevelChange = 0;
+				// If player is alive, but no level change, nothing happens here.
+				if (player.isRemoved() && Renderer.readyToRenderGameplay && !Bed.inBed(player)) {
+					// Makes delay between death and death menu.
+					World.playerDeadTime++;
+					if (World.playerDeadTime > 60) {
+						setDisplay(new PlayerDeathDisplay());
 					}
-					
-					player.tick(); // Ticks the player when there's no menu.
-					if (isValidClient() && Bed.inBed(player) && !Bed.sleeping() && input.getKey("exit").clicked)
-						Game.client.sendBedExitRequest();
-					
-					if (level != null) {
-						if (!isValidClient())
-							level.tick(true);
-						Tile.tickCount++;
-					}
+				} else if (World.pendingLevelChange != 0) {
+					setDisplay(new LevelTransitionDisplay(World.pendingLevelChange));
+					World.pendingLevelChange = 0;
 				}
-				else if (isValidServer()) {
-					// Here is where I should put things like select up/down, backspace to boot, esc to open pause menu, etc.
-					if (input.getKey("pause").clicked)
-						setMenu(new PauseDisplay());
+
+				player.tick(); // Ticks the player when there's no menu.
+
+				if (level != null) {
+					level.tick(true);
+					Tile.tickCount++;
 				}
-				
-				if (menu == null && input.getKey("F3").clicked) { // Shows debug info in upper-left
-					Renderer.showinfo = !Renderer.showinfo;
+
+				if (display == null && input.getKey("F3").clicked) { // Shows debug info in upper-left
+					Renderer.showDebugInfo = !Renderer.showDebugInfo;
 				}
-				
+
 				// For debugging only
-				if (debug && HAS_GUI) {
-					
+				if (debug) {
+
 					if (input.getKey("ctrl-p").clicked) {
 						// Print all players on all levels, and their coordinates.
-						System.out.println("Printing players on all levels "+Network.onlinePrefix());
-						for (int i = 0; i < levels.length; i++) {
-							if (levels[i] == null) continue;
-							levels[i].printEntityLocs(Player.class);
+						System.out.println("Printing players on all levels.");
+						for (Level value : levels) {
+							if (value == null) continue;
+							value.printEntityLocs(Player.class);
 						}
 					}
-					
-					if (!ISONLINE || isValidServer()) {
-						// Host-only cheats.
-						if (input.getKey("Shift-r").clicked && !isValidServer())
-							World.initWorld(); // For single-player use only.
-						
-						if (input.getKey("1").clicked) changeTimeOfDay(Time.Morning);
-						if (input.getKey("2").clicked) changeTimeOfDay(Time.Day);
-						if (input.getKey("3").clicked) changeTimeOfDay(Time.Evening);
-						if (input.getKey("4").clicked) changeTimeOfDay(Time.Night);
-						
-						String prevMode = (String)Settings.get("mode");
-						if (input.getKey("creative").clicked) {
-							Settings.set("mode", "creative");
-							if (!ISONLINE)
-								Items.fillCreativeInv((Inventory)player.getInventory(), false);
-						}
-						if (input.getKey("survival").clicked) Settings.set("mode", "survival");
-						if (input.getKey("shift-t").clicked) Settings.set("mode", "score");
-						if (!Settings.get("mode").equals(prevMode) && isValidServer())
-							server.updateGameVars(); // Gamemode changed
-						
-						if (isMode("score") && input.getKey("ctrl-t").clicked) {
-							scoreTime = normSpeed * 5; // 5 seconds
-							if (isValidServer()) server.updateGameVars();
-						}
-						
-						float prevSpeed = gamespeed;
-						if (input.getKey("shift-0").clicked)
-							gamespeed = 1;
-						
-						if (input.getKey("shift-equals").clicked) {
-							if (gamespeed < 1) gamespeed *= 2;
-							else if (normSpeed*gamespeed < 2000) gamespeed++;
-						}
-						if (input.getKey("shift-minus").clicked) {
-							if (gamespeed > 1) gamespeed--;
-							else if (normSpeed*gamespeed > 5) gamespeed /= 2;
-						}
-						if (gamespeed != prevSpeed && isValidServer())
-							server.updateGameVars();
+
+					// Host-only cheats.
+					if (input.getKey("Shift-r").clicked)
+						World.initWorld(); // For single-player use only.
+
+					if (input.getKey("1").clicked) changeTimeOfDay(Time.Morning);
+					if (input.getKey("2").clicked) changeTimeOfDay(Time.Day);
+					if (input.getKey("3").clicked) changeTimeOfDay(Time.Evening);
+					if (input.getKey("4").clicked) changeTimeOfDay(Time.Night);
+
+					String prevMode = (String)Settings.get("mode");
+					if (input.getKey("creative").clicked) {
+						Settings.set("mode", "creative");
+						Items.fillCreativeInv(player.getInventory(), false);
 					}
-					
-					
-					if (!ISONLINE || isValidClient()) {
-						// Client-only cheats, since they are player-specific.
-						
-						if (input.getKey("shift-g").clicked) // This should not be needed, since the inventory should not be altered.
-							Items.fillCreativeInv((Inventory)player.getInventory());
-						
-						if (input.getKey("ctrl-h").clicked) player.health--;
-						if (input.getKey("ctrl-b").clicked) player.hunger--;
-						
-						if (input.getKey("0").clicked) player.moveSpeed = 1;
-						if (input.getKey("equals").clicked) player.moveSpeed++;
-						if (input.getKey("minus").clicked && player.moveSpeed > 1) player.moveSpeed--; // -= 0.5D;
-						
-						if (input.getKey("shift-u").clicked) {
-							levels[currentLevel].setTile(player.x>>4, player.y>>4, Tiles.get("Stairs Up"));
-						}
-						if (input.getKey("shift-d").clicked) {
-							levels[currentLevel].setTile(player.x>>4, player.y>>4, Tiles.get("Stairs Down"));
-						}
-						
-						if (isConnectedClient() && input.getKey("alt-t").clicked) {
-							// Update the tile with the server's value for it.
-							client.requestTile(player.getLevel(), player.x >> 4, player.y >> 4);
-						}
+					if (input.getKey("survival").clicked) Settings.set("mode", "survival");
+					if (input.getKey("shift-t").clicked) Settings.set("mode", "score");
+
+					if (isMode("score") && input.getKey("ctrl-t").clicked) {
+						scoreTime = normSpeed * 5; // 5 seconds
+					}
+
+					float prevSpeed = gamespeed;
+					if (input.getKey("shift-0").clicked)
+						gamespeed = 1;
+
+					if (input.getKey("shift-equals").clicked) {
+						if (gamespeed < 1) gamespeed *= 2;
+						else if (normSpeed*gamespeed < 2000) gamespeed++;
+					}
+					if (input.getKey("shift-minus").clicked) {
+						if (gamespeed > 1) gamespeed--;
+						else if (normSpeed*gamespeed > 5) gamespeed /= 2;
+					}
+
+
+					// Client-only cheats, since they are player-specific.
+					if (input.getKey("shift-g").clicked) // This should not be needed, since the inventory should not be altered.
+						Items.fillCreativeInv(player.getInventory());
+
+					if (input.getKey("ctrl-h").clicked) player.health--;
+					if (input.getKey("ctrl-b").clicked) player.hunger--;
+
+					if (input.getKey("0").clicked) player.moveSpeed = 1;
+					if (input.getKey("equals").clicked) player.moveSpeed++;
+					if (input.getKey("minus").clicked && player.moveSpeed > 1) player.moveSpeed--; // -= 0.5D;
+
+					if (input.getKey("shift-u").clicked) {
+						levels[currentLevel].setTile(player.x>>4, player.y>>4, Tiles.get("Stairs Up"));
+					}
+					if (input.getKey("shift-d").clicked) {
+						levels[currentLevel].setTile(player.x>>4, player.y>>4, Tiles.get("Stairs Down"));
 					}
 				} // End debug only cond.
 			} // End "menu-null" conditional
 		} // End hasfocus conditional
 	} // End tick()
-	
-	
+
+
 	// This is the proper way to change the tickCount.
 	public static void setTime(int ticks) {
 		if (ticks < Time.Morning.tickTime) ticks = 0; // Error correct
@@ -336,12 +283,10 @@ public class Updater extends Game {
 		}
 		tickCount = ticks;
 	}
-	
+
 	// This is the proper way to change the time of day.
 	public static void changeTimeOfDay(Time t) {
 		setTime(t.tickTime);
-		if (isValidServer())
-			server.updateGameVars();
 	}
 	// This one works too.
 	public static void changeTimeOfDay(int t) {
@@ -351,12 +296,12 @@ public class Updater extends Game {
 		else
 			System.out.println("Time " + t + " does not exist.");
 	}
-	
+
 	public static Time getTime() {
 		Time[] times = Time.values();
 		return times[time];
 	}
-	
+
 	/** This adds a notification to all player games. */
 	public static void notifyAll(String msg) {
 		notifyAll(msg, 0);
@@ -365,9 +310,5 @@ public class Updater extends Game {
 		msg = Localization.getLocalized(msg);
 		notifications.add(msg);
 		Updater.notetick = notetick;
-		if (isValidServer())
-			server.broadcastNotification(msg, notetick);
-		else if (isConnectedClient())
-			client.sendNotification(msg, notetick);
 	}
 }

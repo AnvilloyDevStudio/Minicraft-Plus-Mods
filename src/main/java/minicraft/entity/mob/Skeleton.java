@@ -3,7 +3,6 @@ package minicraft.entity.mob;
 import minicraft.core.Game;
 import minicraft.core.io.Settings;
 import minicraft.entity.Arrow;
-import minicraft.entity.Direction;
 import minicraft.gfx.MobSprite;
 import minicraft.item.Items;
 
@@ -37,7 +36,7 @@ public class Skeleton extends EnemyMob {
 
 		if (skipTick()) return;
 		
-		Player player = (Player) getClosestPlayer();
+		Player player = getClosestPlayer();
 		if (player != null && randomWalkTime == 0 && !Game.isMode("Creative")) { // Run if there is a player nearby, the skeleton has finished their random walk, and gamemode is not creative.
 			artime--;
 			
@@ -45,7 +44,7 @@ public class Skeleton extends EnemyMob {
 			int yd = player.y - y;
 			if (xd * xd + yd * yd < 100 * 100) {
 				if (artime < 1) {
-					level.add(new Arrow(this, (Direction)dir, lvl));
+					level.add(new Arrow(this, dir, lvl));
 					artime = arrowtime;
 				}
 			}

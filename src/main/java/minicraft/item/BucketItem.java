@@ -1,7 +1,6 @@
 package minicraft.item;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import minicraft.core.Game;
 import minicraft.entity.Direction;
@@ -13,49 +12,31 @@ import minicraft.level.tile.Tiles;
 
 public class BucketItem extends StackableItem {
 	
-	public static class Fill {
-		public static ArrayList<Fill> Instances = new ArrayList<>();
-		public static HashMap<String, Fill> Fills = new HashMap<>();
-
-		static {
-			new Fill("Empty", Tiles.get("hole"), 2);
-			new Fill("Water", Tiles.get("water"), 0);
-			new Fill("Lava", Tiles.get("lava"), 1);
-		}
+	public enum Fill {
+		Empty (Tiles.get("hole"), 2),
+		Water (Tiles.get("water"), 0),
+		Lava (Tiles.get("lava"), 1);
 		
 		public Tile contained;
 		public int offset;
-		public String name;
-		public Sprite sprite;
 
-		Fill(String name, Tile contained, int offset) {
-			this.name = name;
+		Fill(Tile contained, int offset) {
 			this.contained = contained;
 			this.offset = offset;
-			sprite = null;
-			Instances.add(this);
-			Fills.put(name, this);
-		}
-		public Fill(String name, Tile contained, Sprite sprite) {
-			this.name = name;
-			this.contained = contained;
-			this.sprite = sprite;
-			Instances.add(this);
-			Fills.put(name, this);
 		}
 	}
 	
 	protected static ArrayList<Item> getAllInstances() {
 		ArrayList<Item> items = new ArrayList<>();
 		
-		for (Fill fill: Fill.Instances)
+		for (Fill fill: Fill.values())
 			items.add(new BucketItem(fill));
 		
 		return items;
 	}
 	
 	private static Fill getFilling(Tile tile) {
-		for (Fill fill: Fill.Instances)
+		for (Fill fill: Fill.values())
 			if (fill.contained.id == tile.id)
 				return fill;
 		
@@ -64,9 +45,9 @@ public class BucketItem extends StackableItem {
 	
 	private Fill filling;
 	
-	public BucketItem(Fill fill) { this(fill, 1); }
+	private BucketItem(Fill fill) { this(fill, 1); }
 	private BucketItem(Fill fill, int count) {
-		super(fill.name + " Bucket", fill.sprite==null? new Sprite(fill.offset, 6, 0): fill.sprite, count);
+		super(fill.name() + " Bucket", new Sprite(fill.offset, 6, 0), count);
 		this.filling = fill;
 	}
 	
@@ -74,14 +55,14 @@ public class BucketItem extends StackableItem {
 		Fill fill = getFilling(tile);
 		if (fill == null) return false;
 
-		if (filling != Fill.Fills.get("Empty")) {
-			if (fill == Fill.Fills.get("Empty")) {
+		if (filling != Fill.Empty) {
+			if (fill == Fill.Empty) {
 				level.setTile(xt, yt, filling.contained);
-				if (!Game.isMode("creative")) player.activeItem = editBucket(player, Fill.Fills.get("Empty"));
+				if (!Game.isMode("creative")) player.activeItem = editBucket(player, Fill.Empty);
 				return true;
-			} else if (fill == Fill.Fills.get("Lava") && filling == Fill.Fills.get("Water")) {
+			} else if (fill == Fill.Lava && filling == Fill.Water) {
 				level.setTile(xt, yt, Tiles.get("Obsidian"));
-				if (!Game.isMode("creative")) player.activeItem = editBucket(player, Fill.Fills.get("Empty"));
+				if (!Game.isMode("creative")) player.activeItem = editBucket(player, Fill.Empty);
 				return true;
 			}
 		} else { // This is an empty bucket

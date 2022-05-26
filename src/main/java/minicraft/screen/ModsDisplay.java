@@ -32,7 +32,7 @@ public class ModsDisplay extends Display {
 	@Override
 	public void tick(InputHandler input) {
 		if (input.getKey("menu").clicked || input.getKey("attack").clicked || input.getKey("exit").clicked) {
-			Game.exitMenu();
+			Game.exitDisplay();
 			return;
 		}
 		if (input.getKey("cursor-down").clicked && selectedIndex < mods.size() - 1) {
@@ -71,7 +71,7 @@ public class ModsDisplay extends Display {
 
 		// Title.
 		Font.drawCentered("Mods", screen, Screen.h - 185, Color.YELLOW);
-        
+
 		// Render the menu.
 		Font.draw(ModsDisplay.shortNameIfLong(selectedUUUUU), screen, 5, Screen.h - 55, Color.GRAY); // First unselected space
 		Font.draw(ModsDisplay.shortNameIfLong(selectedUUUU), screen, 5, Screen.h - 65, Color.GRAY); // First unselected space

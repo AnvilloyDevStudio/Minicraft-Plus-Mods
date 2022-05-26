@@ -8,6 +8,7 @@ import minicraft.entity.mob.Player;
 import minicraft.gfx.Sprite;
 import minicraft.item.Item;
 import minicraft.item.ToolItem;
+import minicraft.item.ToolType;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
@@ -26,8 +27,8 @@ public class FarmTile extends Tile {
     public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
         if (item instanceof ToolItem) {
             ToolItem tool = (ToolItem) item;
-            if (tool.type.name.equals("shovel")) {
-                if (player.payStamina(4 - (tool.level.level-1)) && tool.payDurability()) {
+            if (tool.type == ToolType.Shovel) {
+                if (player.payStamina(4 - tool.level) && tool.payDurability()) {
                     level.setTile(xt, yt, Tiles.get("Dirt"));
                     Sound.monsterHurt.play();
                     return true;

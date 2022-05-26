@@ -11,6 +11,7 @@ import minicraft.gfx.Sprite;
 import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.ToolItem;
+import minicraft.item.ToolType;
 import minicraft.level.Level;
 
 public class SandTile extends Tile {
@@ -28,14 +29,14 @@ public class SandTile extends Tile {
 	{
 		public boolean connectsTo(Tile tile, boolean isSide) {
 			if(!isSide) return true;
-			return ((Tile)tile).Connections.get("sand");
+			return tile.connectsToSand;
 		}
 	};
 	
 	protected SandTile(String name) {
 		super(name, (ConnectorSprite)null);
 		csprite = sprite;
-		Connections.set("sand", true);
+		connectsToSand = true;
 		maySpawn = true;
 	}
 	
@@ -45,7 +46,7 @@ public class SandTile extends Tile {
 		if(steppedOn) csprite.full = SandTile.steppedOn;
 		else csprite.full = SandTile.normal;
 
-		csprite.sparse.color = DirtTile.dCol(((Level)level).depth);
+		csprite.sparse.color = DirtTile.dCol(level.depth);
 		
 		csprite.render(screen, level, x, y);
 	}
@@ -68,8 +69,8 @@ public class SandTile extends Tile {
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
-			if (tool.type.name.equals("shovel")) {
-				if (player.payStamina(4 - (tool.level.level-1)) && tool.payDurability()) {
+			if (tool.type == ToolType.Shovel) {
+				if (player.payStamina(4 - tool.level) && tool.payDurability()) {
 					level.setTile(xt, yt, Tiles.get("Hole"));
 					Sound.monsterHurt.play();
 					level.dropItem(xt * 16 + 8, yt * 16 + 8, Items.get("Sand"));

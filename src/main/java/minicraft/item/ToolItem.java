@@ -11,57 +11,52 @@ import minicraft.gfx.Sprite;
 
 public class ToolItem extends Item {
 	
-	public static ArrayList<Item> Instances = new ArrayList<>();
-
 	protected static ArrayList<Item> getAllInstances() {
+		ArrayList<Item> items = new ArrayList<>();
 
-		// for (ToolType tool : ToolType.values()) {
-		// 	if (!tool.noLevel) {
-		// 		for (int lvl = 0; lvl <= 4; lvl++)
-		// 			items.add(new ToolItem(tool, lvl));
-		// 	} else {
-		// 		items.add(new ToolItem(tool));
-		// 	}
-		// }
+		for (ToolType tool : ToolType.values()) {
+			if (!tool.noLevel) {
+				for (int lvl = 0; lvl <= 4; lvl++)
+					items.add(new ToolItem(tool, lvl));
+			} else {
+				items.add(new ToolItem(tool));
+			}
+		}
 		
-		return Instances;
+		return items;
 	}
 	
 	private Random random = new Random();
 	
+	public static final String[] LEVEL_NAMES = {"Wood", "Rock", "Iron", "Gold", "Gem"}; // The names of the different levels. A later level means a stronger tool.
+	
 	public ToolType type; // Type of tool (Sword, hoe, axe, pickaxe, shovel)
-	public ItemLevel level = ItemLevel.Levels.get("wood"); // Level of said tool
+	public int level; // Level of said tool
 	public int dur; // The durability of the tool
+	private int damage; // The damage of the tool
 	
 	/** Tool Item, requires a tool type (ToolType.Sword, ToolType.Axe, ToolType.Hoe, etc) and a level (0 = wood, 2 = iron, 4 = gem, etc) */
-	public ToolItem(ToolType type, ItemLevel level) {
-		super(level.name + " " + type.name, type.sprite!=null? type.sprite: new Sprite(type.xPos, type.yPos + level.level-1, 0));
+	public ToolItem(ToolType type, int level) {
+		super(LEVEL_NAMES[level] + " " + type.name(), new Sprite(type.xPos, type.yPos + level, 0));
 		
 		this.type = type;
 		this.level = level;
+		this.damage = level * 5 + 10;
 		
-		dur = type.durability * level.level; // Initial durability fetched from the ToolType
+		dur = type.durability * (level + 1); // Initial durability fetched from the ToolType
 	}
 
 	public ToolItem(ToolType type) {
-		super(type.name, type.sprite!=null? type.sprite: new Sprite(type.xPos, type.yPos, 0));
+		super(type.name(), new Sprite(type.xPos, type.yPos, 0));
 
 		this.type = type;
 		dur = type.durability;
-	}
-
-	static {
-		for (ToolType type : ToolType.TypeInstances) 
-			if (!type.noLevel)
-				for (ItemLevel lvl : ToolType.TypeLevels.get(type.name))
-					Instances.add(new ToolItem(type, lvl));
-			else Instances.add(new ToolItem(type));
 	}
 	
 	/** Gets the name of this tool (and it's type) as a display string. */
 	@Override
 	public String getDisplayName() {
-		if (!type.noLevel) return " " + Localization.getLocalized(level.name) + " " + Localization.getLocalized(type.toString());
+		if (!type.noLevel) return " " + Localization.getLocalized(LEVEL_NAMES[level]) + " " + Localization.getLocalized(type.toString());
 		else return " " + Localization.getLocalized(type.toString());
 	}
 	
@@ -71,31 +66,34 @@ public class ToolItem extends Item {
 	
 	/** You can attack mobs with tools. */
 	public boolean canAttack() {
-		return type.attack;
+		return type != ToolType.Shears;
 	}
-	
+
 	public boolean payDurability() {
 		if (dur <= 0) return false;
 		if (!Game.isMode("creative")) dur--;
 		return true;
+	}
+
+	public int getDamage() {
+		return random.nextInt(5) + damage;
 	}
 	
 	/** Gets the attack damage bonus from an item/tool (sword/axe) */
 	public int getAttackDamageBonus(Entity e) {
 		if (!payDurability())
 			return 0;
-		
+
 		if (e instanceof Mob) {
-			if (type.name.equals("axe")) {
-				return level.level * 2 + random.nextInt(4); // Wood axe damage: 2-5; gem axe damage: 10-13.
-			}
-			if (type.name.equals("sword")) {
-				return level.level * 3 + random.nextInt(2 + (level.level-1) * (level.level-1)); // Wood: 3-5 damage; gem: 15-32 damage.
-			}
-			if (type.name.equals("claymore")) {
-				return level.level * 3 + random.nextInt(4 + (level.level-1) * (level.level-1) * 3); // Wood: 3-6 damage; gem: 15-66 damage.
-			}
-			return 1; // All other tools do very little damage to mobs.
+			if (type == ToolType.Axe) {
+				return (level + 1) * 2 + random.nextInt(4); // Wood axe damage: 2-5; gem axe damage: 10-13.
+			} else if (type == ToolType.Sword) {
+				return (level + 1) * 3 + random.nextInt(2 + level * level); // Wood: 3-5 damage; gem: 15-32 damage.
+			} else if (type == ToolType.Claymore) {
+				return (level + 1) * 3 + random.nextInt(4 + level * level * 3); // Wood: 3-6 damage; gem: 15-66 damage.
+			} else if (type == ToolType.Pickaxe)
+				return (level + 1) + random.nextInt(2); // Wood: 3-6 damage; gem: 15-66 damage.
+			return 1;
 		}
 		
 		return 0;
@@ -117,7 +115,7 @@ public class ToolItem extends Item {
 	}
 	
 	@Override
-	public int hashCode() { return type.name.hashCode() + (level.level-1); }
+	public int hashCode() { return type.name().hashCode() + level; }
 	
 	public ToolItem clone() {
 		ToolItem ti;

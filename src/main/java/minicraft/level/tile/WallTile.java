@@ -40,7 +40,7 @@ public class WallTile extends Tile {
 
 	@Override
 	public boolean hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
-		if (Game.isMode("Creative") || ((Level)level).depth != -3 || type != Material.Obsidian || AirWizard.beaten) {
+		if (Game.isMode("Creative") || level.depth != -3 || type != Material.Obsidian || AirWizard.beaten) {
 			hurt(level, x, y, random.nextInt(6) / 6 * dmg / 2);
 			return true;
 		} else {
@@ -55,9 +55,9 @@ public class WallTile extends Tile {
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
 			if (tool.type == type.getRequiredTool()) {
-				if (((Level)level).depth != -3 || type != Material.Obsidian || AirWizard.beaten) {
-					if (player.payStamina(4 - (tool.level.level-1)) && tool.payDurability()) {
-						hurt(level, xt, yt, random.nextInt(10) + (tool.level.level-1) * 5 + 10);
+				if (level.depth != -3 || type != Material.Obsidian || AirWizard.beaten) {
+					if (player.payStamina(4 - tool.level) && tool.payDurability()) {
+						hurt(level, xt, yt, tool.getDamage());
 						return true;
 					}
 				} else {

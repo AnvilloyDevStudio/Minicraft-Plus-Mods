@@ -2,13 +2,12 @@ package minicraft.item;
 
 import java.util.ArrayList;
 
-import minicraft.core.Game;
 import minicraft.entity.Direction;
 import minicraft.entity.mob.Player;
-import minicraft.entity.mob.RemotePlayer;
 import minicraft.gfx.Sprite;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
+import minicraft.screen.AchievementsDisplay;
 
 public class PotionItem extends StackableItem {
 	
@@ -32,6 +31,9 @@ public class PotionItem extends StackableItem {
 	
 	// The return value is used to determine if the potion was used, which means being discarded.
 	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
+		if (type.equals(PotionType.Lava)) {
+			AchievementsDisplay.setAchievement("minicraft.achievement.lava",true);
+		}
 		return super.interactOn(applyPotion(player, type, true));
 	}
 	
@@ -46,10 +48,6 @@ public class PotionItem extends StackableItem {
 		if (player.getPotionEffects().containsKey(type) != addEffect) { // If hasEffect, and is disabling, or doesn't have effect, and is enabling...
 			if (!type.toggleEffect(player, addEffect))
 				return false; // Usage failed
-			
-			// Transmit the effect; server never uses potions without this.
-			if (type.transmitEffect() && Game.isValidServer() && player instanceof RemotePlayer) 
-				Game.server.getAssociatedThread((RemotePlayer)player).sendPotionEffect(type, addEffect);
 		}
 		
 		if (addEffect && type.duration > 0) player.potioneffects.put(type, type.duration); // Add it

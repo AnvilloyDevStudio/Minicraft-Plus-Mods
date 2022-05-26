@@ -8,7 +8,7 @@ import minicraft.entity.mob.Player;
 import minicraft.gfx.Sprite;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
-import minicraft.screen.BookData;
+import minicraft.util.BookData;
 import minicraft.screen.BookDisplay;
 
 public class BookItem extends Item {
@@ -33,7 +33,7 @@ public class BookItem extends Item {
 	}
 	
 	public boolean interactOn(Tile tile, Level level, int xt, int yt, Player player, Direction attackDir) {
-		Game.setMenu(new BookDisplay(book, hasTitlePage));
+		Game.setDisplay(new BookDisplay(book, hasTitlePage));
 		return true;
 	}
 	

@@ -28,7 +28,7 @@ public class Menu {
 	private static final int LIMIT_TYPING_SEARCHER = 22;
 	
 	@NotNull
-	private ArrayList<ListEntry> entries = new ArrayList<>();
+	private final ArrayList<ListEntry> entries = new ArrayList<>();
 	
 	private int spacing = 0;
 	private Rectangle bounds = null;
@@ -94,7 +94,7 @@ public class Menu {
 		listPositionSearcher = 0;
 		typingSearcher = "";
 	}
-	
+
 	public void init() {
 		
 		if(entries.size() == 0) {
@@ -136,7 +136,15 @@ public class Menu {
 	int getSelection() { return selection; }
 	int getDispSelection() { return dispSelection; }
 	
-	ListEntry[] getEntries() { return entries.toArray(new ListEntry[entries.size()]); }
+	ListEntry[] getEntries() { return entries.toArray(new ListEntry[0]); }
+	protected void setEntries(ListEntry[] entries) {
+		this.entries.clear();
+		this.entries.addAll(0, Arrays.asList(entries));
+	}
+	protected void setEntries(List<ListEntry> entries) {
+		this.entries.clear();
+		this.entries.addAll(entries);
+	}
 	@Nullable ListEntry getCurEntry() { return entries.size() == 0 ? null : entries.get(selection); }
 	int getNumOptions() { return entries.size(); }
 	
@@ -330,7 +338,7 @@ public class Menu {
 			ListEntry entry = entries.get(idx);
 			
 			if(!(entry instanceof BlankEntry)) {
-				Point pos = (Point)entryPos.positionRect(new Dimension(entry.getWidth(), ListEntry.getHeight()), new Rectangle(entryBounds.getLeft(), y, entryBounds.getWidth(), ListEntry.getHeight(), Rectangle.CORNER_DIMS));
+				Point pos = entryPos.positionRect(new Dimension(entry.getWidth(), ListEntry.getHeight()), new Rectangle(entryBounds.getLeft(), y, entryBounds.getWidth(), ListEntry.getHeight(), Rectangle.CORNER_DIMS));
 				boolean selected = idx == selection;
 				if (searcherBarActive && useSearcherBar) {
 					entry.render(screen, pos.x, pos.y, selected, typingSearcher, Color.YELLOW);
@@ -425,7 +433,7 @@ public class Menu {
 			menu.spacing = entrySpacing;
 			menu.entryPos = entryPos;
 		}
-		
+
 		public Builder setEntries(ListEntry... entries) { return setEntries(Arrays.asList(entries)); }
 		public Builder setEntries(List<ListEntry> entries) {
 			menu.entries.clear();
@@ -443,15 +451,15 @@ public class Menu {
 		public Builder setMenuSize(Dimension d) { menuSize = d; return this; } // can be used to set the size to null
 		
 		public Builder setBounds(Rectangle rect) {
-			menuSize = (Dimension) rect.getSize();
-			setPositioning((Point)rect.getCenter(), RelPos.CENTER); // because the anchor represents the center of the rectangle.
+			menuSize = rect.getSize();
+			setPositioning(rect.getCenter(), RelPos.CENTER); // because the anchor represents the center of the rectangle.
 			return this;
 		}
 		
 		public Builder setDisplayLength(int numEntries) { menu.displayLength = numEntries; return this; }
 		
 		
-		public Builder setTitlePos(RelPos rp) { titlePos = (rp == null ? RelPos.TOP : (RelPos)rp); return this; }
+		public Builder setTitlePos(RelPos rp) { titlePos = (rp == null ? RelPos.TOP : rp); return this; }
 		
 		public Builder setTitle(String title) { menu.title = title; return this; }
 
@@ -618,11 +626,11 @@ public class Menu {
 				menu.displayLength = (entrySize.height + menu.spacing) / (ListEntry.getHeight() + menu.spacing);
 				
 			// based on the menu centering, and the anchor, determine the upper-left point from which to draw the menu.
-			menu.bounds = (Rectangle) menuPos.positionRect(menuSize, anchor, new Rectangle()); // reset to a value that is actually useful to the menu
+			menu.bounds = menuPos.positionRect(menuSize, anchor, new Rectangle()); // reset to a value that is actually useful to the menu
 			
 			menu.entryBounds = border.subtractFrom(menu.bounds);
 			
-			menu.titleLoc = (Point) titlePos.positionRect(titleDim, menu.bounds);
+			menu.titleLoc = titlePos.positionRect(titleDim, menu.bounds);
 			
 			if(titlePos.xIndex == 0 && titlePos.yIndex != 1)
 				menu.titleLoc.x += SpriteSheet.boxWidth;

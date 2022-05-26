@@ -9,6 +9,7 @@ import minicraft.gfx.Sprite;
 import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.ToolItem;
+import minicraft.item.ToolType;
 import minicraft.level.Level;
 
 public class DirtTile extends Tile {
@@ -26,6 +27,7 @@ public class DirtTile extends Tile {
 
 	protected static int dCol(int depth) {
 		switch (depth) {
+			case 1: return Color.get(1, 194, 194, 194); // Sky.
 			case 0: return Color.get(1, 129, 105, 83); // Surface.
 			case -4: return Color.get(1, 76, 30, 100); // Dungeons.
 			default: return Color.get(1, 102); // Caves.
@@ -41,22 +43,22 @@ public class DirtTile extends Tile {
 	}
 	
 	public void render(Screen screen, Level level, int x, int y) {
-		levelSprite[dIdx(((Level)level).depth)].render(screen, x * 16, y * 16, 0);
+		levelSprite[dIdx(level.depth)].render(screen, x * 16, y * 16, 0);
 	}
 	
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
-			if (tool.type.name.equals("shovel")) {
-				if (player.payStamina(4 - (tool.level.level-1)) && tool.payDurability()) {
+			if (tool.type == ToolType.Shovel) {
+				if (player.payStamina(4 - tool.level) && tool.payDurability()) {
 					level.setTile(xt, yt, Tiles.get("Hole"));
 					Sound.monsterHurt.play();
 					level.dropItem(xt * 16 + 8, yt * 16 + 8, Items.get("Dirt"));
 					return true;
 				}
 			}
-			if (tool.type.name.equals("hoe")) {
-				if (player.payStamina(4 - (tool.level.level-1)) && tool.payDurability()) {
+			if (tool.type == ToolType.Hoe) {
+				if (player.payStamina(4 - tool.level) && tool.payDurability()) {
 					level.setTile(xt, yt, Tiles.get("Farmland"));
 					Sound.monsterHurt.play();
 					return true;

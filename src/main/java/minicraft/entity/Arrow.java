@@ -7,8 +7,6 @@ import minicraft.entity.mob.Player;
 import minicraft.gfx.Color;
 import minicraft.gfx.Rectangle;
 import minicraft.gfx.Screen;
-import minicraft.level.Level;
-import minicraft.level.tile.Tile;
 
 public class Arrow extends Entity implements ClientTickable {
 	private Direction dir;
@@ -44,7 +42,7 @@ public class Arrow extends Entity implements ClientTickable {
 	
 	@Override
 	public void tick() {
-		if (x < 0 || x >> 4 > ((Level)level).w || y < 0 || y >> 4 > ((Level)level).h) {
+		if (x < 0 || x >> 4 > level.w || y < 0 || y >> 4 > level.h) {
 			remove(); // Remove when out of bounds
 			return;
 		}
@@ -64,8 +62,8 @@ public class Arrow extends Entity implements ClientTickable {
 			}
 
 			if (!level.getTile(x / 16, y / 16).mayPass(level, x / 16, y / 16, this)
-					&& !((Tile)level.getTile(x / 16, y / 16)).Connections.get("fluid")
-					&& ((Tile)level.getTile(x / 16, y / 16)).id != 16) {
+					&& !level.getTile(x / 16, y / 16).connectsToFluid
+					&& level.getTile(x / 16, y / 16).id != 16) {
 				this.remove();
 			}
 		}

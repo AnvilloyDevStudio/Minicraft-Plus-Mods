@@ -2,9 +2,10 @@ package minicraft.gfx;
 
 import java.util.Arrays;
 
+import org.jetbrains.annotations.NotNull;
+
 import minicraft.core.Renderer;
 import minicraft.core.Updater;
-import minicraft.core.io.Settings;
 
 public class Screen {
 	
@@ -15,8 +16,8 @@ public class Screen {
 	private static final int MAXDARK = 128;
 	
 	/// x and y offset of screen:
-	int xOffset;
-	int yOffset;
+	private int xOffset;
+	private int yOffset;
 	
 	// Used for mirroring an image:
 	private static final int BIT_MIRROR_X = 0x01; // Written in hexadecimal; binary: 01
@@ -29,7 +30,6 @@ public class Screen {
 	// And 3072 the start of the gui sheet
 
 	private SpriteSheet[] sheets;
-	private SpriteSheet[] sheetsCustom;
 
 	public Screen(SpriteSheet itemSheet, SpriteSheet tileSheet, SpriteSheet entitySheet, SpriteSheet guiSheet, SpriteSheet skinsSheet) {
 
@@ -38,49 +38,24 @@ public class Screen {
 		/// Screen width and height are determined by the actual game window size, meaning the screen is only as big as the window.
 		pixels = new int[Screen.w * Screen.h]; // Makes new integer array for all the pixels on the screen.
 	}
-
-	public Screen(SpriteSheet itemSheet, SpriteSheet tileSheet, SpriteSheet entitySheet, SpriteSheet guiSheet, SpriteSheet skinsSheet,
-					SpriteSheet itemSheetCustom, SpriteSheet tileSheetCustom, SpriteSheet entitySheetCustom, SpriteSheet guiSheetCustom) {
-		this(itemSheet, tileSheet, entitySheet, guiSheet, skinsSheet);
-
-		sheetsCustom = new SpriteSheet[]{itemSheetCustom, tileSheetCustom, entitySheetCustom, guiSheetCustom};
-	}
-	
 	public Screen(Screen model) {
 		this(model.sheets[0], model.sheets[1], model.sheets[2], model.sheets[3], model.sheets[4]);
 	}
-	
-	public void setSheet(SpriteSheet itemSheet, SpriteSheet tileSheet, SpriteSheet entitySheet, SpriteSheet guiSheet, SpriteSheet skinsSheet) {
-		if (itemSheet != null) {
-		        sheets[0] = (SpriteSheet)itemSheet;
-		}
-		if (tileSheet != null) {
-		        sheets[1] = (SpriteSheet)tileSheet;
-		}
-		if (entitySheet != null) {
-			sheets[2] = (SpriteSheet)entitySheet;
-		}
-		if (guiSheet != null) {
-			sheets[3] = (SpriteSheet)guiSheet;
-		}
-		if (skinsSheet != null) {
-			sheets[4] = (SpriteSheet)skinsSheet;
-		}
+
+	@NotNull
+	public void setSkinSheet(SpriteSheet skinSheet) {
+		sheets[4] = skinSheet;
 	}
 
-	public void setSheet(SpriteSheet itemSheet, SpriteSheet tileSheet, SpriteSheet entitySheet, SpriteSheet guiSheet) {
-		if (itemSheet != null) {
-		        sheets[0] = (SpriteSheet)itemSheet;
-		}
-		if (tileSheet != null) {
-		        sheets[1] = (SpriteSheet)tileSheet;
-		}
-		if (entitySheet != null) {
-			sheets[2] = (SpriteSheet)entitySheet;
-		}
-		if (guiSheet != null) {
-			sheets[3] = (SpriteSheet)guiSheet;
-		}
+	public void setSheets(SpriteSheet itemSheet, SpriteSheet tileSheet, SpriteSheet entitySheet, SpriteSheet guiSheet) {
+		if (itemSheet != null) sheets[0] = itemSheet;
+		if (tileSheet != null) sheets[1] = tileSheet;
+		if (entitySheet != null) sheets[2] = entitySheet;
+		if (guiSheet != null) sheets[3] = guiSheet;
+	}
+
+	public SpriteSheet getSpriteSheet() {
+		return sheets[4];
 	}
 	
 	/** Clears all the colors on the screen */
@@ -101,18 +76,15 @@ public class Screen {
 
 	/** This method takes care of assigning the correct spritesheet to assign to the sheet variable **/
     public void render(int xp, int yp, int tile, int bits, int sheet, int whiteTint, boolean fullbright) {
-    	SpriteSheet currentSheet;
-		if (Settings.get("textures").equals("Custom")) {
-			currentSheet = sheetsCustom[sheet] != null ? sheetsCustom[sheet] : sheets[sheet];
-		} else {
-			currentSheet = sheets[sheet];
-		}
-
-		render(xp, yp, tile, bits, currentSheet, whiteTint, fullbright);
+		render(xp, yp, tile, bits, sheets[sheet], whiteTint, fullbright, 0);
+    }
+    
+    public void render(int xp, int yp, int tile, int bits, int sheet, int whiteTint, boolean fullbright, int color) {
+    	render(xp, yp, tile, bits, sheets[sheet], -1, false, color); 
     }
 
     /** Renders an object from the sprite sheet based on screen coordinates, tile (SpriteSheet location), colors, and bits (for mirroring). I believe that xp and yp refer to the desired position of the upper-left-most pixel. */
-    public void render(int xp, int yp, int tile, int bits, SpriteSheet sheet, int whiteTint, boolean fullbright) {
+    public void render(int xp, int yp, int tile, int bits, SpriteSheet sheet, int whiteTint, boolean fullbright, int color) {
 		// xp and yp are originally in level coordinates, but offset turns them to screen coordinates.
 		xp -= xOffset; //account for screen offset
 		yp -= yOffset;
@@ -151,7 +123,12 @@ public class Screen {
 						if (fullbright) {
 							pixels[index] = Color.WHITE;
 						} else {
-							pixels[index] = Color.upgrade(col);
+							if (color != 0) {
+								
+								pixels[index] = color;
+							} else {
+								pixels[index] = Color.upgrade(col);
+							}
 						}
 					}
 				}
@@ -202,7 +179,7 @@ public class Screen {
 		else if(currentLevel >= 5)
 			tintFactor = -MAXDARK;
         
-		int[] oPixels = ((Screen)screen2).pixels;  // The Integer array of pixels to overlay the screen with.
+		int[] oPixels = screen2.pixels;  // The Integer array of pixels to overlay the screen with.
 		int i = 0; // Current pixel on the screen
 		for (int y = 0; y < h; y++) { // loop through height of screen
             for (int x = 0; x < w; x++) { // loop through width of screen

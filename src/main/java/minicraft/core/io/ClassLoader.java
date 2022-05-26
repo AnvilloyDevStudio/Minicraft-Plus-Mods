@@ -4,15 +4,16 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.AbstractMap;
+import java.util.Map.Entry;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.json.JSONObject;
 
 public class ClassLoader {
     public ClassLoader() {}
-    public Pair<Pair<Class<?>, Manifest>, JSONObject> loadJar(File jarf) {
+    public Entry<Entry<Class<?>, Manifest>, JSONObject> loadJar(File jarf) {
         URLClassLoader child;
         try {
             JarFile jar = new JarFile(jarf);
@@ -24,10 +25,7 @@ public class ClassLoader {
                 getClass().getClassLoader()
             );
             Class<?> classToLoad = Class.forName("mod.Main", true, child);
-            return Pair.of(Pair.of(classToLoad, manifest), modInfo);
-            // Method method = classToLoad.getDeclaredMethod("myMethod");
-            // Object instance = classToLoad.getDeclaredConstructor().newInstance();
-            // Object result = method.invoke(instance);
+            return new AbstractMap.SimpleEntry<>(new AbstractMap.SimpleEntry<>(classToLoad, manifest), modInfo);
         } catch (ClassNotFoundException | SecurityException | IOException e) {
             e.printStackTrace();
             return null;

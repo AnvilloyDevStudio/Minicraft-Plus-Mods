@@ -1,8 +1,5 @@
 package minicraft.entity.mob;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import minicraft.core.Game;
 import minicraft.core.io.Settings;
 import minicraft.core.io.Sound;
@@ -14,7 +11,9 @@ import minicraft.gfx.Point;
 import minicraft.gfx.Screen;
 import minicraft.item.Items;
 import minicraft.level.tile.Tiles;
-import minicraft.level.Level;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Creeper extends EnemyMob {
 	private static MobSprite[][][] sprites;
@@ -61,7 +60,7 @@ public class Creeper extends EnemyMob {
 			boolean playerInRange = false; // Tells if any players are within the blast
 
 			// Find if the player is in range and store it in playerInRange.
-			for (Entity e : (Entity[])level.getEntitiesOfClass(Mob.class)) {
+			for (Entity e : level.getEntitiesOfClass(Mob.class)) {
 				Mob mob = (Mob) e;
 				int pdx = Math.abs(mob.x - x);
 				int pdy = Math.abs(mob.y - y);
@@ -72,10 +71,10 @@ public class Creeper extends EnemyMob {
 				}
 			}
 
-			// Basically, if there aren't any players it "defuses" itself and doesn't blow up
+			// Handles what happens when it blows up.
+			// It will only blow up if there are any players nearby.
 			if (playerInRange) {
-				// Blow up
-
+				// Play explosion sound
 				Sound.explode.play();
 
 				// Figure out which tile the mob died on
@@ -85,12 +84,13 @@ public class Creeper extends EnemyMob {
 				// Used for calculations
 				int radius = lvl;
 
+				// The total amount of damage we want to apply.
 				int lvlDamage = BLAST_DAMAGE * lvl;
 
 				// Hurt all the entities
 				List<Entity> entitiesInRange = level.getEntitiesInTiles(xt, yt, radius);
 				List<Entity> spawners = new ArrayList<>();
-				Point[] tilePositions = (Point[]) level.getAreaTilePositions(xt, yt, radius);
+				Point[] tilePositions = level.getAreaTilePositions(xt, yt, radius);
 
 				for (Entity entity : entitiesInRange) { // Hurts entities in range
 					if (entity instanceof Mob) {
@@ -120,7 +120,7 @@ public class Creeper extends EnemyMob {
 						}
 					}
 					if (!hasSpawner) {
-						if (((Level)level).depth != 1) {
+						if (level.depth != 1) {
 							level.setAreaTiles(tilePosition.x, tilePosition.y, 0, Tiles.get("hole"), 0);
 						} else {
 							level.setAreaTiles(tilePosition.x, tilePosition.y, 0, Tiles.get("Infinite Fall"), 0);
@@ -131,6 +131,7 @@ public class Creeper extends EnemyMob {
 
 				die(); // Dying now kind of kills everything. the super class will take care of it.
 			} else {
+				// If there aren't any players it will defuse itself and won't blow up.
 				fuseTime = 0;
 				fuseLit = false;
 			}
@@ -172,32 +173,5 @@ public class Creeper extends EnemyMob {
 		// Only drop items if the creeper has not exploded
 		if (!fuseLit) dropItem(1, 4 - Settings.getIdx("diff"), Items.get("Gunpowder"));
 		super.die();
-	}
-
-	@Override
-	protected String getUpdateString() {
-		String updates = super.getUpdateString() + ";";
-		updates += "fuseTime," + fuseTime +
-				";fuseLit," + fuseLit;
-
-		return updates;
-	}
-
-	@Override
-	protected boolean updateField(String field, String val) {
-		if (super.updateField(field, val)) return true;
-		switch (field) {
-			case "fuseTime":
-				fuseTime = Integer.parseInt(val);
-				return true;
-
-			case "fuseLit":
-				boolean wasLit = fuseLit;
-				fuseLit = Boolean.parseBoolean(val);
-				if (fuseLit && !wasLit)
-					Sound.fuse.play();
-		}
-
-		return false;
 	}
 }

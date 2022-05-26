@@ -1,8 +1,8 @@
 package minicraft.entity.mob;
 
-import minicraft.core.Game;
 import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
+import minicraft.entity.Entity;
 import minicraft.entity.particle.TextParticle;
 import minicraft.gfx.Color;
 import minicraft.gfx.MobSprite;
@@ -55,14 +55,18 @@ public abstract class MobAi extends Mob {
 		if (lifetime > 0) {
 			age++;
 			if (age > lifetime) {
-				remove();
-				return;
+				boolean playerClose = getLevel().entityNearPlayer((Entity) this);
+
+				if (!playerClose) {
+					remove();
+					return;
+				}
 			}
 		}
 		
 		if (getLevel() != null) {
 			boolean foundPlayer = false;
-			for (Player p: (Player[])level.getPlayers()) {
+			for (Player p: level.getPlayers()) {
 				if (p.isWithin(8, this) && p.potioneffects.containsKey(PotionType.Time)) {
 					foundPlayer = true;
 					break;
@@ -93,16 +97,14 @@ public abstract class MobAi extends Mob {
 		
 		MobSprite curSprite = sprites[dir.getDir()][(walkDist >> 3) % sprites[dir.getDir()].length];
 		if (hurtTime > 0) {
-			curSprite.render((Screen)screen, xo, yo, true);
+			curSprite.render(screen, xo, yo, true);
 		} else {
-			curSprite.render((Screen)screen, xo, yo);
+			curSprite.render(screen, xo, yo);
 		}
 	}
 	
 	@Override
 	public boolean move(int xd, int yd) {
-		//noinspection SimplifiableIfStatement
-		if (Game.isValidClient()) return false; // Client mobAi's should not move at all.
 		
 		return super.move(xd, yd);
 	}
@@ -111,7 +113,7 @@ public abstract class MobAi extends Mob {
 	public void doHurt(int damage, Direction attackDir) {
 		if (isRemoved() || hurtTime > 0) return; // If the mob has been hurt recently and hasn't cooled down, don't continue
 		
-		Player player = (Player) getClosestPlayer();
+		Player player = getClosestPlayer();
 		if (player != null) { // If there is a player in the level
 			
 			/// Play the hurt sound only if the player is less than 80 entity coordinates away; or 5 tiles away.
@@ -169,7 +171,7 @@ public abstract class MobAi extends Mob {
 	 * @return true if the mob can spawn, false if not.
 	 */
 	protected static boolean checkStartPos(Level level, int x, int y, int playerDist, int soloRadius) {
-		Player player = (Player) level.getClosestPlayer(x, y);
+		Player player = level.getClosestPlayer(x, y);
 		if (player != null) {
 			int xd = player.x - x;
 			int yd = player.y - y;
@@ -193,7 +195,7 @@ public abstract class MobAi extends Mob {
 	
 	protected void die(int points) { die(points, 0); }
 	protected void die(int points, int multAdd) {
-		for (Player p: (Player[])level.getPlayers()) {
+		for (Player p: level.getPlayers()) {
 			p.addScore(points); // Add score for mob death
 			if (multAdd != 0)
 				p.addMultiplier(multAdd);

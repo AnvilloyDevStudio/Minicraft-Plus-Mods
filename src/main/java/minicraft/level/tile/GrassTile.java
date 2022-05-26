@@ -9,6 +9,7 @@ import minicraft.gfx.Sprite;
 import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.ToolItem;
+import minicraft.item.ToolType;
 import minicraft.level.Level;
 
 public class GrassTile extends Tile {
@@ -16,14 +17,14 @@ public class GrassTile extends Tile {
 	{
 		public boolean connectsTo(Tile tile, boolean isSide) {
 			if(!isSide) return true;
-			return ((Tile)tile).Connections.get("grass");
+			return tile.connectsToGrass;
 		}
 	};
 	
 	protected GrassTile(String name) {
 		super(name, sprite);
 		csprite.sides = csprite.sparse;
-		Connections.set("grass", true);
+		connectsToGrass = true;
 		maySpawn = true;
 	}
 
@@ -45,15 +46,15 @@ public class GrassTile extends Tile {
 
 	@Override
 	public void render(Screen screen, Level level, int x, int y) {
-		sprite.sparse.color = DirtTile.dCol(((Level)level).depth);
+		sprite.sparse.color = DirtTile.dCol(level.depth);
 		sprite.render(screen, level, x, y);
 	}
 
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
-			if (tool.type.name.equals("shovel")) {
-				if (player.payStamina(4 - (tool.level.level-1)) && tool.payDurability()) {
+			if (tool.type == ToolType.Shovel) {
+				if (player.payStamina(4 - tool.level) && tool.payDurability()) {
 					level.setTile(xt, yt, Tiles.get("Dirt"));
 					Sound.monsterHurt.play();
 					if (random.nextInt(5) == 0) { // 20% chance to drop Grass seeds
@@ -62,8 +63,8 @@ public class GrassTile extends Tile {
 					return true;
 				}
 			}
-			if (tool.type.name.equals("hoe")) {
-				if (player.payStamina(4 - (tool.level.level-1)) && tool.payDurability()) {
+			if (tool.type == ToolType.Hoe) {
+				if (player.payStamina(4 - tool.level) && tool.payDurability()) {
 					level.setTile(xt, yt, Tiles.get("Dirt"));
 					Sound.monsterHurt.play();
 					if (random.nextInt(5) != 0) { // 80% chance to drop Wheat seeds
@@ -72,8 +73,8 @@ public class GrassTile extends Tile {
 					return true;
 				}
 			}
-			if (tool.type.name.equals("pickaxe")) {
-				if (player.payStamina(4 - (tool.level.level-1)) && tool.payDurability()) {
+			if (tool.type == ToolType.Pickaxe) {
+				if (player.payStamina(4 - tool.level) && tool.payDurability()) {
 					level.setTile(xt, yt, Tiles.get("Path"));
 					Sound.monsterHurt.play();
 				}

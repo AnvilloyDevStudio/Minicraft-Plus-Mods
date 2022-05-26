@@ -17,9 +17,9 @@ public class SaplingTile extends Tile {
 		super(name, sprite);
 		this.onType = onType;
 		this.growsTo = growsTo;
-		Connections.set("sand", onType.Connections.get("sand"));
-		Connections.set("grass", onType.Connections.get("grass"));
-		Connections.set("fluid", onType.Connections.get("fluid"));
+		connectsToSand = onType.connectsToSand;
+		connectsToGrass = onType.connectsToGrass;
+		connectsToFluid = onType.connectsToFluid;
 		maySpawn = true;
 	}
 
@@ -31,8 +31,11 @@ public class SaplingTile extends Tile {
 
 	public boolean tick(Level level, int x, int y) {
 		int age = level.getData(x, y) + 1;
-		if (age > 100) {
-			level.setTile(x, y, growsTo);
+		if (age > 110) {
+			// Don't grow if there is an entity on this tile.
+			if (!level.isEntityOnTile(x, y)) {
+				level.setTile(x, y, growsTo);
+			}
 		} else {
 			level.setData(x, y, age);
 		}

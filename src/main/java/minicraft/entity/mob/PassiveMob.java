@@ -66,7 +66,7 @@ public class PassiveMob extends MobAi {
 		if (!MobAi.checkStartPos(level, x, y, 80, r))
 			return false;
 		
-		Tile tile = (Tile) level.getTile(x >> 4, y >> 4);
+		Tile tile = level.getTile(x >> 4, y >> 4);
 		return tile == Tiles.get("grass") || tile == Tiles.get("flower");
 		
 	}

@@ -19,7 +19,7 @@ public class CactusTile extends Tile {
 	
 	protected CactusTile(String name) {
 		super(name, sprite);
-		Connections.set("sand", true);
+		connectsToSand = true;
 	}
 
 	public boolean mayPass(Level level, int x, int y, Entity e) {

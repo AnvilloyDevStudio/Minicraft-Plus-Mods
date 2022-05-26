@@ -24,9 +24,6 @@ public abstract class Item {
 	}
 	protected Item(String name, Sprite sprite) {
 		this.name = name;
-		if (sprite == null) {
-			sprite = new Sprite(0, 31, 0);
-		}
 		this.sprite = sprite;
 	}
 
@@ -34,7 +31,7 @@ public abstract class Item {
 	public void renderHUD(Screen screen, int x, int y, int fontColor) {
 		String dispName = getDisplayName();
 		sprite.render(screen, x, y);
-		Font.drawBackground(dispName, (Screen)screen, x + 8, y, fontColor);
+		Font.drawBackground(dispName, screen, x + 8, y, fontColor);
 	}
 	
 	/** Determines what happens when the player interacts with a tile */
@@ -52,11 +49,9 @@ public abstract class Item {
 		return false;
 	}
 
-	public Sprite getSprite() {return sprite;}
-
 	/** Sees if an item equals another item */
 	public boolean equals(Item item) {
-		return item != null && item.getClass().equals(getClass()) && ((Item)item).name.equals(name);
+		return item != null && item.getClass().equals(getClass()) && item.name.equals(name);
 	}
 	
 	@Override

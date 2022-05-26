@@ -4,17 +4,15 @@ import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.Random;
 
-import org.jetbrains.annotations.NotNull;
+import minicraft.util.BookData;
 
 import minicraft.core.Game;
-import minicraft.core.Mods;
-import minicraft.core.Network;
+import minicraft.network.Network;
 import minicraft.core.Renderer;
 import minicraft.core.VersionInfo;
 import minicraft.core.World;
 import minicraft.core.io.InputHandler;
 import minicraft.core.io.Localization;
-import minicraft.entity.mob.RemotePlayer;
 import minicraft.gfx.Color;
 import minicraft.gfx.Font;
 import minicraft.gfx.Point;
@@ -22,39 +20,41 @@ import minicraft.gfx.Screen;
 import minicraft.level.Level;
 import minicraft.screen.entry.BlankEntry;
 import minicraft.screen.entry.LinkEntry;
-import minicraft.screen.entry.ListEntry;
 import minicraft.screen.entry.SelectEntry;
 import minicraft.screen.entry.StringEntry;
 
 public class TitleDisplay extends Display {
 	private static final Random random = new Random();
-	
+
 	private int rand;
 	private int count = 0; // This and reverse are for the logo; they produce the fade-in/out effect.
 	private boolean reverse = false;
-	
+
 	public TitleDisplay() {
+
 		super(true, false, new Menu.Builder(false, 2, RelPos.CENTER,
 			new StringEntry("Checking for updates...", Color.BLUE),
 			new BlankEntry(),
-			new BlankEntry(),
-			new SelectEntry("Play", () -> /*Game.setMenu(new PlayDisplay())*/{
+			new SelectEntry("Play", () -> {
 				if (WorldSelectDisplay.getWorldNames().size() > 0)
-					Game.setMenu(new Display(true, new Menu.Builder(false, 2, RelPos.CENTER,
-						new SelectEntry("Load World", () -> Game.setMenu(new WorldSelectDisplay())),
-						new SelectEntry("New World", () -> Game.setMenu(new WorldGenDisplay()))
+					Game.setDisplay(new Display(true, new Menu.Builder(false, 2, RelPos.CENTER,
+						new SelectEntry("Load World", () -> Game.setDisplay(new WorldSelectDisplay())),
+						new SelectEntry("New World", () -> Game.setDisplay(new WorldGenDisplay()))
 					).createMenu()));
-				else Game.setMenu(new WorldGenDisplay());
+				else Game.setDisplay(new WorldGenDisplay());
 			}),
-			new SelectEntry("Mods", () -> Game.setMenu(new ModsDisplay())),
-			new SelectEntry("Options", () -> Game.setMenu(new OptionsDisplay())),
-            new SelectEntry("Skins", () -> Game.setMenu(new SkinDisplay())),
-			displayFactory("Help",
-				new SelectEntry("Instructions", () -> Game.setMenu(new BookDisplay(BookData.instructions))),
-				new BlankEntry(),
-				new SelectEntry("Storyline Guide", () -> Game.setMenu(new BookDisplay(BookData.storylineGuide))),
-				new BlankEntry(),
-				new SelectEntry("About", () -> Game.setMenu(new BookDisplay(BookData.about)))
+			new SelectEntry("Mods", () -> Game.setDisplay(new ModsDisplay())),
+			new SelectEntry("Options", () -> Game.setDisplay(new OptionsMainMenuDisplay())),
+            new SelectEntry("minicraft.display.skin", () -> Game.setDisplay(new SkinDisplay())),
+			new SelectEntry("minicraft.display.achievement", () -> Game.setDisplay(new AchievementsDisplay())),
+			new SelectEntry("Help", () ->
+				Game.setDisplay(new Display(true, new Menu.Builder(false, 1, RelPos.CENTER,
+					new BlankEntry(),
+					new SelectEntry("Instructions", () -> Game.setDisplay(new BookDisplay(BookData.instructions))),
+					new SelectEntry("Storyline Guide", () -> Game.setDisplay(new BookDisplay(BookData.storylineGuide))),
+					new SelectEntry("About", () -> Game.setDisplay(new BookDisplay(BookData.about))),
+					new SelectEntry("Credits", () -> Game.setDisplay(new BookDisplay(BookData.credits)))
+				).setTitle("Help").createMenu()))
 			),
 			new SelectEntry("Quit", Game::quit)
 			)
@@ -62,27 +62,15 @@ public class TitleDisplay extends Display {
 			.createMenu()
 		);
 	}
-	
+
 	@Override
 	public void init(Display parent) {
 		super.init(null); // The TitleScreen never has a parent.
+
 		Renderer.readyToRenderGameplay = false;
 
 		// Check version
 		checkVersion();
-
-		/// This is useful to just ensure that everything is really reset as it should be. 
-		if (Game.server != null) {
-			if (Game.debug) System.out.println("Wrapping up loose server ends.");
-			Game.server.endConnection();
-			Game.server = null;
-		}
-		if (Game.client != null) {
-			if (Game.debug) System.out.println("Wrapping up loose client ends.");
-			Game.client.endConnection();
-			Game.client = null;
-		}
-		Game.ISONLINE = false;
 
 		LocalDateTime time = LocalDateTime.now();
 		if (time.getMonth() == Month.DECEMBER) {
@@ -91,39 +79,56 @@ public class TitleDisplay extends Display {
 		} else {
 			rand = random.nextInt(splashes.length - 3) + 3;
 		}
-		
+
 		World.levels = new Level[World.levels.length];
-		
-		if(Game.player == null || Game.player instanceof RemotePlayer)
+
+		if(Game.player == null)
 			// Was online, need to reset player
 			World.resetGame(false);
 	}
-	
+
 	private void checkVersion() {
 		VersionInfo latestVersion = Network.getLatestVersion();
 		if(latestVersion == null) {
 			Network.findLatestVersion(this::checkVersion);
 		}
 		else {
-			if(latestVersion.version.compareTo(Game.VERSION) > 0) { // Link new version
-				menus[0].updateEntry(0, new StringEntry("New: "+latestVersion.releaseName, Color.GREEN));
-				menus[0].updateEntry(1, new LinkEntry(Color.CYAN, "--Select here to Download--", latestVersion.releaseUrl, "Direct link to latest version: " + latestVersion.releaseUrl + "\nCan also be found here with change log: https://www.github.com/chrisj42/minicraft-plus-revived/releases"));
+			if (latestVersion.version.compareTo(Game.VERSION, true) > 0) {
+				menus[0].updateEntry(0, new StringEntry(Localization.getLocalized("New: ") + latestVersion.releaseName, Color.GREEN));
+				menus[0].updateEntry(1, new LinkEntry(Color.CYAN, "--Select here to Download--", latestVersion.releaseUrl, "Direct link to latest version: " + latestVersion.releaseUrl));
 			}
-			else if(latestVersion.releaseName.length() > 0)
-				menus[0].updateEntry(0, new StringEntry("You have the latest version.", Color.DARK_GRAY));
+			else if (latestVersion.releaseName.length() > 0)
+				menus[0].updateEntry(0, new StringEntry("You have the latest version.", Color.DARK_GRAY, true));
 			else
-				menus[0].updateEntry(0, new StringEntry("Connection failed, could not check for updates.", Color.RED));
+				menus[0].updateEntry(0, new StringEntry("Could not check for updates.", Color.RED, true));
 		}
 	}
-	
-	@NotNull
-	private static SelectEntry displayFactory(String entryText, ListEntry... entries) {
-		return new SelectEntry(entryText, () -> Game.setMenu(new Display(true, new Menu.Builder(false, 2, RelPos.CENTER, entries).createMenu())));
-	}
-	
+
 	@Override
 	public void tick(InputHandler input) {
 		if (input.getKey("r").clicked && Game.debug) rand = random.nextInt(splashes.length - 3) + 3;
+
+		super.tick(input);
+	}
+
+	@Override
+	public void render(Screen screen) {
+		super.render(screen);
+
+		int h = 2; // Height of squares (on the spritesheet)
+		int w = 15; // Width of squares (on the spritesheet)
+		int xo = (Screen.w - w * 8) / 2; // X location of the title
+		int yo = 18; // Y location of the title
+
+		for (int y = 0; y < h; y++) {
+			for (int x = 0; x < w; x++) {
+				screen.render(xo + x * 8, yo + y * 8, x + y * 32, 0, 3);
+			}
+		}
+
+		boolean isblue = splashes[rand].contains("blue");
+		boolean isGreen = splashes[rand].contains("Green");
+		boolean isRed = splashes[rand].contains("Red");
 
 		if (reverse) {
 			count--;
@@ -133,54 +138,30 @@ public class TitleDisplay extends Display {
 			if (count == 25) reverse = true;
 		}
 
-		super.tick(input);
-	}
-	
-	@Override
-	public void render(Screen screen) {
-		super.render(screen);
-		
-		int h = 2; // Height of squares (on the spritesheet)
-		int w = 15; // Width of squares (on the spritesheet)
-		int xo = (Screen.w - w * 8) / 2; // X location of the title
-		int yo = 28; // Y location of the title
-		
-		for (int y = 0; y < h; y++) {
-			for (int x = 0; x < w; x++) {
-				screen.render(xo + x * 8, yo + y * 8, x + y * 32, 0, 3);
-			}
-		}
-		
-		boolean isblue = splashes[rand].contains("blue");
-		boolean isGreen = splashes[rand].contains("Green");
-		boolean isRed = splashes[rand].contains("Red");
-		
 		/// This isn't as complicated as it looks. It just gets a color based off of count, which oscilates between 0 and 25.
 		int bcol = 5 - count / 5; // This number ends up being between 1 and 5, inclusive.
 		int splashColor = isblue ? Color.BLUE : isRed ? Color.RED : isGreen ? Color.GREEN : Color.get(1, bcol*51, bcol*51, bcol*25);
 
-		
-		Font.drawCentered(splashes[rand], screen, 52, splashColor);
-		
+		Font.drawCentered(splashes[rand], screen, (Screen.h / 2) - 44, splashColor);
+
 		Font.draw("Version " + Game.VERSION, screen, 1, 1, Color.get(1, 51));
-		Font.draw("MiniMods Version " + Mods.VERSION, screen, 1, 11, Color.get(1, 51));
-		
-		
-		String upString = "(" + Game.input.getMapping("cursor-up") + ", "+ Game.input.getMapping("cursor-down")+Localization.getLocalized(" to select") +")";
+
+
+		String upString = "(" + Game.input.getMapping("cursor-up") + ", " + Game.input.getMapping("cursor-down") + Localization.getLocalized(" to select") + ")";
 		String selectString = "(" + Game.input.getMapping("select") + Localization.getLocalized(" to accept") +")";
 		String exitString = "(" + Game.input.getMapping("exit") + Localization.getLocalized(" to return") +")";
-		
-		Font.drawCentered(upString, screen, Screen.h - 32, Color.get(1, 51));
-		Font.drawCentered(selectString, screen, Screen.h - 22, Color.get(1, 51));
-		Font.drawCentered(exitString, screen, Screen.h - 12, Color.get(1, 51));
+
+		Font.drawCentered(upString, screen, Screen.h - 30, Color.DARK_GRAY);
+		Font.drawCentered(selectString, screen, Screen.h - 20, Color.DARK_GRAY);
+		Font.drawCentered(exitString, screen, Screen.h - 10, Color.DARK_GRAY);
 	}
-	
+
 	private static final String[] splashes = {
 		"Secret Splash!",
 		"Happy birthday Minicraft!",
 		"Happy XMAS!",
         "Now with Customizable Skins!",
-        "Skin Update by Litorom1 & El Virus!",
+        "Skin Update by Litorom1 and El Virus!",
 		"Now with better fishing!",
 		"Now with better tools!",
 		"Now with better chests!",
@@ -232,7 +213,7 @@ public class TitleDisplay extends Display {
 		"Bigger Worlds!",
 		"World types!",
 		"World themes!",
-		"Sugarcane is a idea!",
+		"Sugarcane is an idea!",
 		"Milk is an idea!",
 		"So we back in the mine,",
 		"Pickaxe swinging from side to side",

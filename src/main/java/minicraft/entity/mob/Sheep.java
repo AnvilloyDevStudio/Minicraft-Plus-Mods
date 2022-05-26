@@ -10,6 +10,7 @@ import minicraft.gfx.Screen;
 import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.ToolItem;
+import minicraft.item.ToolType;
 
 public class Sheep extends PassiveMob {
 	private static final MobSprite[][] sprites = MobSprite.compileMobSpriteAnimations(0, 28);
@@ -36,9 +37,9 @@ public class Sheep extends PassiveMob {
 
 		MobSprite curSprite = curAnim[dir.getDir()][(walkDist >> 3) % curAnim[dir.getDir()].length];
 		if (hurtTime > 0) {
-			curSprite.render((Screen)screen, xo, yo, true);
+			curSprite.render(screen, xo, yo, true);
 		} else {
-			curSprite.render((Screen)screen, xo, yo);
+			curSprite.render(screen, xo, yo);
 		}
 	}
 
@@ -52,10 +53,11 @@ public class Sheep extends PassiveMob {
 		if (cut) return false;
 
 		if (item instanceof ToolItem) {
-			if (((ToolItem) item).type.name.equals("shear")) {
+			if (((ToolItem) item).type == ToolType.Shears) {
 				cut = true;
 				dropItem(1, 3, Items.get("Wool"));
 				ageWhenCut = age;
+				((ToolItem) item).payDurability();
 				return true;
 			}
 		}

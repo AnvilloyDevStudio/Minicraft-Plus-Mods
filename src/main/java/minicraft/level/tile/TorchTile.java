@@ -16,14 +16,14 @@ public class TorchTile extends Tile {
 	private Tile onType;
 	
 	public static TorchTile getTorchTile(Tile onTile) {
-		int id = ((Tile)onTile).id & 0xFFFF;
-		if(id < 32768) id += 32768;
+		int id = onTile.id & 0xFFFF;
+		if(id < 16384) id += 16384;
 		else System.out.println("Tried to place torch on torch tile...");
 		
 		if(Tiles.containsTile(id))
 			return (TorchTile)Tiles.get(id);
 		else {
-			TorchTile tile = new TorchTile((Tile)onTile);
+			TorchTile tile = new TorchTile(onTile);
 			Tiles.add(id, tile);
 			return tile;
 		}
@@ -32,9 +32,9 @@ public class TorchTile extends Tile {
 	private TorchTile(Tile onType) {
 		super("Torch "+ onType.name, sprite);
 		this.onType = onType;
-		Connections.set("sand", onType.Connections.get("sand"));
-		Connections.set("grass", onType.Connections.get("grass"));
-		Connections.set("fluid", onType.Connections.get("fluid"));
+		this.connectsToSand = onType.connectsToSand;
+		this.connectsToGrass = onType.connectsToGrass;
+		this.connectsToFluid = onType.connectsToFluid;
 	}
 	
 	public void render(Screen screen, Level level, int x, int y) {

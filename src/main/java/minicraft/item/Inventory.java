@@ -84,7 +84,7 @@ public class Inventory {
 			
 			if (!added) items.add(slot, toTake);
 		} else {
-			items.add(slot, (Item)item); // Add the item to the items list
+			items.add(slot, item); // Add the item to the items list
 		}
 	}
 	
@@ -219,7 +219,7 @@ public class Inventory {
 	}
 	public void tryAdd(int chance, @Nullable Item item) { tryAdd(chance, item, 1); }
 	public void tryAdd(int chance, ToolType type, int lvl) {
-		tryAdd(chance, new ToolItem(type, ItemLevel.LevelInstances.get(lvl)));
+		tryAdd(chance, new ToolItem(type, lvl));
 	}
 	
 	/**
@@ -228,6 +228,6 @@ public class Inventory {
 	 * @param type Type of furniture to add.
 	 */
 	public void tryAdd(int chance, Furniture type) {
-		tryAdd(chance, new FurnitureItem((Furniture)type));
+		tryAdd(chance, new FurnitureItem(type));
 	}
 }

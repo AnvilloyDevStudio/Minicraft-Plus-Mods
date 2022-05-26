@@ -1,7 +1,5 @@
 package minicraft.entity.particle;
 
-import java.util.HashMap;
-
 import minicraft.entity.ClientTickable;
 import minicraft.entity.Entity;
 import minicraft.gfx.Screen;
@@ -12,15 +10,7 @@ public class Particle extends Entity implements ClientTickable {
 	private int lifetime;
 	
 	protected Sprite sprite;
-
-	public static HashMap<String, Class<? extends Particle>> Particles = new HashMap<>();
 	
-	static {
-		Particles.put("FireParticle", FireParticle.class);
-		Particles.put("SmashParticle", SmashParticle.class);
-		Particles.put("TextParticle", TextParticle.class);
-	}
-
 	/**
 	 * Creates an particle entity at the given position. The particle has a x and y radius = 1.
 	 * @param x X map coordinate

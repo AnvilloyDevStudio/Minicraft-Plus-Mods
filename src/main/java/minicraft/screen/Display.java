@@ -45,7 +45,7 @@ public class Display {
 	public void tick(InputHandler input) {
 		
 		if (canExit && input.getKey("exit").clicked) {
-			Game.exitMenu();
+			Game.exitDisplay();
 			return;
 		}
 		
@@ -81,7 +81,6 @@ public class Display {
 		if (!changedSelection)
 			menus[selection].tick(input);
 	}
-
 	
 	protected void onSelectionChange(int oldSel, int newSel) {
 		selection = newSel;
@@ -100,8 +99,7 @@ public class Display {
 			idx++;
 			idx = idx % menus.length;
 			if(menus[idx].shouldRender())
-				menus[idx].render((Screen)screen);
+				menus[idx].render(screen);
 		} while (idx != selection);
 	}
-
 }

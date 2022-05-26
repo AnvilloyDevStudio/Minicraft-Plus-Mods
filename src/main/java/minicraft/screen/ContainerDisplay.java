@@ -47,7 +47,7 @@ public class ContainerDisplay extends Display {
 		super.tick(input);
 		
 		if(input.getKey("menu").clicked || chest.isRemoved()) {
-			Game.setMenu(null);
+			Game.setDisplay(null);
 			return;
 		}
 		
@@ -58,27 +58,21 @@ public class ContainerDisplay extends Display {
 			// switch inventories
 			Inventory from, to;
 			if(selection == 0) {
-				from = (Inventory) chest.getInventory();
-				to = (Inventory) player.getInventory();
+				from = chest.getInventory();
+				to = player.getInventory();
 			} else {
-				from = (Inventory) player.getInventory();
-				to = (Inventory) chest.getInventory();
+				from = player.getInventory();
+				to = chest.getInventory();
 			}
 			
 			int toSel = menus[otherIdx].getSelection();
 			int fromSel = curMenu.getSelection();
 			
-			if(Game.isValidClient() && from == chest.getInventory()) {
-				// just send, take no actual action
-				Game.client.removeFromChest(chest, fromSel, toSel, input.getKey("attack").clicked);
-				return;
-			}
-			
-			Item fromItem = (Item) from.get(fromSel);
+			Item fromItem = from.get(fromSel);
 			
 			boolean transferAll = input.getKey("attack").clicked || !(fromItem instanceof StackableItem) || ((StackableItem)fromItem).count == 1;
 			
-			Item toItem = (Item) fromItem.clone();
+			Item toItem = fromItem.clone();
 			
 			if(!transferAll) {
 				((StackableItem)fromItem).count--; // this is known to be valid.
@@ -90,13 +84,9 @@ public class ContainerDisplay extends Display {
 					from.remove(fromSel); // remove it
 			}
 			
-			if(!Game.isValidClient()) {
-				to.add(toSel, toItem);
-				update();
-			} else if(to == chest.getInventory()) {
-				// is online client, and from == player
-				Game.client.addToChest(chest, toSel, toItem);
-			}
+
+			to.add(toSel, toItem);
+			update();
 		}
 	}
 	

@@ -49,12 +49,12 @@ public class FontStyle {
 		/// For centering
 		Dimension size = new Dimension(Font.textWidth(msg), Font.textHeight());
 		
-		Rectangle textBounds = (Rectangle) relTextPos.positionRect(size, anchor, new Rectangle());
+		Rectangle textBounds = relTextPos.positionRect(size, anchor, new Rectangle());
 		
 		if (padX != 0 || padY != 0) {
 			size.width += padX;
 			size.height += padY;
-			Rectangle textBox = (Rectangle) relTextPos.positionRect(size, anchor, new Rectangle());
+			Rectangle textBox = relTextPos.positionRect(size, anchor, new Rectangle());
 			
 			relLinePos.positionRect(textBounds.getSize(), textBox, textBounds);
 		}
@@ -81,7 +81,7 @@ public class FontStyle {
 		// Either way, the draw method needs to use a different position.
 		
 		Dimension size = new Dimension(Font.textWidth(para), para.length*(Font.textHeight()+spacing));
-		paraBounds = (Rectangle) relTextPos.positionRect(size, anchor, new Rectangle());
+		paraBounds = relTextPos.positionRect(size, anchor, new Rectangle());
 	}
 	
 	public void setupParagraphLine(String[] para, int line, int spacing) {
@@ -100,7 +100,7 @@ public class FontStyle {
 		textArea.setSize(textArea.getWidth(), Font.textHeight()+spacing, RelPos.TOP_LEFT);
 		textArea.translate(0, line*textArea.getHeight());
 		
-		anchor = (Point) textArea.getPosition(relTextPos.getOpposite()); // For the relpos to put the rect in the correct pos, the anchor should be fetched using to opposite relpos. 
+		anchor = textArea.getPosition(relTextPos.getOpposite()); // For the relpos to put the rect in the correct pos, the anchor should be fetched using to opposite relpos. 
 		
 		padX = paraBounds.getWidth() - Font.textWidth(para[line]);
 		padY = spacing;
@@ -150,14 +150,14 @@ public class FontStyle {
 	/** Sets the position of the text box relative to the anchor. */
 	public FontStyle setRelTextPos(RelPos relPos) { return setRelTextPos(relPos, true); }
 	public FontStyle setRelTextPos(RelPos relPos, boolean setBoth) {
-		this.relTextPos = (RelPos)relPos;
+		this.relTextPos = relPos;
 		if (setBoth) relLinePos = relTextPos.getOpposite();
 		return this;
 	}
 	
 	/** Sets the position of a paragraph of text relative to the anchor. */
 	public FontStyle setRelLinePos(RelPos relPos) {
-		relLinePos = (RelPos)relPos;
+		relLinePos = relPos;
 		return this;
 	}
 	

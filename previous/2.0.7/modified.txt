@@ -1,0 +1,19 @@
+All modified changes compared with origin 2.0.7
+
+New Class:
+minicraft.core.Crash
+minicraft.core.Mod
+minicraft.core.io.ClassLoader
+minicraft.core.io.CommandWindow
+minicraft.gfx.GraphicComp
+minicraft.screen.ModsDisplay
+
+Others:
+TitleDisplay ModsDisplay
+Commented /*(Disabled)*/ all LegacyLoad parts
+GameDir "playminicraft/mods/Minicraft_Plus" -> "playminicraft/mods/Minicraft_Plus_Mods"
+LevelGen Mod Compatibility
+TileConnections
+ToolType Mod Compatibility
+ToolItem Mod Compatibility
+Level CommandWindow Compatibility

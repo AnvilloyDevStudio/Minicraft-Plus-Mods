@@ -25,9 +25,9 @@ public abstract class Tile {
 	 * This is used by wall tiles to get what material they're made of.
 	 */
 	protected enum Material {
-		Wood(ToolType.get("axe")),
-		Stone(ToolType.get("pickaxe")),
-		Obsidian(ToolType.get("pickaxe"));
+		Wood(ToolType.Axe),
+		Stone(ToolType.Pickaxe),
+		Obsidian(ToolType.Pickaxe);
 
 		public static final Material[] values = Material.values();
 		private final ToolType requiredTool;
@@ -40,32 +40,39 @@ public abstract class Tile {
 			return requiredTool;
 		}
 	}
-	
+
 	public final String name;
-	
+
 	public short id;
-	
+
 	public TileConnections Connections = new TileConnections();
+
 	public static class TileConnections extends HashMap<String, Boolean> {
 		TileConnections() {
 			for (String name : Classes.Map.keySet()) put(name, false);
 		}
+
 		public ArrayList<Short> getTiles(String name) {
 			return Classes.get(name);
 		}
+
 		public Boolean get(String name) {
 			return super.get(name.toLowerCase());
 		}
+
 		public void set(String name, boolean value) {
 			replace(name.toLowerCase(), value);
 		}
+
 		public static class Classes {
 			private static HashMap<String, ArrayList<Short>> Map = new HashMap<>();
+
 			static {
 				put("grass", new ArrayList<Short>(Arrays.asList((short)0)));
 				put("sand", new ArrayList<Short>(Arrays.asList((short)10)));
 				put("fluid", new ArrayList<Short>(Arrays.asList((short)0)));
 			}
+
 			public static void put(String k, ArrayList<Short> v) {
 				Map.put(k.toLowerCase(), v);
 			}
@@ -77,20 +84,25 @@ public abstract class Tile {
 					put(k, m);
 				}
 			}
+
 			public static void putOrAdd(String k, ArrayList<Short> v) {
 				if (Map.containsKey(k.toLowerCase())) add(k, v);
 				else put(k, v);
 			}
+
 			public static ArrayList<Short> get(String k) {
 				return Map.get(k.toLowerCase());
 			}
+
 			public static void add(String name, short... values) {
 				ArrayList<Short> m = get(name);
 				for (short v : values) m.add(v);
 			}
+
 			public static void add(String name, short v) {
 				get(name).add(v);
 			}
+
 			public static void add(String name, ArrayList<Short> v) {
 				get(name).addAll(v);
 			}
@@ -98,6 +110,7 @@ public abstract class Tile {
 		public static class ConnectionKey {
 			public String name;
 			public ArrayList<Short> tiles;
+
 			ConnectionKey(String name, ArrayList<Short> ids) {
 				this.name = name;
 				tiles = ids;
@@ -107,20 +120,19 @@ public abstract class Tile {
 
 	public int light;
 	protected boolean maySpawn;
-	
+
 	protected Sprite sprite;
 	protected ConnectorSprite csprite;
-	
+
 	{
 		light = 1;
 		maySpawn = false;
 		sprite = null;
 		csprite = null;
 	}
-	
+
 	protected Tile(String name, Sprite sprite) {
 		this.name = name.toUpperCase();
-		if (sprite == null) sprite = new Sprite(0, 30, 2, 2, 1);
 		this.sprite = sprite;
 	}
 	protected Tile(String name, ConnectorSprite sprite) {
@@ -128,14 +140,14 @@ public abstract class Tile {
 		csprite = sprite;
 	}
 
-	
+
 	/** This method is used by tiles to specify the default "data" they have in a level's data array.
 		Used for starting health, color/type of tile, etc. */
 	// At least, that was the idea at first...
 	public int getDefaultData() {
 		return 0;
 	}
-	
+
 	/** Render method, used in sub-classes */
 	public void render(Screen screen, Level level, int x, int y) {
 		if (sprite != null)
@@ -143,9 +155,9 @@ public abstract class Tile {
 		if (csprite != null)
 			csprite.render(screen, level, x, y);
 	}
-	
+
 	public boolean maySpawn() { return maySpawn; }
-	
+
 	/** Returns if the player can walk on it, overrides in sub-classes  */
 	public boolean mayPass(Level level, int x, int y, Entity e) {
 		return true;
@@ -176,13 +188,13 @@ public abstract class Tile {
 	 * @param dmg The damage taken.
 	 */
 	public void hurt(Level level, int x, int y, int dmg) {}
-	
+
 	/** What happens when you run into the tile (ex: run into a cactus) */
 	public void bumpedInto(Level level, int xt, int yt, Entity entity) {}
-	
+
 	/** Update method */
 	public boolean tick(Level level, int xt, int yt) { return false; }
-	
+
 	/** What happens when you are inside the tile (ex: lava) */
 	public void steppedOn(Level level, int xt, int yt, Entity entity) {}
 
@@ -199,10 +211,22 @@ public abstract class Tile {
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
 		return false;
 	}
-	
+
+	/**
+	 * Executed when the tile is exploded.
+	 * The call for this method is done just before the tiles are changed to exploded tiles.
+	 * @param level The level we are on.
+	 * @param xt X position of the tile.
+	 * @param yt Y position of the tile.
+	 * @return true if successful.
+	 */
+	public boolean onExplode(Level level, int xt, int yt) {
+		return false;
+	}
+
 	/** Sees if the tile connects to a fluid. */
-	public boolean connectsToLiquid() { return Connections.get("fluid"); }
-	
+	public boolean connectsToLiquid() { return connectsToFluid; }
+
 	public int getData(String data) {
 		try {
 			return Integer.parseInt(data);
@@ -210,38 +234,38 @@ public abstract class Tile {
 			return 0;
 		}
 	}
-	
+
 	public boolean matches(int thisData, String tileInfo) {
 		return name.equals(tileInfo.split("_")[0]);
 	}
-	
+
 	public String getName(int data) {
 		return name;
 	}
-	
+
 	public static String getData(int depth, int x, int y) {
 		try {
 			byte lvlidx = (byte) World.lvlIdx(depth);
 			Level curLevel = World.levels[lvlidx];
 			int pos = x + curLevel.w * y;
-			
+
 			int tileid = curLevel.tiles[pos];
 			int tiledata = curLevel.data[pos];
-			
+
 			return lvlidx + ";" + pos + ";" + tileid + ";" + tiledata;
 		} catch(NullPointerException | IndexOutOfBoundsException ignored) {
 		}
-		
+
 		return "";
 	}
-	
+
 	@Override
 	public boolean equals(Object other) {
 		if (!(other instanceof Tile)) return false;
 		Tile o = (Tile) other;
 		return name.equals(o.name);
 	}
-	
+
 	@Override
 	public int hashCode() { return name.hashCode(); }
 }

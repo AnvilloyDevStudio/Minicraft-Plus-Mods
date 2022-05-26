@@ -13,7 +13,7 @@ public class Arrow extends Entity implements ClientTickable {
 	private int damage;
 	public Mob owner;
 	private int speed;
-	
+
 	public Arrow(Mob owner, Direction dir, int dmg) {
 		this(owner, owner.x, owner.y, dir, dmg);
 	}
@@ -23,15 +23,15 @@ public class Arrow extends Entity implements ClientTickable {
 		this.x = x;
 		this.y = y;
 		this.dir = dir;
-		
+
 		damage = dmg;
 		col = Color.get(-1, 111, 222, 430);
-		
+
 		if (damage > 3) speed = 8;
 		else if (damage >= 0) speed = 7;
 		else speed = 6;
 	}
-	
+
 	/**
 	 * Generates information about the arrow.
 	 * @return string representation of owner, xdir, ydir and damage.
@@ -39,7 +39,7 @@ public class Arrow extends Entity implements ClientTickable {
 	public String getData() {
 		return owner.eid + ":" + dir.ordinal() + ":"+damage;
 	}
-	
+
 	@Override
 	public void tick() {
 		if (x < 0 || x >> 4 > level.w || y < 0 || y >> 4 > level.h) {
@@ -62,7 +62,7 @@ public class Arrow extends Entity implements ClientTickable {
 			}
 
 			if (!level.getTile(x / 16, y / 16).mayPass(level, x / 16, y / 16, this)
-					&& !level.getTile(x / 16, y / 16).connectsToFluid
+					&& !level.getTile(x / 16, y / 16).connections.get("fluid")
 					&& level.getTile(x / 16, y / 16).id != 16) {
 				this.remove();
 			}
@@ -81,7 +81,7 @@ public class Arrow extends Entity implements ClientTickable {
 		if(dir == Direction.LEFT) xt = 1;
 		if(dir == Direction.UP) xt = 2;
 		if(dir == Direction.DOWN) xt = 3;
-		
+
 		screen.render(x - 4, y - 4, xt + yt * 32, 0);
 	}
 }

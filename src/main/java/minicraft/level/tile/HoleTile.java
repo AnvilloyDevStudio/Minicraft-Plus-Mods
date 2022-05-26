@@ -16,8 +16,8 @@ public class HoleTile extends Tile {
 
 	protected HoleTile(String name) {
 		super(name, sprite);
-		connectsToSand = true;
-		connectsToFluid = true;
+		connections.set("sand", true);
+		connections.set("fluid", true);
 	}
 
 	@Override

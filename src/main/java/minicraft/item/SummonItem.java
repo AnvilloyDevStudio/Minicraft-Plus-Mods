@@ -24,8 +24,8 @@ public class SummonItem extends StackableItem {
 
 	private final String mob;
 
-	private SummonItem(String name, Sprite sprite, String mob) { this(name, sprite, 1, mob); }
-	private SummonItem(String name, Sprite sprite, int count, String mob) {
+	public SummonItem(String name, Sprite sprite, String mob) { this(name, sprite, 1, mob); }
+	public SummonItem(String name, Sprite sprite, int count, String mob) {
 		super(name, sprite, count);
 		this.mob = mob;
 	}

@@ -9,7 +9,6 @@ import minicraft.gfx.Sprite;
 import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.ToolItem;
-import minicraft.item.ToolType;
 import minicraft.level.Level;
 
 public class CloudTile extends Tile {
@@ -19,7 +18,7 @@ public class CloudTile extends Tile {
 			return tile != Tiles.get("Infinite Fall");
 		}
 	};
-	
+
 	protected CloudTile(String name) {
 		super(name, sprite);
 	}
@@ -32,7 +31,7 @@ public class CloudTile extends Tile {
 		// We don't want the tile to break when attacked with just anything, even in creative mode
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
-			if (tool.type == ToolType.Shovel && player.payStamina(5)) {
+			if (tool.type.name.equals("shovel") && player.payStamina(5)) {
 				level.setTile(xt, yt, Tiles.get("Infinite Fall")); // Would allow you to shovel cloud, I think.
 				Sound.monsterHurt.play();
 				level.dropItem(xt * 16 + 8, yt * 16 + 8, 1, 3, Items.get("Cloud"));

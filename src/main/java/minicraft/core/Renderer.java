@@ -180,7 +180,7 @@ public class Renderer extends Game {
 
 		// This checks if the player is holding a bow, and shows the arrow counter accordingly.
 		if (player.activeItem instanceof ToolItem) {
-			if (((ToolItem)player.activeItem).type == ToolType.Bow) {
+			if (((ToolItem)player.activeItem).type.name.equals("bow")) {
 				int ac = player.getInventory().count(Items.arrowItem);
 				// "^" is an infinite symbol.
 				if (isMode("creative") || ac >= 10000)

@@ -21,9 +21,12 @@ The boxes on the left hand side are used to update the codes when the version is
 
 # Compatibilities
 * [X] LevelGen Mod Compatibility
-* [-] Tile.TileConnections
-    * [-] connectsTo* -> TileConnections#get/set
-* [ ] ToolType Mod Compatibility
-* [ ] ToolItem Mod Compatibility
+* [X] Tile.TileConnections
+    * [X] connectsTo* -> TileConnections#get/set
+* [X] ToolType Mod Compatibility
+    * [X] ToolType enum to class
+* [X] ToolItem Mod Compatibility
+    * [X] LEVEL_NAMES (String[]) -> LEVELS (HashMap<\String, Integer>)
 * [ ] Level CommandWindow Compatibility
-* [ ] Items Mod Compatibility
+* [X] Items Mod Compatibility (Mods#registeredItems)
+* [X] Change all visibilities of constructors of items and tiles to public

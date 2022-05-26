@@ -23,7 +23,7 @@ public class WallTile extends Tile {
 	protected Material type;
 	private ConnectorSprite sprite;
 
-	protected WallTile(Material type) {
+	public WallTile(Material type) {
 		super(type.name() + " Wall", (ConnectorSprite) null);
 		this.type = type;
 		switch (type) {

@@ -53,7 +53,7 @@ public class Sheep extends PassiveMob {
 		if (cut) return false;
 
 		if (item instanceof ToolItem) {
-			if (((ToolItem) item).type == ToolType.Shears) {
+			if (((ToolItem) item).type.name.equals("shears")) {
 				cut = true;
 				dropItem(1, 3, Items.get("Wool"));
 				ageWhenCut = age;

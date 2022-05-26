@@ -25,7 +25,6 @@ dependencies {
     // implementation files("dependencies/forgespi-4.0.11.jar")
     // implementation files("dependencies/accesstransformers-8.0.7.jar")
     // implementation files("dependencies/securejarhandler-1.0.3.jar")
-
 }
 
 java {

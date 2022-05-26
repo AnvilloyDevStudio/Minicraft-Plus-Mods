@@ -9,7 +9,6 @@ import minicraft.gfx.Sprite;
 import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.ToolItem;
-import minicraft.item.ToolType;
 import minicraft.level.Level;
 
 public class DirtTile extends Tile {
@@ -19,8 +18,8 @@ public class DirtTile extends Tile {
 		levelSprite[1] = new Sprite(14, 2, 2, 2, 1);
 		levelSprite[2] = new Sprite(12, 4, 2, 2, 1);
 	}
-	
-	protected DirtTile(String name) {
+
+	public DirtTile(String name) {
 		super(name, levelSprite[0]);
 		maySpawn = true;
 	}
@@ -41,15 +40,15 @@ public class DirtTile extends Tile {
 			default: return 1; // Caves
 		}
 	}
-	
+
 	public void render(Screen screen, Level level, int x, int y) {
 		levelSprite[dIdx(level.depth)].render(screen, x * 16, y * 16, 0);
 	}
-	
+
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
-			if (tool.type == ToolType.Shovel) {
+			if (tool.type.name.equals("shovel")) {
 				if (player.payStamina(4 - tool.level) && tool.payDurability()) {
 					level.setTile(xt, yt, Tiles.get("Hole"));
 					Sound.monsterHurt.play();
@@ -57,7 +56,7 @@ public class DirtTile extends Tile {
 					return true;
 				}
 			}
-			if (tool.type == ToolType.Hoe) {
+			if (tool.type.name.equals("hoe")) {
 				if (player.payStamina(4 - tool.level) && tool.payDurability()) {
 					level.setTile(xt, yt, Tiles.get("Farmland"));
 					Sound.monsterHurt.play();

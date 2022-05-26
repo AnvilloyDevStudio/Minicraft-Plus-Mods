@@ -16,8 +16,8 @@ public class ExplodedTile extends Tile {
 
 	protected ExplodedTile(String name) {
 		super(name, sprite);
-		connectsToSand = true;
-		connectsToFluid = true;
+		connections.set("sand", true);
+		connections.set("fluid", true);
 	}
 
 	public boolean mayPass(Level level, int x, int y, Entity e) {

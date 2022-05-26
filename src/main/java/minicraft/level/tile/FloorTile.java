@@ -14,7 +14,7 @@ public class FloorTile extends Tile {
 	protected Material type;
 	private Sprite sprite;
 
-	protected FloorTile(Material type) {
+	public FloorTile(Material type) {
 		super((type == Material.Wood ? "Wood Planks" : type == Material.Obsidian ? "Obsidian" : type.name() + " Bricks"), (Sprite) null);
 		this.type = type;
 		maySpawn = true;

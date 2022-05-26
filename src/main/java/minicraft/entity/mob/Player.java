@@ -512,7 +512,7 @@ public class Player extends Mob implements ItemHolder, ClientTickable {
 			// Fire a bow if we have the stamina and an arrow.
 			if (activeItem instanceof ToolItem && stamina - 1 >= 0) {
 				ToolItem tool = (ToolItem) activeItem;
-				if (tool.type == ToolType.Bow && tool.dur > 0 && inventory.count(Items.arrowItem) > 0) {
+				if (tool.type.name.equals("bow") && tool.dur > 0 && inventory.count(Items.arrowItem) > 0) {
 
 					if (!Game.isMode("creative")) inventory.removeItem(Items.arrowItem);
 					level.add(new Arrow(this, attackDir, tool.level));

@@ -37,8 +37,8 @@ import minicraft.screen.Display;
 
 public class Main {
     public static void entry() {
-        Items.add(new StackableItem("copper", null));
-        Items.add(new StackableItem("copper ore", null));
+        Mods.registerItem(new StackableItem("copper", null));
+        Mods.registerItem(new StackableItem("copper ore", null));
         Recipes.furnaceRecipes.add(new Recipe("Copper_1", "Coal_1", "Copper Ore_4"));
         Tiles.add(43, new OreTile(new OreType("Copper", Items.get("copper ore"), null)));
         LevelGen.ModTileGen.TileGeneration copperGen = (map, data, layer, w, h, random) -> {
@@ -64,24 +64,24 @@ public class Main {
             public void render(Screen screen, Level level, int x, int y) {
                 new Sprite(0, 30, 2, 2, 1).render(screen, x << 4, y << 4);
             }
-        
+
             @Override
             public boolean hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
                 hurt(level, x, y, dmg);
                 return true;
             }
-        
+
             public void hurt(Level level, int x, int y, int dmg) {
                 if (random.nextInt(250) == 0)
                     level.dropItem(x * 16 + 8, y * 16 + 8, Items.get("Apple"));
-                
+
                 int damage = level.getData(x, y) + dmg;
                 int treeHealth = 30;
                 if (Game.isMode("Creative")) dmg = damage = treeHealth;
-                
+
                 level.add(new SmashParticle(x*16, y*16));
                 Sound.monsterHurt.play();
-        
+
                 level.add(new TextParticle("" + dmg, x * 16 + 8, y * 16 + 8, Color.RED));
                 if (damage >= treeHealth) {
                     level.dropItem(x * 16 + 8, y * 16 + 8, 2, 5, Items.get("Wood"));

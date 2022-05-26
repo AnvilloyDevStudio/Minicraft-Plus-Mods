@@ -1,5 +1,7 @@
 package minicraft.level.tile;
 
+import java.util.Map.Entry;
+
 import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.mob.Mob;
@@ -9,23 +11,21 @@ import minicraft.level.Level;
 
 public class SaplingTile extends Tile {
 	private static Sprite sprite = new Sprite(12, 1, 1);
-	
+
 	private Tile onType;
 	private Tile growsTo;
-	
+
 	protected SaplingTile(String name, Tile onType, Tile growsTo) {
 		super(name, sprite);
 		this.onType = onType;
 		this.growsTo = growsTo;
-		connectsToSand = onType.connectsToSand;
-		connectsToGrass = onType.connectsToGrass;
-		connectsToFluid = onType.connectsToFluid;
+		for (Entry<String, Boolean> e : onType.connections.entrySet()) connections.set(e.getKey(), e.getValue());
 		maySpawn = true;
 	}
 
 	public void render(Screen screen, Level level, int x, int y) {
 		onType.render(screen, level, x, y);
-		
+
 		sprite.render(screen, x * 16, y * 16);
 	}
 

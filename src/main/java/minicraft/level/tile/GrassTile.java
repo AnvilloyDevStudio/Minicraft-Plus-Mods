@@ -9,7 +9,6 @@ import minicraft.gfx.Sprite;
 import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.ToolItem;
-import minicraft.item.ToolType;
 import minicraft.level.Level;
 
 public class GrassTile extends Tile {
@@ -17,24 +16,24 @@ public class GrassTile extends Tile {
 	{
 		public boolean connectsTo(Tile tile, boolean isSide) {
 			if(!isSide) return true;
-			return tile.connectsToGrass;
+			return tile.connections.get("grass");
 		}
 	};
-	
+
 	protected GrassTile(String name) {
 		super(name, sprite);
 		csprite.sides = csprite.sparse;
-		connectsToGrass = true;
+		connections.set("grass", true);
 		maySpawn = true;
 	}
 
 	public boolean tick(Level level, int xt, int yt) {
 		// TODO revise this method.
 		if (random.nextInt(40) != 0) return false;
-		
+
 		int xn = xt;
 		int yn = yt;
-		
+
 		if (random.nextBoolean()) xn += random.nextInt(2) * 2 - 1;
 		else yn += random.nextInt(2) * 2 - 1;
 
@@ -53,7 +52,7 @@ public class GrassTile extends Tile {
 	public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
-			if (tool.type == ToolType.Shovel) {
+			if (tool.type.name.equals("shovel")) {
 				if (player.payStamina(4 - tool.level) && tool.payDurability()) {
 					level.setTile(xt, yt, Tiles.get("Dirt"));
 					Sound.monsterHurt.play();
@@ -63,7 +62,7 @@ public class GrassTile extends Tile {
 					return true;
 				}
 			}
-			if (tool.type == ToolType.Hoe) {
+			if (tool.type.name.equals("hoe")) {
 				if (player.payStamina(4 - tool.level) && tool.payDurability()) {
 					level.setTile(xt, yt, Tiles.get("Dirt"));
 					Sound.monsterHurt.play();
@@ -73,7 +72,7 @@ public class GrassTile extends Tile {
 					return true;
 				}
 			}
-			if (tool.type == ToolType.Pickaxe) {
+			if (tool.type.name.equals("pickaxe")) {
 				if (player.payStamina(4 - tool.level) && tool.payDurability()) {
 					level.setTile(xt, yt, Tiles.get("Path"));
 					Sound.monsterHurt.play();

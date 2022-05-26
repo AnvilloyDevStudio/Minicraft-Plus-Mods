@@ -15,14 +15,14 @@ public class PathTile extends Tile {
 
     public PathTile(String name) {
         super(name, sprite);
-        connectsToGrass = true;
+		connections.set("grass", true);
         maySpawn = true;
     }
 
     public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
         if (item instanceof ToolItem) {
             ToolItem tool = (ToolItem) item;
-            if (tool.type == ToolType.Shovel) {
+            if (tool.type.name.equals("shovel")) {
                 if (player.payStamina(4 - tool.level) && tool.payDurability()) {
                     level.setTile(xt, yt, Tiles.get("Hole"));
                     Sound.monsterHurt.play();

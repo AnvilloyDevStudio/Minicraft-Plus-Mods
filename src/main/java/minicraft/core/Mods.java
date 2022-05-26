@@ -12,6 +12,8 @@ import org.json.JSONObject;
 import minicraft.core.io.ClassLoader;
 import minicraft.core.io.FileHandler;
 import minicraft.core.io.InputHandler;
+import minicraft.item.Item;
+import minicraft.item.Items;
 import minicraft.saveload.Version;
 import minicraft.screen.Display;
 
@@ -20,6 +22,13 @@ public class Mods extends Game {
     public static ArrayList<Mods.Mod> Mods = new ArrayList<>();
     public static final Version VERSION = new Version("0.3.0");
     public static ArrayList<Display> guiDisplays = new ArrayList<>();
+	public static ArrayList<Item> registeredItems = new ArrayList<>();
+
+	public static void registerItem(Item item) {
+		registeredItems.add(item);
+		Items.add(item);
+	}
+
     public static void init() {}
 
     static {
@@ -64,6 +73,7 @@ public class Mods extends Game {
             if (success) Mods.forEach(m -> m.startLoading());
         }
     }
+
     static void renderGui() {
         guiDisplays.forEach(m -> m.render(Renderer.screen));
     }

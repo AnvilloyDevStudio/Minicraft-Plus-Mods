@@ -25,9 +25,9 @@ public abstract class Tile {
 	 * This is used by wall tiles to get what material they're made of.
 	 */
 	protected enum Material {
-		Wood(ToolType.Axe),
-		Stone(ToolType.Pickaxe),
-		Obsidian(ToolType.Pickaxe);
+		Wood(ToolType.types.get("axe")),
+		Stone(ToolType.types.get("pickaxe")),
+		Obsidian(ToolType.types.get("pickaxe"));
 
 		public static final Material[] values = Material.values();
 		private final ToolType requiredTool;
@@ -45,7 +45,7 @@ public abstract class Tile {
 
 	public short id;
 
-	public TileConnections Connections = new TileConnections();
+	public TileConnections connections = new TileConnections();
 
 	public static class TileConnections extends HashMap<String, Boolean> {
 		TileConnections() {
@@ -56,12 +56,12 @@ public abstract class Tile {
 			return Classes.get(name);
 		}
 
-		public Boolean get(String name) {
-			return super.get(name.toLowerCase());
+		public boolean get(String name) {
+			return super.get(name.toUpperCase());
 		}
 
 		public void set(String name, boolean value) {
-			replace(name.toLowerCase(), value);
+			replace(name.toUpperCase(), value);
 		}
 
 		public static class Classes {
@@ -74,10 +74,10 @@ public abstract class Tile {
 			}
 
 			public static void put(String k, ArrayList<Short> v) {
-				Map.put(k.toLowerCase(), v);
+				Map.put(k.toUpperCase(), v);
 			}
 			public static void putOrAdd(String k, short... v) {
-				if (Map.containsKey(k.toLowerCase())) add(k, v);
+				if (Map.containsKey(k.toUpperCase())) add(k, v);
 				else {
 					ArrayList<Short> m = new ArrayList<>();
 					for (short value : v) m.add(value);
@@ -86,12 +86,12 @@ public abstract class Tile {
 			}
 
 			public static void putOrAdd(String k, ArrayList<Short> v) {
-				if (Map.containsKey(k.toLowerCase())) add(k, v);
+				if (Map.containsKey(k.toUpperCase())) add(k, v);
 				else put(k, v);
 			}
 
 			public static ArrayList<Short> get(String k) {
-				return Map.get(k.toLowerCase());
+				return Map.get(k.toUpperCase());
 			}
 
 			public static void add(String name, short... values) {
@@ -105,15 +105,6 @@ public abstract class Tile {
 
 			public static void add(String name, ArrayList<Short> v) {
 				get(name).addAll(v);
-			}
-		}
-		public static class ConnectionKey {
-			public String name;
-			public ArrayList<Short> tiles;
-
-			ConnectionKey(String name, ArrayList<Short> ids) {
-				this.name = name;
-				tiles = ids;
 			}
 		}
 	}
@@ -225,7 +216,7 @@ public abstract class Tile {
 	}
 
 	/** Sees if the tile connects to a fluid. */
-	public boolean connectsToLiquid() { return connectsToFluid; }
+	public boolean connectsToLiquid() { return connections.get("fluid"); }
 
 	public int getData(String data) {
 		try {

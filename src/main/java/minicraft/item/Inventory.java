@@ -11,7 +11,7 @@ import minicraft.entity.furniture.Furniture;
 public class Inventory {
 	private final Random random = new Random();
 	private final List<Item> items = new ArrayList<>(); // The list of items that is in the inventory.
-	
+
 	/**
 	 * Returns all the items which are in this inventory.
 	 * @return ArrayList containing all the items in the inventory.
@@ -33,18 +33,18 @@ public class Inventory {
 	 * @return The removed item.
 	 */
 	public Item remove(int idx) { return items.remove(idx); }
-	
+
 	public void addAll(Inventory other) {
 		for (Item i: other.getItems())
 			add(i.clone());
 	}
-	
+
 	/** Adds an item to the inventory */
 	public void add(@Nullable Item item) {
 		if (item != null)
 			add(items.size(), item);  // Adds the item to the end of the inventory list
 	}
-	
+
 	/**
 	 * Adds several copies of the same item to the end of the inventory.
 	 * @param item Item to be added.
@@ -54,7 +54,7 @@ public class Inventory {
 		for (int i = 0; i < num; i++)
 			add(item.clone());
 	}
-	
+
 	/**
 	 * Adds an item to a specific spot in the inventory.
 	 * @param slot Index to place item at.
@@ -71,7 +71,7 @@ public class Inventory {
 
 		if (item instanceof StackableItem) { // If the item is a item...
 			StackableItem toTake = (StackableItem) item; // ...convert it into a StackableItem object.
-			
+
 			boolean added = false;
 			for (Item value : items) {
 				if (toTake.stacksWith(value)) {
@@ -81,13 +81,13 @@ public class Inventory {
 					break;
 				}
 			}
-			
+
 			if (!added) items.add(slot, toTake);
 		} else {
 			items.add(slot, item); // Add the item to the items list
 		}
 	}
-	
+
 	/** Removes items from your inventory; looks for stacks, and removes from each until reached count. returns amount removed. */
 	private int removeFromStack(StackableItem given, int count) {
 		int removed = 0; // To keep track of amount removed.
@@ -110,12 +110,12 @@ public class Inventory {
 			}
 			// If not all have been removed, look for another stack.
 		}
-		
+
 		if (removed < count) System.out.println("Inventory: could not remove all items; " + (count-removed) + " left.");
 		return removed;
 	}
-	
-	/** 
+
+	/**
 	 * Removes the item from the inventory entirely, whether it's a stack, or a lone item.
 	 */
 	public void removeItem(Item i) {
@@ -125,7 +125,7 @@ public class Inventory {
 		else
 			removeItems(i.clone(), 1);
 	}
-	
+
 	/**
 	 * Removes items from this inventory. Note, if passed a stackable item, this will only remove a max of count from the stack.
 	 * @param given Item to remove.
@@ -144,15 +144,15 @@ public class Inventory {
 				}
 			}
 		}
-		
+
 		if (count > 0)
 			System.out.println("WARNING: could not remove " + count + " " + given + (count>1?"s":"") + " from inventory");
 	}
-	
+
 	/** Returns the how many of an item you have in the inventory. */
 	public int count(Item given) {
 		if (given == null) return 0; // null requests get no items. :)
-		
+
 		int found = 0; // Initialize counting var
 		// Assign current item
 		for (Item curItem : items) { // Loop though items in inv
@@ -162,10 +162,10 @@ public class Inventory {
 			else if (curItem.equals(given))
 				found++; // Otherwise, just add 1 to the found count.
 		}
-		
+
 		return found;
 	}
-	
+
 	/**
 	 * Generates a string representation of all the items in the inventory which can be sent
 	 * over the network.
@@ -175,26 +175,26 @@ public class Inventory {
 		StringBuilder itemdata = new StringBuilder();
 		for (Item i: items)
 			itemdata.append(i.getData()).append(":");
-		
+
 		if (itemdata.length() > 0)
 			itemdata = new StringBuilder(itemdata.substring(0, itemdata.length() - 1)); // Remove extra ",".
-		
+
 		return itemdata.toString();
 	}
-	
+
 	/**
 	 * Replaces all the items in the inventory with the items in the string.
 	 * @param items String representation of an inventory.
 	 */
 	public void updateInv(String items) {
 		clearInv();
-		
+
 		if (items.length() == 0) return; // There are no items to add.
-		
+
 		for (String item: items.split(":")) // This still generates a 1-item array when "items" is blank... [""].
 			add(Items.get(item));
 	}
-	
+
 	/**
 	 * Tries to add an item to the inventory.
 	 * @param chance Chance for the item to be added.
@@ -218,10 +218,10 @@ public class Inventory {
 			tryAdd(chance, item, num, false);
 	}
 	public void tryAdd(int chance, @Nullable Item item) { tryAdd(chance, item, 1); }
-	public void tryAdd(int chance, ToolType type, int lvl) {
+	public void tryAdd(int chance, ToolType type, String lvl) {
 		tryAdd(chance, new ToolItem(type, lvl));
 	}
-	
+
 	/**
 	 * Tries to add an Furniture to the inventory.
 	 * @param chance Chance for the item to be added.

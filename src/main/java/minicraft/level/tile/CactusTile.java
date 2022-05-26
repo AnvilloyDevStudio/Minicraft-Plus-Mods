@@ -16,10 +16,10 @@ import minicraft.level.Level;
 
 public class CactusTile extends Tile {
 	private static Sprite sprite = new Sprite(6, 0, 2, 2, 1);
-	
+
 	protected CactusTile(String name) {
 		super(name, sprite);
-		connectsToSand = true;
+		connections.set("sand", true);
 	}
 
 	public boolean mayPass(Level level, int x, int y, Entity e) {
@@ -32,7 +32,7 @@ public class CactusTile extends Tile {
 		if (Game.isMode("creative")) dmg = damage = cHealth;
 		level.add(new SmashParticle(x * 16, y * 16));
 		level.add(new TextParticle("" + dmg, x * 16 + 8, y * 16 + 8, Color.RED));
-		
+
 		if (damage >= cHealth) {
 			//int count = random.nextInt(2) + 2;
 			level.setTile(x, y, Tiles.get("sand"));

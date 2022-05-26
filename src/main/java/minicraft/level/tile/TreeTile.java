@@ -22,7 +22,7 @@ public class TreeTile extends Tile {
 
 	protected TreeTile(String name) {
 		super(name, (ConnectorSprite)null);
-		connectsToGrass = true;
+		connections.set("grass", true);
 	}
 
 	public void render(Screen screen, Level level, int x, int y) {
@@ -84,7 +84,7 @@ public class TreeTile extends Tile {
 			return false; // Go directly to hurt method
 		if (item instanceof ToolItem) {
 			ToolItem tool = (ToolItem) item;
-			if (tool.type == ToolType.Axe) {
+			if (tool.type.name.equals("axe")) {
 				if (player.payStamina(4 - tool.level) && tool.payDurability()) {
 					hurt(level, xt, yt, tool.getDamage());
 					return true;

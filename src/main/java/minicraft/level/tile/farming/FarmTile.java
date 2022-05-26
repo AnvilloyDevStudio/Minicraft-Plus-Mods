@@ -19,7 +19,7 @@ public class FarmTile extends Tile {
     public FarmTile(String name) {
         super(name, sprite);
     }
-    protected FarmTile(String name, Sprite sprite) {
+    public FarmTile(String name, Sprite sprite) {
         super(name, sprite);
     }
 
@@ -27,7 +27,7 @@ public class FarmTile extends Tile {
     public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
         if (item instanceof ToolItem) {
             ToolItem tool = (ToolItem) item;
-            if (tool.type == ToolType.Shovel) {
+            if (tool.type.name.equals("shovel")) {
                 if (player.payStamina(4 - tool.level) && tool.payDurability()) {
                     level.setTile(xt, yt, Tiles.get("Dirt"));
                     Sound.monsterHurt.play();

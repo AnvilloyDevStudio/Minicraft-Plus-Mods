@@ -10,15 +10,15 @@ public class LavaTile extends Tile {
 	private ConnectorSprite sprite = new ConnectorSprite(LavaTile.class, new Sprite(12, 9, 3, 3, 1, 3), Sprite.dots(0))
 	{
 		public boolean connectsTo(Tile tile, boolean isSide) {
-			return tile.connectsToFluid;
+			return tile.connections.get("fluid");
 		}
 	};
 
 	protected LavaTile(String name) {
 		super(name, (ConnectorSprite)null);
 		super.csprite = sprite;
-		connectsToSand = true;
-		connectsToFluid = true;
+		connections.set("sand", true);
+		connections.set("fluid", true);
 	}
 
 	@Override

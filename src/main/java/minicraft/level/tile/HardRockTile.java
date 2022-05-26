@@ -15,7 +15,6 @@ import minicraft.gfx.Sprite;
 import minicraft.item.Item;
 import minicraft.item.Items;
 import minicraft.item.ToolItem;
-import minicraft.item.ToolType;
 import minicraft.level.Level;
 
 public class HardRockTile extends Tile {
@@ -42,7 +41,7 @@ public class HardRockTile extends Tile {
 			ToolItem tool = (ToolItem) item;
 
 			// If we are hitting with a gem pickaxe.
-			if (tool.type == ToolType.Pickaxe && tool.level == 4) {
+			if (tool.type.name.equals("pickaxe") && tool.level == 4) {
 				if (player.payStamina(2) && tool.payDurability()) {
 					hurt(level, xt, yt, tool.getDamage());
 					return true;

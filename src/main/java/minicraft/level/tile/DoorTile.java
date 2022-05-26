@@ -17,7 +17,7 @@ public class DoorTile extends Tile {
 	private Sprite closedSprite;
 	private Sprite openSprite;
 
-	protected DoorTile(Material type) {
+	public DoorTile(Material type) {
 		super(type.name() + " Door", (Sprite) null);
 		this.type = type;
 		switch (type) {

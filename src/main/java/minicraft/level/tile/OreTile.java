@@ -1,5 +1,7 @@
 package minicraft.level.tile;
 
+import java.util.HashMap;
+
 import minicraft.core.Game;
 import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
@@ -22,17 +24,23 @@ import minicraft.screen.AchievementsDisplay;
 public class OreTile extends Tile {
 	private final OreType type;
 
-	public enum OreType {
-        Iron (Items.get("Iron Ore"), 0),
-		Lapis (Items.get("Lapis"), 2),
-		Gold (Items.get("Gold Ore"), 4),
-		Gem (Items.get("Gem"), 6),
-		Cloud (Items.get("Cloud Ore"), 8);
+	public static class OreType {
+		public static HashMap<String, OreType> types = new HashMap<>();
+
+		static {
+			types.put("Iron", new OreType("Iron", Items.get("Iron Ore"), 0));
+			types.put("Lapis", new OreType("Lapis", Items.get("Lapis"), 2));
+			types.put("Gold", new OreType("Gold", Items.get("Gold Ore"), 4));
+			types.put("Gem", new OreType("Gem", Items.get("Gem"), 6));
+			types.put("Cloud", new OreType("Cloud", Items.get("Cloud Ore"), 8));
+		}
 
 		private final Item drop;
 		public final int color;
+		public final String name;
 
-		OreType(Item drop, int color) {
+		OreType(String name, Item drop, int color) {
+			this.name = name;
 			this.drop = drop;
 			this.color = color;
 		}
@@ -43,7 +51,7 @@ public class OreTile extends Tile {
     }
 
 	public OreTile(OreType o) {
-		super((o == OreTile.OreType.Lapis ? "Lapis" : o == OreType.Cloud ? "Cloud Cactus" : o.name() + " Ore"), new Sprite(22 + o.color, 2, 2, 2, 1));
+		super((o.name.equals("Lapis") ? "Lapis" : o.name.equals("Cloud") ? "Cloud Cactus" : o.name + " Ore"), new Sprite(22 + o.color, 2, 2, 2, 1));
         this.type = o;
 	}
 
@@ -92,7 +100,7 @@ public class OreTile extends Tile {
 		if (dmg > 0) {
 			int count = random.nextInt(2);
 			if (damage >= oreH) {
-				if (type == OreType.Cloud) {
+				if (type.name.equals("Cloud")) {
 					level.setTile(x, y, Tiles.get("Cloud"));
 				} else {
 					level.setTile(x, y, Tiles.get("Dirt"));

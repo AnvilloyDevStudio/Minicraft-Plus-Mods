@@ -115,6 +115,8 @@ public class Game {
 		Tiles.initTileList();
 		Sound.init();
 
+		Mods.init();
+
 		World.resetGame(); // "half"-starts a new game, to set up initial variables
 		player.eid = 0;
 		new Load(true); // This loads any saved preferences.

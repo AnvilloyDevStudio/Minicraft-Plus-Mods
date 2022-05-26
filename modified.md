@@ -27,6 +27,8 @@ The boxes on the left hand side are used to update the codes when the version is
     * [X] ToolType enum to class
 * [X] ToolItem Mod Compatibility
     * [X] LEVEL_NAMES (String[]) -> LEVELS (HashMap<\String, Integer>)
+* [X] OreType Mod Compatibility
+    * [X] OreType enum to class
 * [ ] Level CommandWindow Compatibility
 * [X] Items Mod Compatibility (Mods#registeredItems)
 * [X] Change all visibilities of constructors of items and tiles to public

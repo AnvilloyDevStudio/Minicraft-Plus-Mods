@@ -45,7 +45,6 @@ public class Items {
 		addAll(PotionItem.getAllInstances());
 		addAll(FishingRodItem.getAllInstances());
 		addAll(SummonItem.getAllInstances());
-		addAll(Mods.registeredItems);
 	}
 
 	/** fetches an item from the list given its name. */

@@ -37,10 +37,11 @@ import minicraft.screen.Display;
 
 public class Main {
     public static void entry() {
-        Mods.registerItem(new StackableItem("copper", null));
-        Mods.registerItem(new StackableItem("copper ore", null));
+        Mods.registerItem(new StackableItem("copper", Sprite.missingTexture(1, 1)));
+        Mods.registerItem(new StackableItem("copper ore", Sprite.missingTexture(1, 1)));
         Recipes.furnaceRecipes.add(new Recipe("Copper_1", "Coal_1", "Copper Ore_4"));
-        Tiles.add(43, new OreTile(new OreType("Copper", Items.get("copper ore"), null)));
+		OreType.types.put("Copper", new OreType("Copper", Items.get("copper ore"), Sprite.missingTexture(2, 2)));
+        Tiles.add(43, new OreTile(OreType.types.get("Copper")));
         LevelGen.ModTileGen.TileGeneration copperGen = (map, data, layer, w, h, random) -> {
             int r = 2;
             for (int i = 0; i < w * h / 650; i++) {
@@ -61,9 +62,9 @@ public class Main {
         new LevelGen.ModTileGen(-2, copperGen);
         new LevelGen.ModTileGen(-3, copperGen);
         Tiles.add(44, new TreeTile("High Tree") {
-            public void render(Screen screen, Level level, int x, int y) {
-                new Sprite(0, 30, 2, 2, 1).render(screen, x << 4, y << 4);
-            }
+            // public void render(Screen screen, Level level, int x, int y) {
+            //     new Sprite(0, 30, 2, 2, 1).render(screen, x << 4, y << 4);
+            // }
 
             @Override
             public boolean hurt(Level level, int x, int y, Mob source, int dmg, Direction attackDir) {
@@ -107,20 +108,20 @@ public class Main {
                 }
             }
         });
-        Tiles.add(46, new Tile("redstone", (Sprite)null) {
+        Tiles.add(46, new Tile("redstone", Sprite.missingTexture(2, 2)) {
             @Override
             public boolean mayPass(Level level, int x, int y, Entity e) {
                 return true;
             }
-            @Override
-            public void render(Screen screen, Level level, int x, int y) {
-                Tiles.get(1).render(screen, level, x, y);
-                try {
-                    GraphicComp.spriteFromSpriteSheet(0, 0, 2, 2, new SpriteSheet(ImageIO.read(Main.class.getResourceAsStream(level.getData(x, y) == 0? "/resources/tile/Redstone.png": "/resources/tile/RedstoneOn.png")))).render(screen, x*16, y*16);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
+            // @Override
+            // public void render(Screen screen, Level level, int x, int y) {
+            //     Tiles.get(1).render(screen, level, x, y);
+            //     try {
+            //         GraphicComp.spriteFromSpriteSheet(0, 0, 2, 2, new SpriteSheet(ImageIO.read(Main.class.getResourceAsStream(level.getData(x, y) == 0? "/resources/tile/Redstone.png": "/resources/tile/RedstoneOn.png")))).render(screen, x*16, y*16);
+            //     } catch (IOException e) {
+            //         e.printStackTrace();
+            //     }
+            // }
             @Override
             public boolean interact(Level level, int xt, int yt, Player player, Item item, Direction attackDir) {
                 level.dropItem(xt*16+8, yt*16+8, Items.get("redstone"));
@@ -134,32 +135,32 @@ public class Main {
                 return true;
             }
         });
-        Items.add(new TileItem("redstone", null, "redstone", "grass", "dirt"));
+        Mods.registerItem(new TileItem("redstone", Sprite.missingTexture(1, 1), "redstone", "grass", "dirt"));
         Tiles.add(45, new OreTile(new OreType("Redstone", Items.get("redstone"), null)) {
-            @Override
-            public void render(Screen screen, Level level, int x, int y) {
-                try {
-                    Tiles.get(1).render(screen, level, x, y);
-                    GraphicComp.spriteFromSpriteSheet(0, 0, 2, 2, new SpriteSheet(ImageIO.read(Main.class.getResourceAsStream("/resources/tile/RedstoneOre.png")))).render(screen, x * 16, y * 16);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
+            // @Override
+            // public void render(Screen screen, Level level, int x, int y) {
+            //     try {
+            //         Tiles.get(1).render(screen, level, x, y);
+            //         GraphicComp.spriteFromSpriteSheet(0, 0, 2, 2, new SpriteSheet(ImageIO.read(Main.class.getResourceAsStream("/resources/tile/RedstoneOre.png")))).render(screen, x * 16, y * 16);
+            //     } catch (IOException e) {
+            //         e.printStackTrace();
+            //     }
+            // }
         });
-        Tiles.add(47, new Tile("Redstone signal transmitter", (Sprite)null) {
+        Tiles.add(47, new Tile("Redstone signal transmitter", Sprite.missingTexture(2, 2)) {
             @Override
             public boolean mayPass(Level level, int x, int y, Entity e) {
                 return true;
             }
-            @Override
-            public void render(Screen screen, Level level, int x, int y) {
-                Tiles.get(1).render(screen, level, x, y);
-                try {
-                    GraphicComp.spriteFromSpriteSheet(0, 0, 2, 2, new SpriteSheet(ImageIO.read(Main.class.getResourceAsStream("/resources/tile/RedstoneTransmitter.png")))).renderRotated(screen, x*16, y*16, level.getData(x, y));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
+            // @Override
+            // public void render(Screen screen, Level level, int x, int y) {
+            //     Tiles.get(1).render(screen, level, x, y);
+            //     try {
+            //         GraphicComp.spriteFromSpriteSheet(0, 0, 2, 2, new SpriteSheet(ImageIO.read(Main.class.getResourceAsStream("/resources/tile/RedstoneTransmitter.png")))).renderRotated(screen, x*16, y*16, level.getData(x, y));
+            //     } catch (IOException e) {
+            //         e.printStackTrace();
+            //     }
+            // }
             @Override
             public boolean tick(Level level, int xt, int yt) {
                 Direction dir = Direction.getDirection(level.getData(xt, yt));
@@ -203,7 +204,7 @@ public class Main {
                 return new RedstoneSignalTransmitter(getName(), sprite, count, model, validTiles);
             }
         }
-        Items.add(new RedstoneSignalTransmitter("Redstone signal transmitter", null, "Redstone signal transmitter", "grass", "dirt"));
+        Mods.registerItem(new RedstoneSignalTransmitter("Redstone signal transmitter", Sprite.missingTexture(1, 1), "Redstone signal transmitter", "grass", "dirt"));
         Recipes.workbenchRecipes.add(new Recipe("Redstone signal transmitter_1", "redstone_2", "stone_5"));
         new LevelGen.ModTileGen(-2, (map, data, layer, w, h, random) -> {
             int r = 2;
@@ -221,20 +222,20 @@ public class Main {
                 }
             }
         });
-        Tiles.add(48, new Tile("Redstone switch", (Sprite)null) {
+        Tiles.add(48, new Tile("Redstone switch", Sprite.missingTexture(2, 2)) {
             @Override
             public boolean mayPass(Level level, int x, int y, Entity e) {
                 return true;
             }
-            @Override
-            public void render(Screen screen, Level level, int x, int y) {
-                Tiles.get(1).render(screen, level, x, y);
-                try {
-                    GraphicComp.spriteFromSpriteSheet(0, 0, 2, 2, new SpriteSheet(ImageIO.read(Main.class.getResourceAsStream(level.getData(x, y) == 0? "/resources/tile/RedstoneSwitch.png": "/resources/tile/RedstoneSwitchOn.png")))).render(screen, x*16, y*16);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
+            // @Override
+            // public void render(Screen screen, Level level, int x, int y) {
+            //     Tiles.get(1).render(screen, level, x, y);
+            //     try {
+            //         GraphicComp.spriteFromSpriteSheet(0, 0, 2, 2, new SpriteSheet(ImageIO.read(Main.class.getResourceAsStream(level.getData(x, y) == 0? "/resources/tile/RedstoneSwitch.png": "/resources/tile/RedstoneSwitchOn.png")))).render(screen, x*16, y*16);
+            //     } catch (IOException e) {
+            //         e.printStackTrace();
+            //     }
+            // }
             @Override
             public boolean tick(Level level, int xt, int yt) {
                 int switchOn = level.getData(xt, yt);
@@ -260,9 +261,11 @@ public class Main {
                 return true;
             }
         });
-        Items.add(new TileItem("Redstone switch", null, "Redstone switch", "grass", "dirt"));
+        Mods.registerItem(new TileItem("Redstone switch", Sprite.missingTexture(1, 1), "Redstone switch", "grass", "dirt"));
         Recipes.craftRecipes.add(new Recipe("Redstone switch_1", "redstone_1", "stone_2", "wood_1"));
-        Mods.guiDisplays.add(new Display() {
+
+		// MiniMap
+		Mods.guiDisplays.add(new Display() {
             @Override
             public void render(Screen screen) {
                 int[] pixels = screen.pixels;

@@ -33,9 +33,7 @@ public class Mods extends Game {
 
     static {
         File[] mods = FileHandler.readModsFolder();
-        if (mods == null) {
-            Mods = null;
-        } else {
+        if (mods != null) {
             ClassLoader loader = new ClassLoader();
             for (int a = 0; a<mods.length; a++) {
                 Entry<Entry<Class<?>, Manifest>, JSONObject> modP = loader.loadJar(mods[a]);

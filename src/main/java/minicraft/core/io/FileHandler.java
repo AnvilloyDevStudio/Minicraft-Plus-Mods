@@ -81,9 +81,9 @@ public class FileHandler extends Game {
 	}
 
 	public static File[] readModsFolder() {
-		if (!new File(gameModsDir).exists()) {
-			return null;
-		} else return new File(gameModsDir).listFiles(new FilenameFilter() {
+		if (!new File(gameModsDir).exists())
+			new File(gameModsDir).mkdirs();
+		return new File(gameModsDir).listFiles(new FilenameFilter() {
 			@Override
 			public boolean accept(File dir, String name) {
 				return name.endsWith(".jar");

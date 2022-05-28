@@ -38,11 +38,19 @@ public class OreTile extends Tile {
 		private final Item drop;
 		public final int color;
 		public final String name;
+		public final Sprite sprite;
 
 		OreType(String name, Item drop, int color) {
 			this.name = name;
 			this.drop = drop;
 			this.color = color;
+			sprite = null;
+		}
+		public OreType(String name, Item drop, Sprite color) {
+			this.name = name;
+			this.drop = drop;
+			this.color = 0;
+			sprite = color;
 		}
 
 		private Item getOre() {
@@ -51,7 +59,7 @@ public class OreTile extends Tile {
     }
 
 	public OreTile(OreType o) {
-		super((o.name.equals("Lapis") ? "Lapis" : o.name.equals("Cloud") ? "Cloud Cactus" : o.name + " Ore"), new Sprite(22 + o.color, 2, 2, 2, 1));
+		super((o.name.equals("Lapis") ? "Lapis" : o.name.equals("Cloud") ? "Cloud Cactus" : o.name + " Ore"), o.sprite == null ? new Sprite(22 + o.color, 2, 2, 2, 1) : o.sprite);
         this.type = o;
 	}
 

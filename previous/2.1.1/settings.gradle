@@ -1,0 +1,8 @@
+file('modlibs').eachDir { dir ->
+  include "mod-${dir.name}"
+  project(":mod-${dir.name}").projectDir = dir
+}
+file('previous').eachDir { dir ->
+  include "prev-${dir.name}"
+  project(":prev-${dir.name}").projectDir = dir
+}

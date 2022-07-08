@@ -87,6 +87,7 @@ public class Mods extends Game {
             manifest = man;
             mainClass = m;
         }
+
         public void startLoading() {
             try {
                 mainClass.getDeclaredMethod("entry").invoke(null, new Object[0]);

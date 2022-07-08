@@ -527,6 +527,8 @@ public class LevelGen {
 			Structure.lavaPool.draw(map, x, y, w);
 		}
 
+		replaceTilesWithMod(-4, map, data, w, h);
+
 		return new short[][]{map, data};
 	}
 
@@ -615,6 +617,8 @@ public class LevelGen {
 			}
 		}
 
+		replaceTilesWithMod(-depth, map, data, w, h);
+
 		if (depth > 2) {
 			int r = 1;
 			int xx = 60;
@@ -688,6 +692,8 @@ public class LevelGen {
 			}
 		}
 
+		replaceTilesWithMod(1, map, data, w, h);
+
 		stairsLoop:
 		for (int i = 0; i < w * h / 50; i++) {
 			int x = random.nextInt(w - 2) + 1;
@@ -747,7 +753,7 @@ public class LevelGen {
 		}
 
 		public TileGeneration generation;
-		
+
 		public ModTileGen(int layer, TileGeneration gen) {
 			generation = gen;
 			if (modGens.containsKey(layer)) modGens.get(layer).add(this);

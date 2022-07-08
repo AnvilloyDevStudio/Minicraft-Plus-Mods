@@ -32,7 +32,7 @@ java {
 }
 
 shadowJar {
-    archivesBaseName = 'minicraft_plus_mods-2.1.2'
+    archivesBaseName = 'minicraft_plus_mods-2.1.3'
     archiveClassifier.set('')
 
     manifest {

@@ -1,8 +1,5 @@
 package minicraft.core;
 
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
-
 import minicraft.core.io.Localization;
 import minicraft.core.io.Settings;
 import minicraft.entity.furniture.Bed;
@@ -17,6 +14,8 @@ import minicraft.screen.LevelTransitionDisplay;
 import minicraft.screen.PlayerDeathDisplay;
 import minicraft.screen.WorldSelectDisplay;
 import org.tinylog.Logger;
+
+import java.awt.*;
 
 public class Updater extends Game {
 	private Updater() {}
@@ -150,7 +149,7 @@ public class Updater extends Game {
 		if (isMode("score") && (!paused && !gameOver)) {
 			if (scoreTime <= 0) { // GAME OVER
 				gameOver = true;
-				setDisplay(new EndGameDisplay(player));
+				setDisplay(new EndGameDisplay());
 			}
 
 			scoreTime--;

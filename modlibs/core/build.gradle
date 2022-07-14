@@ -4,7 +4,7 @@ apply plugin: 'application'
 project.version = '0.1.0'
 
 sourceCompatibility = 8
-mainClassName = 'mod.Main'
+mainClassName = "minimods.mod.core.Main"
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
 repositories {
@@ -18,7 +18,7 @@ repositories {
 dependencies {
     implementation project(":")
     // Use the following for local modding
-    // implementation files("minicraft_plus_mods-2.0.7-0.2.0.jar")
+    // implementation files("minicraft_plus_mods-x.x.x-x.x.x.jar")
 }
 
 buildscript {
@@ -33,7 +33,7 @@ buildscript {
 jar {
     archivesBaseName = 'core'
     archiveClassifier.set('')
-    
+
     manifest {
         attributes('Main-Class': mainClassName,
                 'Implementation-Title': project.name,

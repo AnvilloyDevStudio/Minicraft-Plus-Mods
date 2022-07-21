@@ -7,7 +7,7 @@ import org.jetbrains.annotations.Nullable;
 
 import org.tinylog.Logger;
 
-import minicraft.core.Mods;
+import minicraft.mods.Mods;
 
 public class Items {
 

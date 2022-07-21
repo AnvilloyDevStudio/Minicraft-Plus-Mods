@@ -14,7 +14,7 @@ The boxes on the left hand side are used to update the codes when the version is
 
 * [X] minicraft.core.Crash
 * [X] minicraft.core.Mod
-* [X] minicraft.core.io.ClassLoader
+* [X] minicraft.core.io.ModClassLoader
 * [X] minicraft.core.io.CommandWindow
 * [X] minicraft.gfx.GraphicComp <!-- mentioned in line `minicraft.gfx.GraphicComp#L154` -->
 * [X] minicraft.screen.ModsDisplay

@@ -27,6 +27,7 @@ import minicraft.item.PotionType;
 import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
 import minicraft.level.Level;
+import minicraft.mods.Mods;
 import minicraft.screen.LoadingDisplay;
 import minicraft.screen.RelPos;
 import org.tinylog.Logger;

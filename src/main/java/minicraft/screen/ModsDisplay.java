@@ -10,14 +10,14 @@ import minicraft.core.io.Sound;
 import minicraft.gfx.*;
 
 public class ModsDisplay extends Display {
-	private static final List<minicraft.core.Mods.Mod> mods = new ArrayList<>();
+	private static final List<minicraft.mods.Mods.Mod> mods = new ArrayList<>();
 	private static int selectedIndex = 0;
 	private static int pageIndex = 0;
 	private List<List<String>> pages = new ArrayList<>();
 
 	static {
 		// These are all the generic skins. To add one, just add an entry in this list.
-		for (minicraft.core.Mods.Mod mod : minicraft.core.Mods.Mods) {
+		for (minicraft.mods.Mods.Mod mod : minicraft.mods.Mods.Mods) {
             mods.add(mod);
         }
 
@@ -58,16 +58,16 @@ public class ModsDisplay extends Display {
 		screen.clear(0);
 
         // Get skin above and below.
-		String selectedUUUUU = selectedIndex + 5 > mods.size() - 5 ? "" : mods.get(selectedIndex + 5).Info.getString("name");
-		String selectedUUUU = selectedIndex + 4 > mods.size() - 4 ? "" : mods.get(selectedIndex + 4).Info.getString("name");
-		String selectedUUU = selectedIndex + 3 > mods.size() - 3 ? "" : mods.get(selectedIndex + 3).Info.getString("name");
-		String selectedUU = selectedIndex + 2 > mods.size() - 2 ? "" : mods.get(selectedIndex + 2).Info.getString("name");
-		String selectedU = selectedIndex + 1 > mods.size() - 1 ? "" : mods.get(selectedIndex + 1).Info.getString("name");
-		String selectedD = selectedIndex - 1 < 0 ? "" : mods.get(selectedIndex - 1).Info.getString("name");
-		String selectedDD = selectedIndex - 2 < 0 ? "" : mods.get(selectedIndex - 2).Info.getString("name");
-		String selectedDDD = selectedIndex - 3 < 0 ? "" : mods.get(selectedIndex - 3).Info.getString("name");
-		String selectedDDDD = selectedIndex - 4 < 0 ? "" : mods.get(selectedIndex - 4).Info.getString("name");
-		String selectedDDDDD = selectedIndex - 5 < 0 ? "" : mods.get(selectedIndex - 5).Info.getString("name");
+		String selectedUUUUU = selectedIndex + 5 > mods.size() - 5 ? "" : mods.get(selectedIndex + 5).info.getString("name");
+		String selectedUUUU = selectedIndex + 4 > mods.size() - 4 ? "" : mods.get(selectedIndex + 4).info.getString("name");
+		String selectedUUU = selectedIndex + 3 > mods.size() - 3 ? "" : mods.get(selectedIndex + 3).info.getString("name");
+		String selectedUU = selectedIndex + 2 > mods.size() - 2 ? "" : mods.get(selectedIndex + 2).info.getString("name");
+		String selectedU = selectedIndex + 1 > mods.size() - 1 ? "" : mods.get(selectedIndex + 1).info.getString("name");
+		String selectedD = selectedIndex - 1 < 0 ? "" : mods.get(selectedIndex - 1).info.getString("name");
+		String selectedDD = selectedIndex - 2 < 0 ? "" : mods.get(selectedIndex - 2).info.getString("name");
+		String selectedDDD = selectedIndex - 3 < 0 ? "" : mods.get(selectedIndex - 3).info.getString("name");
+		String selectedDDDD = selectedIndex - 4 < 0 ? "" : mods.get(selectedIndex - 4).info.getString("name");
+		String selectedDDDDD = selectedIndex - 5 < 0 ? "" : mods.get(selectedIndex - 5).info.getString("name");
 
 		// Title.
 		Font.drawCentered("Mods", screen, Screen.h - 185, Color.YELLOW);
@@ -78,7 +78,7 @@ public class ModsDisplay extends Display {
 		Font.draw(ModsDisplay.shortNameIfLong(selectedUUU), screen, 5, Screen.h - 75, Color.GRAY); // First unselected space
 		Font.draw(ModsDisplay.shortNameIfLong(selectedUU), screen, 5, Screen.h - 85, Color.GRAY); // First unselected space
 		Font.draw(ModsDisplay.shortNameIfLong(selectedU), screen, 5, Screen.h - 95, Color.GRAY); // First unselected space
-		if (mods.size() != 0) Font.draw(ModsDisplay.shortNameIfLong(mods.get(selectedIndex).Info.getString("name")), screen, 5, Screen.h - 105, Color.WHITE); // Selection
+		if (mods.size() != 0) Font.draw(ModsDisplay.shortNameIfLong(mods.get(selectedIndex).info.getString("name")), screen, 5, Screen.h - 105, Color.WHITE); // Selection
 		Font.draw(ModsDisplay.shortNameIfLong(selectedD), screen, 5, Screen.h - 115, Color.GRAY); // Fourth space
 		Font.draw(ModsDisplay.shortNameIfLong(selectedDD), screen, 5, Screen.h - 125, Color.GRAY); // Fourth space
 		Font.draw(ModsDisplay.shortNameIfLong(selectedDDD), screen, 5, Screen.h - 135, Color.GRAY); // Fourth space
@@ -87,13 +87,13 @@ public class ModsDisplay extends Display {
 		if (mods.size() == 0) Font.drawCentered("No mod available.", screen, Screen.h/2, Color.CYAN);
 		FontStyle fs = new FontStyle();
 		if (mods.size() != 0) {
-			Font.drawCentered("Name: "+mods.get(selectedIndex).Info.getString("name"), screen, Screen.h-170, Color.WHITE);
-			Font.drawCentered("Version: "+(mods.get(selectedIndex).Info.has("version")? mods.get(selectedIndex).Info.getString("version"): "1.0.0"), screen, Screen.h-158, Color.WHITE);
+			Font.drawCentered("Name: "+mods.get(selectedIndex).info.getString("name"), screen, Screen.h-170, Color.WHITE);
+			Font.drawCentered("Version: "+(mods.get(selectedIndex).info.has("version")? mods.get(selectedIndex).info.getString("version"): "1.0.0"), screen, Screen.h-158, Color.WHITE);
 		}
 		fs.setXPos(Screen.w/2-10);
 		fs.setYPos(Screen.h-140);
 		List<String> des = new ArrayList<>();
-		if (mods.size() != 0) for (String line : Arrays.asList(mods.get(selectedIndex).Info.getString("description").split("\n"))) {
+		if (mods.size() != 0) for (String line : Arrays.asList(mods.get(selectedIndex).info.getString("description").split("\n"))) {
 			int br = (int)Math.ceil(line.length()/18)+1;
 			for (int a = 0; a<br; a++) {
 				int b = (a+1)*18;

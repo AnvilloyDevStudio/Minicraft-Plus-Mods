@@ -5,8 +5,9 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
+import org.spongepowered.asm.mixin.injection.Inject;
+
 import minicraft.core.Game;
-import minicraft.core.Mods;
 import minicraft.core.io.Sound;
 import minicraft.entity.Direction;
 import minicraft.entity.Entity;
@@ -34,7 +35,10 @@ import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
 import minicraft.level.tile.TreeTile;
 import minicraft.level.tile.OreTile.OreType;
+import minicraft.mods.Mods;
 import minicraft.screen.Display;
+import minimods.mod.core.mixins.PausedDisplayMixin;
+import minimods.mod.core.mixins.WorldMixin;
 
 public class Main {
 	public static Sprite missingTexture1 = Sprite.missingTexture(1, 1);
@@ -372,5 +376,8 @@ public class Main {
                 }
             }
         });
+
+		PausedDisplayMixin.init();
+		WorldMixin.init();
     }
 }

@@ -8,6 +8,7 @@ import minicraft.item.Items;
 import minicraft.level.Level;
 import minicraft.level.tile.Tile;
 import minicraft.level.tile.Tiles;
+import minicraft.mods.Mods;
 import minicraft.saveload.Save;
 import minicraft.screen.EndGameDisplay;
 import minicraft.screen.LevelTransitionDisplay;

@@ -9,6 +9,7 @@ import minicraft.core.io.Sound;
 import minicraft.entity.mob.Player;
 import minicraft.level.Level;
 import minicraft.level.tile.Tiles;
+import minicraft.mods.Mods;
 import minicraft.network.Analytics;
 import minicraft.saveload.Load;
 import minicraft.saveload.Version;

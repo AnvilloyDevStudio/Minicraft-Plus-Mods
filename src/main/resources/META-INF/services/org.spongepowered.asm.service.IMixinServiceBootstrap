@@ -1,1 +1,1 @@
-minicraft.mods.knot.MixinServiceKnotBootstrap
+minicraft.mods.mixin.ModMixinServiceBootstrap

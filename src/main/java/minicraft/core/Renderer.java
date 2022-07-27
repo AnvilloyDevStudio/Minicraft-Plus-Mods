@@ -329,7 +329,7 @@ public class Renderer extends Game {
 			}
 		}
 
-		Mods.renderGui();
+		// Mods.renderGui(); TODO
 		renderDebugInfo();
 	}
 

@@ -1,39 +1,70 @@
 package minicraft.mods;
 
-import java.io.File;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.jar.Manifest;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
-import org.spongepowered.asm.launch.MixinBootstrap;
 import org.tinylog.Logger;
+import org.tinylog.TaggedLogger;
 
-import minicraft.core.Game;
-import minicraft.core.Renderer;
-import minicraft.core.io.FileHandler;
-import minicraft.core.io.InputHandler;
-import minicraft.item.Item;
-import minicraft.item.Items;
-import minicraft.mods.ModClassLoader.ModContainer;
-import minicraft.mods.knot.MixinServiceKnot;
-import minicraft.mods.knot.MixinServiceKnotBootstrap;
-import minicraft.saveload.Version;
-import minicraft.screen.Display;
+public class Mods {
+	public static final ArrayList<ModContainer> mods = new ArrayList<>();
 
-public class Mods extends Game {
-    public static ArrayList<Mods.Mod> Mods = new ArrayList<>();
-    public static final Version VERSION = new Version("0.4.0");
-    public static ArrayList<Display> guiDisplays = new ArrayList<>();
-	public static ArrayList<Item> registeredItems = new ArrayList<>();
+    // public static ArrayList<Mods.Mod> Mods = new ArrayList<>();
+    public static final String MODSVERSION = "0.4.0";
+    // public static ArrayList<Display> guiDisplays = new ArrayList<>();
 
-	public static void registerItem(Item item) {
-		registeredItems.add(item);
-		Items.add(item);
+	// TODO A copy from Game#VERSION, this needed to be updated when updating
+	public static final String GAMEVERSION = "2.1.3";
+
+	// TODO A copy from FileHandler, this may need to update from the original code when updating
+	static final String OS;
+	static final String localGameDir;
+	static final String systemGameDir;
+	static String gameDir;
+	static String gameModsDir;
+	static boolean debug;
+
+	static {
+		OS = System.getProperty("os.name").toLowerCase();
+		String local = "playminicraft/mods/Minicraft_Plus";
+
+		if (OS.contains("windows")) // windows
+			systemGameDir = System.getenv("APPDATA");
+		else {
+			systemGameDir = System.getProperty("user.home");
+			if (!OS.contains("mac"))
+				local = "." + local; // linux
+		}
+
+		localGameDir = "/" + local;
+		gameDir = systemGameDir + localGameDir;
+		gameModsDir = systemGameDir + localGameDir + "/mods";
 	}
 
-    public static void init() {}
+	public final static String entrypoint = "minicraft.core.Game";
+
+    public static void init() {
+		LoaderInitialization.init();
+	}
+
+	static void setDebug(boolean debug) {
+		Mods.debug = debug;
+	}
+
+	public static void launchGame(ClassLoader loader, String[] args) {
+		try {
+			Class<?> c = loader.loadClass(entrypoint);
+			Method m = c.getMethod("main", String[].class);
+			m.invoke(null, (Object) args);
+		} catch(InvocationTargetException e) {
+			throw new RuntimeException("Game has crashed", e.getCause());
+		} catch(ReflectiveOperationException e) {
+			throw new RuntimeException("Failed to start game", e);
+		}
+	}
 
     static {
         // File[] mods = FileHandler.readModsFolder();
@@ -84,31 +115,10 @@ public class Mods extends Game {
         // } else Logger.info("Unable to list mods.");
     }
 
-    public static void renderGui() {
-        guiDisplays.forEach(m -> m.render(Renderer.screen));
-    }
-    public static void tick(InputHandler input) {
-        guiDisplays.forEach(m -> m.tick(input));
-    }
-
-    public static class Mod {
-        public final JSONObject info;
-        public final Manifest manifest;
-        private final Class<?> mainClass;
-        public Mod(ModContainer mod) {
-            manifest = mod.manifest;
-            mainClass = mod.entryClass;
-			info = mod.modInfo;
-			if (info.getString("name") == null) System.out.println("mod.json name not found.");
-			if (info.getString("description") == null) System.out.println("mod.json description not found.");
-        }
-
-        public void loadEntry() {
-            try {
-                mainClass.getDeclaredMethod("entry").invoke(null, new Object[0]);
-            } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-                e.printStackTrace();
-            }
-        }
-    }
+    // public static void renderGui() {
+    //     guiDisplays.forEach(m -> m.render(Renderer.screen));
+    // }
+    // public static void tick(InputHandler input) {
+    //     guiDisplays.forEach(m -> m.tick(input));
+    // }
 }

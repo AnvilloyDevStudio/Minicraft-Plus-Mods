@@ -7,7 +7,7 @@ plugins {
 project.version = '0.4.0'
 
 sourceCompatibility = 8
-mainClassName = 'minicraft.mods.knot.KnotClient'
+mainClassName = 'minicraft.mods.LoaderInitialization'
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
 repositories {
@@ -35,12 +35,6 @@ dependencies {
 	implementation 'net.fabricmc:access-widener:2.1.0'
 	implementation 'org.ow2.sat4j:org.ow2.sat4j.core:2.3.6'
 	implementation 'org.ow2.sat4j:org.ow2.sat4j.pb:2.3.6'
-
-    // implementation 'org.ow2.asm:asm:7.1'
-    // implementation files("dependencies/modlauncher-9.1.1.jar")
-    // implementation files("dependencies/forgespi-4.0.11.jar")
-    // implementation files("dependencies/accesstransformers-8.0.7.jar")
-    // implementation files("dependencies/securejarhandler-1.0.3.jar")
 }
 
 java {

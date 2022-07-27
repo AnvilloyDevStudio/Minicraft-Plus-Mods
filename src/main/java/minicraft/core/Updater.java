@@ -174,7 +174,7 @@ public class Updater extends Game {
 			} else {
 				// No menu, currently.
 				paused = false;
-				Mods.tick(input);
+				// Mods.tick(input); TODO
 
 				// If player is alive, but no level change, nothing happens here.
 				if (player.isRemoved() && Renderer.readyToRenderGameplay && !Bed.inBed(player)) {

@@ -29,7 +29,7 @@ public class FileHandler extends Game {
 
 	static {
 		OS = System.getProperty("os.name").toLowerCase();
-		String local = "playminicraft/mods/Minicraft_Plus_Mods";
+		String local = "playminicraft/mods/Minicraft_Plus";
 
 		if (OS.contains("windows")) // windows
 			systemGameDir = System.getenv("APPDATA");
@@ -78,28 +78,6 @@ public class FileHandler extends Game {
 
 	public static String getLocalGameDir() {
 		    return localGameDir;
-	}
-
-	public static File[] readModsFolder() {
-		if (!new File(gameModsDir).exists())
-			new File(gameModsDir).mkdirs();
-		return new File(gameModsDir).listFiles(new FilenameFilter() {
-			@Override
-			public boolean accept(File dir, String name) {
-				return name.endsWith(".jar");
-			}
-		});
-	}
-
-	public static Class<?> readJarFile(File file) {
-		try {
-			JarFile jar = new JarFile(file);
-			Class<?> jarclass = jar.getClass();
-			jar.close();
-			return jarclass;
-		} catch (IOException e) {
-			return null;
-		}
 	}
 
 	private static void deleteFolder(File top) {

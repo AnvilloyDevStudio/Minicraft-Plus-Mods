@@ -1,7 +1,6 @@
 package minicraft.core.io;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.FileVisitor;
@@ -9,7 +8,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.jar.JarFile;
 
 import minicraft.core.Game;
 import minicraft.saveload.Save;

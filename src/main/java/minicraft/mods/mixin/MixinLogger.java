@@ -4,8 +4,6 @@ import org.spongepowered.asm.logging.Level;
 import org.spongepowered.asm.logging.LoggerAdapterAbstract;
 import org.tinylog.Logger;
 
-import minicraft.mods.Mods;
-
 final class MixinLogger extends LoggerAdapterAbstract {
 	MixinLogger(String name) {
 		super(name);
@@ -30,6 +28,7 @@ final class MixinLogger extends LoggerAdapterAbstract {
 			case ERROR:
 				Logger.error(message, params);
 				break;
+			default:
 			case INFO:
 				Logger.info(message, params);
 				break;
@@ -39,15 +38,12 @@ final class MixinLogger extends LoggerAdapterAbstract {
 			case WARN:
 				Logger.warn(message, params);
 				break;
-			default:
-				Logger.info(message, params);
-				break;
 		}
 	}
 
 	@Override
 	public void log(Level level, String message, Throwable t) {
-		log(level, message, t);
+		log(level, message, new Object[]{t});
 	}
 
 	@Override

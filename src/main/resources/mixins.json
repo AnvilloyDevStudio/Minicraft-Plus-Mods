@@ -1,0 +1,11 @@
+{
+  "required": true,
+  "package": "minicraft.mods.coremods.mixins",
+  "mixins": [
+    "GameMixin",
+    "GsonMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

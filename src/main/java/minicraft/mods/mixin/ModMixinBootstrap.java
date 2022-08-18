@@ -18,14 +18,8 @@ public class ModMixinBootstrap {
 
 		MixinBootstrap.init();
 
-		// TODO Add coremods Mixins here
-		try {
-			LoaderInitialization.loadIntoTarget("minicraft.mods.coremods.mixins.GameMixin");
-		} catch (ClassNotFoundException e1) {
-			throw new UndeclaredThrowableException(e1);
-		}
-		System.out.println("minicraft.mods.coremods.mixins.GameMixin: "+LoaderInitialization.getResourceAsStream("minicraft.mods.coremods.mixins.GameMixin"));
-		Mixins.addConfigurations("minicraft.mods.coremods.mixins.GameMixin");
+		// Load coremods Mixin config here
+		Mixins.addConfigurations("mixins.json");
 
 		for (ModContainer mod : Mods.mods) {
 			for (String config : mod.mixinConfig.mixins) {

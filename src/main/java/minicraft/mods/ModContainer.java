@@ -3,6 +3,7 @@ package minicraft.mods;
 import java.io.IOException;
 import java.net.URLClassLoader;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 import java.util.zip.ZipEntry;
@@ -19,15 +20,15 @@ public class ModContainer {
 
 	ModContainer(JarFile jar, URLClassLoader child) {
 		try {
-			metadata = new ModMetadata(new JSONObject(new String(jar.getInputStream(jar.getEntry("mod.json")).readAllBytes())));
+			metadata = new ModMetadata(new JSONObject(new String(LoaderUtils.readStringFromInputStream(jar.getInputStream(jar.getEntry("mod.json"))))));
 			entryClass = Class.forName(metadata.entrypoint, false, child);
 			manifest = jar.getManifest();
 
-			jarPath = Path.of(jar.getName());
+			jarPath = Paths.get(jar.getName());
 
 			ZipEntry mixinEntry;
 			if ((mixinEntry = jar.getEntry("mixins.json")) != null)
-				mixinConfig = new ModMixinConfig(new JSONObject(new String(jar.getInputStream(mixinEntry).readAllBytes())));
+				mixinConfig = new ModMixinConfig(new JSONObject(new String(LoaderUtils.readStringFromInputStream(jar.getInputStream(mixinEntry)))));
 			else
 				mixinConfig = null;
 		} catch (IOException | ClassNotFoundException e) {

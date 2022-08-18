@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.UncheckedIOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.jar.JarFile;

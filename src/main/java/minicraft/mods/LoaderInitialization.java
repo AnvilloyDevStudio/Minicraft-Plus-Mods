@@ -6,6 +6,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.jar.Manifest;
 
@@ -37,7 +38,7 @@ public class LoaderInitialization {
 			JScrollPane errorPane = new JScrollPane(errorDisplay);
 			JOptionPane.showMessageDialog(null, errorPane, "An error has occurred", JOptionPane.ERROR_MESSAGE);
 
-			System.exit(1);
+			System.exit(-1);
 		});
 
 		parseArgs(args);
@@ -48,20 +49,21 @@ public class LoaderInitialization {
 
 	// A copy from Initailizer
 	static void parseArgs(String[] args) {
-		boolean debug = false;
 
 		// Parses command line arguments
 		String saveDir = Mods.systemGameDir;
 		for (int i = 0; i < args.length; i++) {
 			if (args[i].equals("--debug")) {
-				debug = true;
+				Mods.setDebug(true);
 			} else if (args[i].equals("--savedir") && i+1 < args.length) {
 				i++;
 				saveDir = args[i];
+			} else if (args[i].equals("--log-class-loaded")) {
+				Mods.logClassLoad = true;
 			}
 		}
 
-		Mods.setDebug(debug);
+
 		Mods.gameDir = saveDir + Mods.localGameDir;
 		Mods.gameModsDir = saveDir + Mods.localGameDir + "/mods";
 	}
@@ -71,7 +73,7 @@ public class LoaderInitialization {
 		ClassLoader cl = classLoader.getClassLoader();
 
 		try {
-			addToClassPath(Path.of(LoaderInitialization.class.getProtectionDomain().getCodeSource().getLocation().toURI()));
+			addToClassPath(Paths.get(LoaderInitialization.class.getProtectionDomain().getCodeSource().getLocation().toURI()));
 		} catch (URISyntaxException e) {
 			throw new RuntimeException(e);
 		}
@@ -87,7 +89,7 @@ public class LoaderInitialization {
 		classLoader.initializeTransformers();
 
 		try {
-			addToClassPath(Path.of(LoaderInitialization.class.getProtectionDomain().getCodeSource().getLocation().toURI()));
+			addToClassPath(Paths.get(LoaderInitialization.class.getProtectionDomain().getCodeSource().getLocation().toURI()));
 		} catch (URISyntaxException e) {
 			throw new RuntimeException(e);
 		}

@@ -9,9 +9,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import minicraft.core.Game;
 
 @Mixin(Game.class)
-public abstract class GameMixin {
-	@Inject(method = "main", at = @At(value = "INVOKE", target = "minicraft.core.Initializer.run()"))
-	public static void mainInitRun(CallbackInfo ci) {
+public class GameMixin {
+	@Inject(method = "main([Ljava/lang/String;)V", at = @At(value = "INVOKE", target = "minicraft.core.Initializer.run()V", remap = false), remap = false)
+	private static void mainInitRun(CallbackInfo ci) {
 		System.out.println("AAAAAAAAAAAAAAAAAAAAAAAAAAAA");
 	}
 }

@@ -197,9 +197,9 @@ final public class ModClassDelegate {
 						if (url == null) { // no .class file
 							try {
 								c = PLATFORM_CLASS_LOADER.loadClass(name);
-								Logger.info("loaded resources-less class %s from platform class loader");
+								Logger.info("loaded resources-less class {} from platform class loader");
 							} catch (ClassNotFoundException e) {
-								Logger.warn("can't find class %s", name);
+								Logger.warn("can't find class {}", name);
 								throw e;
 							}
 						} else if (!isValidParentUrl(url, fileName)) { // available, but restricted
@@ -207,16 +207,16 @@ final public class ModClassDelegate {
 							// loaded by setting validParentUrls and not including "url". Typical causes are:
 							// - accessing classes too early (game libs shouldn't be used until Loader is ready)
 							// - using jars that are only transient (deobfuscation input or pass-through installers)
-							String msg = String.format("can't load class %s at %s as it hasn't been exposed to the game",
+							String msg = String.format("can't load class {} at {} as it hasn't been exposed to the game",
 									name, getCodeSource(url, fileName));
 							Logger.warn(msg);
 							throw new ClassNotFoundException(msg);
 						} else { // load from system cl
-							Logger.info("loading class {} using the parent class loader", name);
+							if (Mods.logClassLoad) Logger.trace("loading class {} using the parent class loader", name);
 							c = parentClassLoader.loadClass(name);
 						}
 					} else {
-						Logger.info("loaded class %s", name);
+						if (Mods.logClassLoad) Logger.trace("loaded class {}", name);
 					}
 				}
 			}

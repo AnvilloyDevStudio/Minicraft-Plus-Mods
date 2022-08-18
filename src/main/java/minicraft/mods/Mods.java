@@ -3,11 +3,6 @@ package minicraft.mods;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.jar.Manifest;
-
-import org.json.JSONObject;
-import org.tinylog.Logger;
-import org.tinylog.TaggedLogger;
 
 public class Mods {
 	public static final ArrayList<ModContainer> mods = new ArrayList<>();
@@ -26,6 +21,7 @@ public class Mods {
 	static String gameDir;
 	static String gameModsDir;
 	static boolean debug;
+	public static boolean logClassLoad = false;
 
 	static {
 		OS = System.getProperty("os.name").toLowerCase();

@@ -3,8 +3,8 @@ package minicraft.level;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Random;
 
 import javax.swing.ImageIcon;
@@ -757,7 +757,7 @@ public class LevelGen {
 		public ModTileGen(int layer, TileGeneration gen) {
 			generation = gen;
 			if (modGens.containsKey(layer)) modGens.get(layer).add(this);
-			else modGens.put(layer, new ArrayList<>(List.of(this)));
+			else modGens.put(layer, new ArrayList<>(Arrays.asList(this)));
 		}
 	}
 

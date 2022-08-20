@@ -42,6 +42,9 @@ public class LoaderInitialization {
 		});
 
 		parseArgs(args);
+		ModLoadingHandler.initLoadingScreen();
+		ModLoadingHandler.overallPro.text = "Starting Initialization";
+
 		Mods.init();
 
 		Mods.launchGame(classLoader.getClassLoader(), args);
@@ -69,22 +72,33 @@ public class LoaderInitialization {
 	}
 
 	public static void init() {
+		ModLoadingHandler.overallPro.cur = 1;
+		ModLoadingHandler.overallPro.text = "Initializing Mod Loader";
+
+		(ModLoadingHandler.secondaryPro = new ModLoadingHandler.Progress(1)).text = "Getting Class Loader";
 		classLoader = new ModClassLoader().getDelegate();
 		ClassLoader cl = classLoader.getClassLoader();
-
-		try {
-			addToClassPath(Paths.get(LoaderInitialization.class.getProtectionDomain().getCodeSource().getLocation().toURI()));
-		} catch (URISyntaxException e) {
-			throw new RuntimeException(e);
-		}
-
-		GameTransformer.transform();
-
 		Thread.currentThread().setContextClassLoader(cl);
 
+		ModLoadingHandler.secondaryPro.cur = 1;
+		ModLoadingHandler.secondaryPro.text = "Applying Loader Injection";
+		GameTransformer.transform();
+
+		ModLoadingHandler.overallPro.cur = 2;
+		ModLoadingHandler.overallPro.text = "Finding Mods";
+		ModLoadingHandler.secondaryPro = null;
 		ModFindHander.findMods();
 
+		ModLoadingHandler.overallPro.cur = 3;
+		ModLoadingHandler.overallPro.text = "Phase 1: PreInit";
+		ModLoadingHandler.secondaryPro = null;
+		ModHandler.preInitPhaseMods();
+
+		ModLoadingHandler.overallPro.cur = 4;
+		ModLoadingHandler.overallPro.text = "Booting Mixin";
+		ModLoadingHandler.secondaryPro = null;
 		ModMixinBootstrap.init();
+		ModMixinBootstrap.goPhaseInit();
 
 		classLoader.initializeTransformers();
 
@@ -95,6 +109,12 @@ public class LoaderInitialization {
 		}
 
 		unlocked = true;
+
+		ModLoadingHandler.overallPro.cur = 5;
+		ModLoadingHandler.overallPro.text = "Phase 2: Init";
+		ModLoadingHandler.secondaryPro = null;
+		ModHandler.initPhaseMods();
+		ModMixinBootstrap.goPhaseDefault();
 	}
 
 	public static void addToClassPath(Path path, String... allowedPrefixes) {

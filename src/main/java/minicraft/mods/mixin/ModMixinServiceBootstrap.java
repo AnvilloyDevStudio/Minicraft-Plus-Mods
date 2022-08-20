@@ -15,6 +15,6 @@ public class ModMixinServiceBootstrap implements IMixinServiceBootstrap {
 
 	@Override
 	public void bootstrap() {
-		// already done in Knot
+		// already done in LoaderInitialization.
 	}
 }

@@ -51,13 +51,16 @@ public class Mods {
 	}
 
 	public static void launchGame(ClassLoader loader, String[] args) {
+		ModLoadingHandler.overallPro.cur = 6;
+		ModLoadingHandler.overallPro.text = "Phase 3: Post-Init";
+		ModLoadingHandler.secondaryPro = null;
 		try {
 			Class<?> c = loader.loadClass(entrypoint);
 			Method m = c.getMethod("main", String[].class);
 			m.invoke(null, (Object) args);
-		} catch(InvocationTargetException e) {
+		} catch (InvocationTargetException e) {
 			throw new RuntimeException("Game has crashed", e.getCause());
-		} catch(ReflectiveOperationException e) {
+		} catch (ReflectiveOperationException e) {
 			throw new RuntimeException("Failed to start game", e);
 		}
 	}

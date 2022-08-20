@@ -1,9 +1,9 @@
 {
   "required": true,
   "package": "minicraft.mods.coremods.mixins",
+  "priority": 10000000,
   "mixins": [
-    "GameMixin",
-    "GsonMixin"
+    "GameMixin"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -38,7 +38,6 @@ public class Network extends Game {
 					Logger.error("Response body: " + response.getBody());
 					latestVersion = new VersionInfo(VERSION, "", "");
 				} else {
-					response.getParsingError().get().printStackTrace();
 					latestVersion = new VersionInfo(new JSONObject(response.getBody().getArray().getJSONObject(0).toString()));
 				}
 			} catch (UnirestException e) {

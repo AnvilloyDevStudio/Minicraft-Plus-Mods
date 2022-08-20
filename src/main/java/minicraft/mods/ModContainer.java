@@ -6,29 +6,80 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
-import java.util.zip.ZipEntry;
 
-import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
+import org.tinylog.Logger;
 
 public class ModContainer {
 	public final Class<?> entryClass;
+	public final Class<?> preInitClass;
+	public final Class<?> initClass;
 	public final Manifest manifest;
 	public final ModMetadata metadata;
-	public final ModMixinConfig mixinConfig;
+	public final String mixinConfig;
 	public final Path jarPath;
 
 	ModContainer(JarFile jar, URLClassLoader child) {
 		try {
 			metadata = new ModMetadata(new JSONObject(new String(LoaderUtils.readStringFromInputStream(jar.getInputStream(jar.getEntry("mod.json"))))));
-			entryClass = Class.forName(metadata.entrypoint, false, child);
+			if (!metadata.entrypoint.isEmpty()) {
+				Class<?> clazz = Class.forName(metadata.entrypoint, false, child);
+				boolean valid = false;
+				try {
+					clazz.getDeclaredMethod("entry");
+					valid = true;
+				} catch (NoSuchMethodException | SecurityException e) {
+					Logger.warn("Method #entry is unable to get in {}.", clazz.getSimpleName(), e);
+				} finally {
+					if (valid)
+						entryClass = clazz;
+					else
+						entryClass = null;
+				}
+			} else
+				entryClass = null;
+
+			if (!metadata.preInitpoint.isEmpty()) {
+				Class<?> clazz = Class.forName(metadata.preInitpoint, false, child);
+				boolean valid = false;
+				try {
+					clazz.getDeclaredMethod("preInit");
+					valid = true;
+				} catch (NoSuchMethodException | SecurityException e) {
+					Logger.warn("Method #preInit is unable to get in {}.", clazz.getSimpleName(), e);
+				} finally {
+					if (valid)
+						preInitClass = clazz;
+					else
+						preInitClass = null;
+				}
+			} else
+				preInitClass = null;
+
+			if (!metadata.initpoint.isEmpty()) {
+				Class<?> clazz = Class.forName(metadata.initpoint, false, child);
+				boolean valid = false;
+				try {
+					clazz.getDeclaredMethod("init");
+					valid = true;
+				} catch (NoSuchMethodException | SecurityException e) {
+					Logger.warn("Method #init is unable to get in {}.", clazz.getSimpleName(), e);
+				} finally {
+					if (valid)
+						initClass = clazz;
+					else
+						initClass = null;
+				}
+			} else
+				initClass = null;
+
 			manifest = jar.getManifest();
 
 			jarPath = Paths.get(jar.getName());
 
-			ZipEntry mixinEntry;
-			if ((mixinEntry = jar.getEntry("mixins.json")) != null)
-				mixinConfig = new ModMixinConfig(new JSONObject(new String(LoaderUtils.readStringFromInputStream(jar.getInputStream(mixinEntry)))));
+			if (jar.getEntry(metadata.modId + ".mixins.json") != null)
+				mixinConfig = metadata.modId + ".mixins.json";
 			else
 				mixinConfig = null;
 		} catch (IOException | ClassNotFoundException e) {
@@ -41,26 +92,20 @@ public class ModContainer {
 		public final String name;
 		public final String description;
 		public final String author;
-		private final String entrypoint;
+		public final String entrypoint;
+		public final String preInitpoint;
+		public final String initpoint;
 
-		private ModMetadata(JSONObject json) {
+		private ModMetadata(JSONObject json) throws JSONException {
 			modId = json.getString("id");
+			if (modId.isEmpty()) throw new JSONException("modId cannot be empty.");
+
 			name = json.getString("name");
-			description = json.getString("description");
-			author = json.getString("author");
-			entrypoint = json.getString("entrypoint");
-		}
-	}
-
-	public static class ModMixinConfig {
-		public final String[] mixins;
-
-		private ModMixinConfig(JSONObject json) {
-			JSONArray array = json.getJSONArray("mixins");
-			mixins = new String[array.length()];
-			for (int i = 0; i < array.length(); i++) {
-				mixins[i] = array.getString(i);
-			}
+			description = json.optString("description");
+			author = json.optString("author");
+			entrypoint = json.optString("entrypoint");
+			preInitpoint = json.optString("preInitpoint");
+			initpoint = json.optString("initpoint");
 		}
 	}
 }

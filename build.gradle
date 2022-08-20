@@ -25,10 +25,14 @@ dependencies {
     implementation 'org.tinylog:tinylog-api:2.4.1'
     implementation 'org.tinylog:tinylog-impl:2.4.1'
     implementation "org.spongepowered:mixin:0.8.5"
-    implementation "org.spongepowered:mixin:0.8.5:processor"
     annotationProcessor "org.spongepowered:mixin:0.8.5:processor"
-	implementation 'org.ow2.sat4j:org.ow2.sat4j.core:2.3.6'
-	implementation 'org.ow2.sat4j:org.ow2.sat4j.pb:2.3.6'
+
+    // Dependencies of mixin.
+    implementation "org.ow2.asm:asm:9.3"
+    implementation "org.ow2.asm:asm-tree:9.3"
+    implementation "org.ow2.asm:asm-util:9.3"
+    implementation "org.ow2.asm:asm-commons:9.3"
+    implementation 'com.google.guava:guava:31.1-jre'
 }
 
 java {

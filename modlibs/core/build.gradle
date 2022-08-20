@@ -19,7 +19,7 @@ dependencies {
     implementation project(":")
     // Use the following for local modding
     // implementation files("minicraft_plus_mods-x.x.x-x.x.x.jar")
-    implementation "org.spongepowered:mixin:0.8.5:processor"
+    annotationProcessor "org.spongepowered:mixin:0.8.5:processor"
 }
 
 buildscript {

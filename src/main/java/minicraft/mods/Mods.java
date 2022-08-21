@@ -4,6 +4,12 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 
+import org.objectweb.asm.Type;
+
+import minicraft.screen.Menu;
+import minicraft.screen.RelPos;
+import minicraft.screen.entry.ListEntry;
+
 public class Mods {
 	public static final ArrayList<ModContainer> mods = new ArrayList<>();
 
@@ -23,6 +29,7 @@ public class Mods {
 	static boolean debug;
 	public static boolean logClassLoad = false;
 
+	// Copied from FileHandler.
 	static {
 		OS = System.getProperty("os.name").toLowerCase();
 		String local = "playminicraft/mods/Minicraft_Plus";

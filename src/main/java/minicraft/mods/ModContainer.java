@@ -91,6 +91,7 @@ public class ModContainer {
 		public final String modId;
 		public final String name;
 		public final String description;
+		public final String version;
 		public final String author;
 		public final String entrypoint;
 		public final String preInitpoint;
@@ -102,6 +103,7 @@ public class ModContainer {
 
 			name = json.getString("name");
 			description = json.optString("description");
+			version = json.optString("version", "1.0.0");
 			author = json.optString("author");
 			entrypoint = json.optString("entrypoint");
 			preInitpoint = json.optString("preInitpoint");

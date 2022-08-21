@@ -64,36 +64,40 @@ public class ModLoadingHandler {
 			}
 
 			// Draw the second progress bar.
-			if (secondaryPro != null) synchronized (secondaryPro) {
-				if (secondaryPro != null) {
-					if (secondaryPro.text != null && !secondaryPro.text.isEmpty()) {
-						progressTextBounds = font.getLineMetrics(secondaryPro.text, frc);
-						textG.drawString(secondaryPro.text, 10, (int) (35 - progressTextBounds.getDescent()));
-					}
+			try {
+				if (secondaryPro != null) synchronized (secondaryPro) {
+					if (secondaryPro != null) {
+						if (secondaryPro.text != null && !secondaryPro.text.isEmpty()) {
+							progressTextBounds = font.getLineMetrics(secondaryPro.text, frc);
+							textG.drawString(secondaryPro.text, 10, (int) (135 - progressTextBounds.getDescent()));
+						}
 
-					g.drawRect(10, 140, width - 20, 50);
-					g.fillRect(10, 140, (int) ((width - 20) * Math.min((double) secondaryPro.cur / (double) secondaryPro.max, 1d)), 50);
-					progressText = secondaryPro.cur + "/" + secondaryPro.max;
-					progressTextBounds = font.getLineMetrics(progressText, frc);
-					textG.drawString(progressText, (int) (width / 2 - font.getStringBounds(progressText, frc).getWidth() / 2), (int) (165 + progressTextBounds.getHeight() / 2 - progressTextBounds.getDescent()));
+						g.drawRect(10, 140, width - 20, 50);
+						g.fillRect(10, 140, (int) ((width - 20) * Math.min((double) secondaryPro.cur / (double) secondaryPro.max, 1d)), 50);
+						progressText = secondaryPro.cur + "/" + secondaryPro.max;
+						progressTextBounds = font.getLineMetrics(progressText, frc);
+						textG.drawString(progressText, (int) (width / 2 - font.getStringBounds(progressText, frc).getWidth() / 2), (int) (165 + progressTextBounds.getHeight() / 2 - progressTextBounds.getDescent()));
+					}
 				}
-			}
+			} catch (NullPointerException e) {} // There might be some NullPointerException occurs when accessing secondaryPro.
 
 			// Draw the third progress bar.
-			if (detailPro != null) synchronized (detailPro) {
-				if (detailPro != null) {
-					if (detailPro.text != null && !detailPro.text.isEmpty()) {
-						progressTextBounds = font.getLineMetrics(detailPro.text, frc);
-						textG.drawString(detailPro.text, 10, (int) (35 - progressTextBounds.getDescent()));
-					}
+			try {
+				if (detailPro != null) synchronized (detailPro) {
+					if (detailPro != null) {
+						if (detailPro.text != null && !detailPro.text.isEmpty()) {
+							progressTextBounds = font.getLineMetrics(detailPro.text, frc);
+							textG.drawString(detailPro.text, 10, (int) (235 - progressTextBounds.getDescent()));
+						}
 
-					g.drawRect(10, 240, width - 20, 50);
-					g.fillRect(10, 240, (int) ((width - 20) * Math.min((double) detailPro.cur / (double) detailPro.max, 1d)), 50);
-					progressText = detailPro.cur + "/" + detailPro.max;
-					progressTextBounds = font.getLineMetrics(progressText, frc);
-					textG.drawString(progressText, (int) (width / 2 - font.getStringBounds(progressText, frc).getWidth() / 2), (int) (265 + progressTextBounds.getHeight() / 2 - progressTextBounds.getDescent()));
+						g.drawRect(10, 240, width - 20, 50);
+						g.fillRect(10, 240, (int) ((width - 20) * Math.min((double) detailPro.cur / (double) detailPro.max, 1d)), 50);
+						progressText = detailPro.cur + "/" + detailPro.max;
+						progressTextBounds = font.getLineMetrics(progressText, frc);
+						textG.drawString(progressText, (int) (width / 2 - font.getStringBounds(progressText, frc).getWidth() / 2), (int) (265 + progressTextBounds.getHeight() / 2 - progressTextBounds.getDescent()));
+					}
 				}
-			}
+			} catch (NullPointerException e) {} // There might be some NullPointerException occurs when accessing detailPro.
 
 			// Release any system items that are using this method. (so we don't have crappy framerates)
 			g.dispose();

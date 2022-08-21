@@ -23,7 +23,6 @@ public class FileHandler extends Game {
 	static final String OS;
 	private static final String localGameDir;
 	static final String systemGameDir;
-	static final String gameModsDir;
 
 	static {
 		OS = System.getProperty("os.name").toLowerCase();
@@ -38,7 +37,6 @@ public class FileHandler extends Game {
 		}
 
 		localGameDir = "/" + local;
-		gameModsDir = systemGameDir + localGameDir + "/mods";
 	}
 
 

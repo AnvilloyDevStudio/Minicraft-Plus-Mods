@@ -42,7 +42,6 @@ public class TitleDisplay extends Display {
 					).createMenu()));
 				else Game.setDisplay(new WorldGenDisplay());
 			}),
-			// new SelectEntry("Mods", () -> Game.setDisplay(new ModsDisplay())), TODO
 			new SelectEntry("Options", () -> Game.setDisplay(new OptionsMainMenuDisplay())),
             new SelectEntry("minicraft.display.skin", () -> Game.setDisplay(new SkinDisplay())),
 			new SelectEntry("minicraft.display.achievement", () -> Game.setDisplay(new AchievementsDisplay())),

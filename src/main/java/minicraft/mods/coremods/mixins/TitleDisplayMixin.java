@@ -1,13 +1,9 @@
 package minicraft.mods.coremods.mixins;
 
-import java.util.ArrayList;
-
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyArgs;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
 import minicraft.core.Game;
 import minicraft.gfx.Color;

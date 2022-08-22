@@ -27,7 +27,6 @@ import minicraft.item.PotionType;
 import minicraft.item.ToolItem;
 import minicraft.item.ToolType;
 import minicraft.level.Level;
-import minicraft.mods.Mods;
 import minicraft.screen.LoadingDisplay;
 import minicraft.screen.RelPos;
 import org.tinylog.Logger;
@@ -181,7 +180,7 @@ public class Renderer extends Game {
 
 		// This checks if the player is holding a bow, and shows the arrow counter accordingly.
 		if (player.activeItem instanceof ToolItem) {
-			if (((ToolItem)player.activeItem).type.name.equals("bow")) {
+			if (((ToolItem)player.activeItem).type == ToolType.Bow) {
 				int ac = player.getInventory().count(Items.arrowItem);
 				// "^" is an infinite symbol.
 				if (isMode("creative") || ac >= 10000)
@@ -329,7 +328,6 @@ public class Renderer extends Game {
 			}
 		}
 
-		// Mods.renderGui(); TODO
 		renderDebugInfo();
 	}
 

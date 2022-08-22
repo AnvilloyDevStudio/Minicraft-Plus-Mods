@@ -7,8 +7,6 @@ import org.jetbrains.annotations.Nullable;
 
 import org.tinylog.Logger;
 
-import minicraft.mods.Mods;
-
 public class Items {
 
 	// I've checked -- this is only used for making the creative inventory, and in Load.java.
